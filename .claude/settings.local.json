@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm run build:*)",
       "Bash(tree:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(dir /s \"C:\\\\Users\\\\jorge\\\\Desktop\\\\libreria-seo\")",
+      "Bash(npm install:*)"
     ]
   }
 }

@@ -139,8 +139,8 @@ export function ProductsSection() {
   const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 12);
 
   return (
-    <section id="productos" className="py-12 md:py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section id="productos" className="py-12 sm:py-16 md:py-20 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 space-y-3">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
@@ -194,9 +194,9 @@ export function ProductsSection() {
           </div>
         </div>
 
-        {/* Products Grid */}
+        {/* Products Grid - Mobile First */}
         {displayedProducts.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
             {displayedProducts.map((product, index) => (
               <div
                 key={product.id}

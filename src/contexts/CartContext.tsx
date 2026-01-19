@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { Product } from '@/lib/types';
-import { mockContactInfo } from '@/lib/mock-data';
+import { getWhatsAppUrl } from '@/lib/constants';
 
 export interface CartItem {
   product: Product;
@@ -78,8 +78,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (items.length === 0) return;
 
     const message = buildWhatsAppMessage(items, getTotal());
-    const whatsappUrl = `https://wa.me/${mockContactInfo.whatsapp}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(getWhatsAppUrl(message), '_blank');
   }, [items, getTotal]);
 
   return (

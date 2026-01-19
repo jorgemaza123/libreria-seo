@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, MessageCircle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockContactInfo } from '@/lib/mock-data';
+import { getWhatsAppUrl, getPhoneUrl } from '@/lib/constants';
 
 export function StickyContactBar() {
   const [isVisible, setIsVisible] = useState(false);
@@ -39,17 +39,17 @@ export function StickyContactBar() {
             className="flex-1 h-12"
             asChild
           >
-            <a href={`tel:${mockContactInfo.phone}`}>
+            <a href={getPhoneUrl()}>
               <Phone className="w-5 h-5 mr-2" />
               Llamar
             </a>
           </Button>
           <Button
-            className="flex-1 h-12 bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none"
+            className="flex-1 h-12 bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none"
             asChild
           >
-            <a 
-              href={`https://wa.me/${mockContactInfo.whatsapp}?text=Hola, vi su página web y me interesa obtener información`}
+            <a
+              href={getWhatsAppUrl('Hola, vi su página web y me interesa obtener información')}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -74,11 +74,11 @@ export function StickyContactBar() {
         {/* WhatsApp CTA */}
         <Button
           size="lg"
-          className="shadow-xl h-14 text-base bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none"
+          className="shadow-xl h-14 text-base bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none"
           asChild
         >
-          <a 
-            href={`https://wa.me/${mockContactInfo.whatsapp}?text=Hola, vi su página web y me interesa obtener información`}
+          <a
+            href={getWhatsAppUrl('Hola, vi su página web y me interesa obtener información')}
             target="_blank"
             rel="noopener noreferrer"
           >

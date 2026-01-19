@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockFAQs, mockContactInfo } from '@/lib/mock-data';
+import { mockFAQs } from '@/lib/mock-data';
+import { CONTACT, getWhatsAppUrl } from '@/lib/constants';
 
 interface Message {
   id: string;
@@ -44,8 +45,7 @@ export function ChatBot() {
   }, [messages, isOpen]);
 
   const openWhatsApp = (message: string) => {
-    const whatsappUrl = `https://wa.me/${mockContactInfo.whatsapp}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(getWhatsAppUrl(message), '_blank');
   };
 
   const handleQuickOption = (option: typeof quickOptions[0]) => {
@@ -133,7 +133,7 @@ export function ChatBot() {
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center ${
+        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 bg-whatsapp text-whatsapp-foreground rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
         aria-label="Abrir chat"
@@ -152,7 +152,7 @@ export function ChatBot() {
       >
         <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border">
           {/* Header */}
-          <div className="bg-[#25D366] text-white p-4 flex items-center justify-between">
+          <div className="bg-whatsapp text-whatsapp-foreground p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-5 h-5" />
@@ -201,7 +201,7 @@ export function ChatBot() {
                 <button
                   key={option.id}
                   onClick={() => handleQuickOption(option)}
-                  className="text-xs px-3 py-1.5 bg-muted hover:bg-[#25D366]/10 hover:text-[#25D366] rounded-full transition-colors border border-border"
+                  className="text-xs px-3 py-1.5 bg-muted hover:bg-whatsapp/10 hover:text-whatsapp rounded-full transition-colors border border-border"
                 >
                   {option.label}
                 </button>
@@ -212,7 +212,7 @@ export function ChatBot() {
           {/* WhatsApp CTA */}
           <div className="px-4 py-3 border-t border-border bg-card">
             <Button
-              className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white"
+              className="w-full bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground"
               onClick={() => openWhatsApp('Hola, tengo una consulta sobre sus productos y servicios')}
             >
               <MessageCircle className="w-4 h-4 mr-2" />
@@ -231,12 +231,12 @@ export function ChatBot() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Escribe tu consulta..."
-                className="flex-1 h-9 px-3 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366] transition-all"
+                className="flex-1 h-9 px-3 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-whatsapp transition-all"
               />
               <Button
                 type="submit"
                 size="icon"
-                className="rounded-full bg-[#25D366] hover:bg-[#20BD5A] h-9 w-9 text-white"
+                className="rounded-full bg-whatsapp hover:bg-whatsapp/90 h-9 w-9 text-whatsapp-foreground"
                 disabled={!inputValue.trim()}
               >
                 <Send className="w-4 h-4" />

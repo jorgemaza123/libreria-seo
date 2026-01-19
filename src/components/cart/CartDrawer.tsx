@@ -123,7 +123,7 @@ export function CartDrawer() {
             {/* Actions */}
             <Button
               size="lg"
-              className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none" // Hardcoded whatsapp color style since variant="whatsapp" might not be in shadcn
+              className="w-full bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none"
               onClick={sendToWhatsApp}
             >
               <MessageCircle className="w-5 h-5 mr-2" />

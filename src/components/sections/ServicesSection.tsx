@@ -1,8 +1,8 @@
 "use client"
 
-import { Printer, Laptop, BookOpen, FileCheck, Palette, ArrowRight, Shirt, Smartphone } from 'lucide-react';
+import { Printer, Laptop, FileCheck, Palette, ArrowRight, Shirt, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockContactInfo } from '@/lib/mock-data';
+import { getWhatsAppUrl } from '@/lib/constants';
 
 const services = [
   {
@@ -63,15 +63,15 @@ const services = [
 
 export function ServicesSection() {
   const handleServiceClick = (serviceName: string) => {
-    const message = encodeURIComponent(
-      `¡Hola! Me interesa el servicio de ${serviceName}. ¿Pueden darme más información?`
+    window.open(
+      getWhatsAppUrl(`¡Hola! Me interesa el servicio de ${serviceName}. ¿Pueden darme más información?`),
+      '_blank'
     );
-    window.open(`https://wa.me/${mockContactInfo.whatsapp}?text=${message}`, '_blank');
   };
 
   return (
-    <section id="servicios" className="py-16 md:py-24 bg-background">
-      <div className="container mx-auto px-4">
+    <section id="servicios" className="py-12 sm:py-16 md:py-24 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 space-y-4">
           <span className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-bold">
@@ -85,8 +85,8 @@ export function ServicesSection() {
           </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        {/* Services Grid - Mobile First */}
+        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {services.map((service) => {
             const IconComponent = service.icon;
             return (
@@ -132,14 +132,14 @@ export function ServicesSection() {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <Button 
+        <div className="text-center mt-8 sm:mt-12">
+          <Button
             size="lg"
             className="bg-gradient-to-r from-primary to-cta hover:from-primary/90 hover:to-cta/90 text-primary-foreground font-bold shadow-lg"
             asChild
           >
-            <a 
-              href={`https://wa.me/${mockContactInfo.whatsapp}?text=Hola, quiero información sobre sus servicios`}
+            <a
+              href={getWhatsAppUrl('Hola, quiero información sobre sus servicios')}
               target="_blank"
               rel="noopener noreferrer"
             >

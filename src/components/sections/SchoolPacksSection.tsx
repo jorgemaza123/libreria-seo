@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Check, Star, Crown, Leaf, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getWhatsAppUrl } from '@/lib/constants';
 
 const packs = [
   {
@@ -66,10 +67,10 @@ const packs = [
 
 export function SchoolPacksSection() {
   const handleSelectPack = (packName: string) => {
-    const message = encodeURIComponent(
-      `¡Hola! Me interesa el Pack ${packName} para mi lista escolar. ¿Pueden darme más información?`
+    window.open(
+      getWhatsAppUrl(`¡Hola! Me interesa el Pack ${packName} para mi lista escolar. ¿Pueden darme más información?`),
+      '_blank'
     );
-    window.open(`https://wa.me/51987654321?text=${message}`, '_blank');
   };
 
   return (
@@ -185,13 +186,13 @@ export function SchoolPacksSection() {
           <p className="text-muted-foreground mb-4">
             ¿Tienes una lista específica? Envíala y te armamos el presupuesto exacto.
           </p>
-          <Button 
+          <Button
             size="lg"
-            className="bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold shadow-lg"
+            className="bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground font-bold shadow-lg"
             asChild
           >
-            <a 
-              href="https://wa.me/51987654321?text=Hola! Quiero enviar mi lista escolar para cotización"
+            <a
+              href={getWhatsAppUrl('Hola! Quiero enviar mi lista escolar para cotización')}
               target="_blank"
               rel="noopener noreferrer"
             >

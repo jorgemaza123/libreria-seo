@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react';
-import { mockContactInfo, mockNavItems, mockCategories } from '@/lib/mock-data';
+import { mockNavItems, mockCategories } from '@/lib/mock-data';
+import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, SOCIAL_MEDIA, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
 
 export function Footer() {
   const visibleNavItems = mockNavItems
@@ -26,9 +27,9 @@ export function Footer() {
               Útiles escolares, papelería, impresiones, servicios TI y mucho más.
             </p>
             <div className="flex gap-4 pt-2">
-              {mockContactInfo.socialMedia.facebook && (
+              {SOCIAL_MEDIA.facebook && (
                 <a
-                  href={mockContactInfo.socialMedia.facebook}
+                  href={SOCIAL_MEDIA.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
@@ -36,9 +37,9 @@ export function Footer() {
                   <Facebook className="w-5 h-5" />
                 </a>
               )}
-              {mockContactInfo.socialMedia.instagram && (
+              {SOCIAL_MEDIA.instagram && (
                 <a
-                  href={mockContactInfo.socialMedia.instagram}
+                  href={SOCIAL_MEDIA.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
@@ -47,10 +48,10 @@ export function Footer() {
                 </a>
               )}
               <a
-                href={`https://wa.me/${mockContactInfo.whatsapp}`}
+                href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-whatsapp hover:text-whatsapp-foreground flex items-center justify-center transition-colors"
               >
                 <MessageCircle className="w-5 h-5" />
               </a>
@@ -98,35 +99,35 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="text-secondary-foreground/70 text-sm">
-                  {mockContactInfo.address.street}
+                  {BUSINESS_INFO.address.street}
                   <br />
-                  {mockContactInfo.address.city}, {mockContactInfo.address.state}
+                  {BUSINESS_INFO.address.city}, {BUSINESS_INFO.address.state}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
                 <a
-                  href={`tel:${mockContactInfo.phone}`}
+                  href={getPhoneUrl()}
                   className="text-secondary-foreground/70 hover:text-primary text-sm"
                 >
-                  {mockContactInfo.phone}
+                  {CONTACT.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
                 <a
-                  href={`mailto:${mockContactInfo.email}`}
+                  href={getEmailUrl()}
                   className="text-secondary-foreground/70 hover:text-primary text-sm"
                 >
-                  {mockContactInfo.email}
+                  {CONTACT.email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div className="text-secondary-foreground/70 text-sm">
-                  <p>Lun-Vie: {mockContactInfo.hours.weekdays}</p>
-                  <p>Sábado: {mockContactInfo.hours.saturday}</p>
-                  <p>Domingo: {mockContactInfo.hours.sunday}</p>
+                  <p>{BUSINESS_HOURS.weekdays.label}: {BUSINESS_HOURS.weekdays.hours}</p>
+                  <p>{BUSINESS_HOURS.saturday.label}: {BUSINESS_HOURS.saturday.hours}</p>
+                  <p>{BUSINESS_HOURS.sunday.label}: {BUSINESS_HOURS.sunday.hours}</p>
                 </div>
               </li>
             </ul>

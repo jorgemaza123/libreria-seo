@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Clock, Flame, Gift, Zap, ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockPromotions, mockSiteContent } from '@/lib/mock-data';
+import { getWhatsAppUrl } from '@/lib/constants';
 
 // Countdown hook
 function useCountdown(hours: number) {
@@ -223,14 +224,14 @@ export function PromotionsSection() {
                   </div>
 
                   {/* CTA */}
-                  <Button 
-                    variant="default" // Changed from hero to default as hero might not be defined in shadcn base
-                    size="sm" 
+                  <Button
+                    variant="default"
+                    size="sm"
                     className="w-full opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-destructive to-orange-500 hover:from-destructive/90 hover:to-orange-500/90"
                     asChild
                   >
-                    <a 
-                      href={`https://wa.me/51987654321?text=Hola! Me interesa: ${deal.title} a S/${deal.salePrice}`}
+                    <a
+                      href={getWhatsAppUrl(`Hola! Me interesa: ${deal.title} a S/${deal.salePrice}`)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -292,9 +293,9 @@ export function PromotionsSection() {
                           {promo.description}
                         </p>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
-                          <Button size="lg" className="bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none" asChild>
-                            <a 
-                              href={`https://wa.me/51987654321?text=Hola! Me interesa la promoción: ${promo.title}`}
+                          <Button size="lg" className="bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none" asChild>
+                            <a
+                              href={getWhatsAppUrl(`Hola! Me interesa la promoción: ${promo.title}`)}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -362,8 +363,8 @@ export function PromotionsSection() {
               </div>
             </div>
             <Button size="lg" className="bg-gradient-to-r from-primary to-cta" asChild>
-              <a 
-                href="https://wa.me/51987654321?text=Hola! Quisiera una cotización personalizada"
+              <a
+                href={getWhatsAppUrl('Hola! Quisiera una cotización personalizada')}
                 target="_blank"
                 rel="noopener noreferrer"
               >

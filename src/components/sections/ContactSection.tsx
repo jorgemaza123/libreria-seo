@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockContactInfo, mockSiteContent } from '@/lib/mock-data';
+import { mockSiteContent } from '@/lib/mock-data';
+import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
 import { toast } from 'sonner';
 
 export function ContactSection() {
@@ -168,10 +169,10 @@ export function ContactSection() {
                   <div>
                     <p className="font-medium">Dirección</p>
                     <p className="text-muted-foreground text-sm">
-                      {mockContactInfo.address.street}
+                      {BUSINESS_INFO.address.street}
                       <br />
-                      {mockContactInfo.address.city}, {mockContactInfo.address.state},{' '}
-                      {mockContactInfo.address.postalCode}
+                      {BUSINESS_INFO.address.city}, {BUSINESS_INFO.address.state},{' '}
+                      {BUSINESS_INFO.address.postalCode}
                     </p>
                   </div>
                 </li>
@@ -182,10 +183,10 @@ export function ContactSection() {
                   <div>
                     <p className="font-medium">Teléfono</p>
                     <a
-                      href={`tel:${mockContactInfo.phone}`}
+                      href={getPhoneUrl()}
                       className="text-muted-foreground text-sm hover:text-primary transition-colors"
                     >
-                      {mockContactInfo.phone}
+                      {CONTACT.phone}
                     </a>
                   </div>
                 </li>
@@ -196,10 +197,10 @@ export function ContactSection() {
                   <div>
                     <p className="font-medium">Email</p>
                     <a
-                      href={`mailto:${mockContactInfo.email}`}
+                      href={getEmailUrl()}
                       className="text-muted-foreground text-sm hover:text-primary transition-colors"
                     >
-                      {mockContactInfo.email}
+                      {CONTACT.email}
                     </a>
                   </div>
                 </li>
@@ -210,9 +211,9 @@ export function ContactSection() {
                   <div>
                     <p className="font-medium">Horario</p>
                     <div className="text-muted-foreground text-sm space-y-1">
-                      <p>Lun-Vie: {mockContactInfo.hours.weekdays}</p>
-                      <p>Sábado: {mockContactInfo.hours.saturday}</p>
-                      <p>Domingo: {mockContactInfo.hours.sunday}</p>
+                      <p>{BUSINESS_HOURS.weekdays.label}: {BUSINESS_HOURS.weekdays.hours}</p>
+                      <p>{BUSINESS_HOURS.saturday.label}: {BUSINESS_HOURS.saturday.hours}</p>
+                      <p>{BUSINESS_HOURS.sunday.label}: {BUSINESS_HOURS.sunday.hours}</p>
                     </div>
                   </div>
                 </li>
@@ -220,9 +221,9 @@ export function ContactSection() {
             </div>
 
             {/* WhatsApp CTA */}
-            <Button className="w-full bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none" size="xl" asChild>
+            <Button className="w-full bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none" size="xl" asChild>
               <a
-                href={`https://wa.me/${mockContactInfo.whatsapp}?text=Hola, me gustaría obtener información sobre sus productos y servicios.`}
+                href={getWhatsAppUrl('Hola, me gustaría obtener información sobre sus productos y servicios.')}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -234,7 +235,7 @@ export function ContactSection() {
             {/* Map Placeholder */}
             <div className="aspect-video rounded-2xl overflow-hidden bg-muted card-elevated">
               <iframe
-                src={`https://maps.google.com/maps?q=${mockContactInfo.coordinates.lat},${mockContactInfo.coordinates.lng}&z=15&output=embed`}
+                src={`https://maps.google.com/maps?q=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}&z=15&output=embed`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

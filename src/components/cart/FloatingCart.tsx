@@ -107,7 +107,7 @@ export function FloatingCart() {
               </Button>
               <Button
                 size="sm"
-                className="flex-1 bg-[#25D366] hover:bg-[#25D366]/90 text-white border-none"
+                className="flex-1 bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none"
                 onClick={sendToWhatsApp}
               >
                 <MessageCircle className="w-4 h-4 mr-1" />

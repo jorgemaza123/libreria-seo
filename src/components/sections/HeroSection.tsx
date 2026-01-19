@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from 'react';
-import { 
-  Backpack, 
-  Laptop, 
-  FileText, 
-  Gift, 
-  Star, 
-  MapPin, 
+import {
+  Backpack,
+  Laptop,
+  FileText,
+  Gift,
+  Star,
+  MapPin,
   Truck,
   MessageCircle,
   Phone,
@@ -16,6 +16,7 @@ import {
   Palette
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CONTACT, getWhatsAppUrl, getPhoneUrl } from '@/lib/constants';
 
 type CategoryKey = 'escolar' | 'tecnologia' | 'tramites' | 'regalos';
 
@@ -104,8 +105,7 @@ export function HeroSection() {
   const currentCategory = categories.find(c => c.id === activeCategory)!;
 
   const handleCTAClick = () => {
-    const message = encodeURIComponent(currentCategory.whatsappMessage);
-    window.open(`https://wa.me/51987654321?text=${message}`, '_blank');
+    window.open(getWhatsAppUrl(currentCategory.whatsappMessage), '_blank');
   };
 
   return (
@@ -165,13 +165,13 @@ export function HeroSection() {
 
             {/* Quick Contact Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-up stagger-3">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground font-bold shadow-lg shadow-whatsapp/20"
                 asChild
               >
-                <a 
-                  href="https://wa.me/51987654321?text=Hola! Quiero información sobre sus productos y servicios"
+                <a
+                  href={getWhatsAppUrl('Hola! Quiero información sobre sus productos y servicios')}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -180,7 +180,7 @@ export function HeroSection() {
                 </a>
               </Button>
               <Button variant="outline" size="lg" className="font-bold border-2" asChild>
-                <a href="tel:+51987654321">
+                <a href={getPhoneUrl()}>
                   <Phone className="mr-2 h-5 w-5" />
                   Llamar Ahora
                 </a>

@@ -1,0 +1,306 @@
+================================================================================
+                    INFORME DE AUDITORIA SEO COMPLETA
+                         LIBRERIA CENTRAL - SJL
+                      Fecha: Enero 2026
+================================================================================
+
+RESUMEN EJECUTIVO
+-----------------
+Se ha realizado una auditoria exhaustiva del sitio web "Libreria Central".
+El proyecto esta construido con Next.js 16.1.3 y React 19.2.3, con una base
+de SEO bien establecida pero con areas criticas que requieren atencion
+inmediata para optimizar el posicionamiento en Google.
+
+ESTADO GENERAL: 65/100 (Necesita mejoras importantes)
+
+================================================================================
+                         ERRORES CRITICOS (Prioridad Alta)
+================================================================================
+
+1. NO EXISTE ROBOTS.TXT
+   Ubicacion esperada: /public/robots.txt o /src/app/robots.ts
+   Estado: NO ENCONTRADO
+   Impacto: Google no tiene instrucciones claras sobre que indexar
+   Solucion: Crear archivo robots.txt con directivas apropiadas
+
+2. NO EXISTE SITEMAP.XML
+   Ubicacion esperada: /public/sitemap.xml o /src/app/sitemap.ts
+   Estado: NO ENCONTRADO
+   Impacto: Google no puede descubrir todas las paginas eficientemente
+   Solucion: Implementar sitemap dinamico con Next.js
+
+3. IMAGEN OG (Open Graph) NO EXISTE
+   Referencia en codigo: /og-image.jpg
+   Ubicacion: src/lib/seo.ts linea 19
+   Estado: ARCHIVO NO ENCONTRADO en /public/
+   Impacto: Compartir en redes sociales no mostrara imagen
+   Solucion: Crear imagen de 1200x630px optimizada
+
+4. URL BASE NO CONFIGURADA (Placeholder)
+   Archivo: src/lib/seo.ts linea 16
+   Valor actual: "https://libreria-central.com"
+   Estado: DOMINIO NO CONFIGURADO/ACTIVO
+   Impacto: Todas las URLs canonicas apuntan a dominio inexistente
+   Solucion: Actualizar cuando se tenga dominio final
+
+5. NUMEROS DE WHATSAPP INCONSISTENTES
+   - HeroSection.tsx: 51987654321 (lineas 108, 174, 183)
+   - mock-data.ts: 51999999999 (linea 261)
+   - Footer usa mock-data (correcto)
+   Impacto: Confusion del usuario, posible perdida de ventas
+   Solucion: Unificar todos los numeros de contacto
+
+================================================================================
+                         ERRORES IMPORTANTES (Prioridad Media)
+================================================================================
+
+6. LOCALBUSINESS SCHEMA NO INYECTADO
+   Archivo: src/lib/seo.ts (lineas 25-75)
+   Estado: Funcion definida pero NUNCA SE USA en el HTML
+   Impacto: Google no puede identificar el negocio local
+   Solucion: Inyectar schema JSON-LD en layout.tsx o page.tsx principal
+
+7. FAQ SCHEMA NO IMPLEMENTADO
+   Archivo: src/lib/seo.ts (lineas 110-121)
+   Estado: Funcion definida pero NO SE USA
+   Impacto: Las FAQs no aparecen como rich snippets en Google
+   Solucion: Inyectar FAQSchema en pagina donde se muestran las FAQs
+
+8. BREADCRUMB SCHEMA INCOMPLETO
+   Archivo: src/app/producto/[slug]/page.tsx (lineas 79-99)
+   Estado: Breadcrumbs visuales pero SIN JSON-LD
+   Impacto: Google no entiende la estructura de navegacion
+   Solucion: Agregar BreadcrumbSchema JSON-LD junto al visual
+
+9. LINKS DEL FOOTER ROTOS
+   Archivo: src/components/layout/Footer.tsx (lineas 177-182)
+   - "Aviso de Privacidad" apunta a href="#"
+   - "Terminos y Condiciones" apunta a href="#"
+   Impacto: Enlaces rotos afectan experiencia y SEO
+   Solucion: Crear paginas legales o remover enlaces
+
+10. FALTA PRECONNECT PARA DOMINIOS EXTERNOS
+    Dominios usados sin preconnect:
+    - images.unsplash.com (imagenes de productos)
+    - fonts.googleapis.com (fuentes)
+    - fonts.gstatic.com (fuentes)
+    Archivo: src/app/layout.tsx
+    Impacto: Retraso en carga de recursos externos
+    Solucion: Agregar tags <link rel="preconnect"> en head
+
+================================================================================
+                         ADVERTENCIAS (Prioridad Baja)
+================================================================================
+
+11. NO HAY MANIFEST.JSON (PWA)
+    Estado: No existe archivo manifest para Progressive Web App
+    Impacto: La app no se puede instalar en dispositivos moviles
+    Solucion: Crear manifest.json con metadata de la app
+
+12. NO HAY PAGINAS DE CATEGORIAS INDIVIDUALES
+    Estado actual: Solo existe /#productos?category=slug
+    Impacto: Menos oportunidades de rankear por categoria
+    Solucion: Crear /categoria/[slug] con contenido unico
+
+13. NO HAY PAGINAS DE SERVICIOS INDIVIDUALES
+    Estado actual: Solo seccion en homepage
+    Impacto: Perdida de oportunidades de ranking por servicio
+    Solucion: Crear /servicio/[slug] con contenido detallado
+
+14. ALT TEXTS DE IMAGENES GENERICOS
+    Ejemplo: ProductsSection.tsx linea 27
+    alt={product.name} - Usa solo el nombre
+    Mejor practica: "Mochila Escolar Premium - Libreria Central SJL"
+    Impacto: Menor relevancia en Google Images
+
+15. FALTA CANONICAL URL EXPLICITA EN PRODUCTOS
+    Archivo: src/app/producto/[slug]/page.tsx
+    Estado: No hay canonical definido en metadata
+    Impacto: Posible contenido duplicado si hay parametros URL
+
+16. NO HAY HREFLANG TAGS
+    Estado: Sitio solo en espanol-Peru
+    Impacto: Bajo (solo relevante si hay multiples idiomas)
+    Nota: Considerar si se expandira a otros paises
+
+================================================================================
+                         ANALISIS DETALLADO POR ARCHIVO
+================================================================================
+
+ARCHIVO: src/app/layout.tsx
+---------------------------
+[OK] Metadata base configurada correctamente
+[OK] Fuentes con display: swap (bueno para performance)
+[OK] lang="es" en html tag
+[OK] Robots indexing permitido
+[OK] OpenGraph basico configurado
+[OK] Twitter card configurado
+[ERROR] Falta preconnect para dominios externos
+[ERROR] Falta inyeccion de LocalBusinessSchema
+
+ARCHIVO: src/lib/seo.ts
+-----------------------
+[OK] Configuracion SEO bien estructurada
+[OK] Funciones de schema bien definidas
+[ERROR] siteUrl es placeholder
+[ERROR] defaultImage no existe
+[ADVERTENCIA] Schemas definidos pero no usados
+
+ARCHIVO: src/app/page.tsx
+-------------------------
+[OK] Metadata especifica para homepage
+[OK] OpenGraph configurado
+[ERROR] Falta LocalBusinessSchema JSON-LD
+[ERROR] Falta FAQSchema JSON-LD
+
+ARCHIVO: src/app/producto/[slug]/page.tsx
+-----------------------------------------
+[OK] generateStaticParams para SSG
+[OK] generateMetadata dinamico
+[OK] ProductSchema JSON-LD inyectado
+[OK] Breadcrumbs visuales
+[ERROR] Falta BreadcrumbSchema JSON-LD
+[ERROR] Falta canonical URL explicita
+[ADVERTENCIA] Ratings hardcodeados (4 estrellas, 24 resenas)
+
+ARCHIVO: src/components/sections/HeroSection.tsx
+------------------------------------------------
+[OK] Estructura semantica con section y h1
+[ERROR] Numero WhatsApp diferente al de contacto
+[ADVERTENCIA] Contenido muy dinamico (puede afectar indexacion)
+
+ARCHIVO: src/components/layout/Footer.tsx
+-----------------------------------------
+[OK] Informacion de contacto completa
+[OK] Links de redes sociales con rel="noopener noreferrer"
+[ERROR] Links legales apuntan a "#"
+
+ARCHIVO: src/components/sections/ProductsSection.tsx
+----------------------------------------------------
+[OK] Uso de next/image para optimizacion
+[OK] lazy loading en imagenes
+[OK] Estructura semantica con article
+[ADVERTENCIA] Alt texts podrian ser mas descriptivos
+[ADVERTENCIA] Links internos a productos correctos
+
+ARCHIVO: src/app/not-found.tsx
+------------------------------
+[OK] Pagina 404 personalizada
+[OK] Link de retorno a homepage
+
+ARCHIVO: next.config.ts
+-----------------------
+[OK] Dominios de imagenes remotas configurados
+[OK] Cloudinary preparado para integracion
+[ADVERTENCIA] Falta configuracion de headers de seguridad
+
+================================================================================
+                         DATOS MOCK VS PRODUCCION
+================================================================================
+
+El proyecto usa datos mock en src/lib/mock-data.ts que deberan
+migrarse a Supabase:
+
+- mockCategories: 6 categorias
+- mockProducts: 6 productos
+- mockServices: 6 servicios
+- mockPromotions: 3 promociones
+- mockFAQs: 5 preguntas
+- mockContactInfo: Datos de contacto
+- mockSiteContent: Contenido del sitio
+- mockNavItems: Items de navegacion
+
+NOTA: Los IDs son strings ('1', '2', etc.) - Supabase usara UUIDs
+
+================================================================================
+                         RECOMENDACIONES DE IMPLEMENTACION
+================================================================================
+
+PRIORIDAD INMEDIATA (Hacer ahora):
+1. Crear robots.txt
+2. Crear sitemap.xml dinamico
+3. Crear og-image.jpg
+4. Unificar numeros de WhatsApp
+5. Inyectar LocalBusinessSchema en homepage
+
+PRIORIDAD ALTA (Esta semana):
+6. Crear paginas legales (Privacidad, Terminos)
+7. Agregar preconnect para dominios externos
+8. Implementar FAQSchema
+9. Agregar BreadcrumbSchema JSON-LD
+
+PRIORIDAD MEDIA (Proximas 2 semanas):
+10. Crear paginas de categorias individuales
+11. Crear paginas de servicios individuales
+12. Mejorar alt texts de imagenes
+13. Agregar canonical URLs explicitas
+
+PRIORIDAD BAJA (Cuando sea posible):
+14. Implementar manifest.json (PWA)
+15. Agregar headers de seguridad
+16. Considerar hreflang si se expande
+
+================================================================================
+                         METRICAS ACTUALES
+================================================================================
+
+Paginas indexables:
+- Homepage: 1
+- Productos: 6 (dinamicas)
+- Total: 7 paginas
+
+Schemas implementados:
+- Product: SI (en paginas de producto)
+- LocalBusiness: NO (definido pero no usado)
+- FAQ: NO (definido pero no usado)
+- Breadcrumb: NO (definido pero no usado)
+
+Meta tags:
+- Title: SI
+- Description: SI
+- Keywords: SI
+- OpenGraph: SI
+- Twitter Card: SI
+- Robots: SI
+
+Performance (estimado):
+- Fuentes optimizadas: SI (display: swap)
+- Imagenes optimizadas: SI (next/image)
+- Lazy loading: SI
+
+================================================================================
+                         PROXIMOS PASOS SUGERIDOS
+================================================================================
+
+Fase 1 - SEO Tecnico (Urgente):
+1. Crear robots.txt con sitemap reference
+2. Implementar sitemap.xml dinamico
+3. Crear imagen OG de 1200x630px
+4. Corregir inconsistencias de datos
+
+Fase 2 - Structured Data:
+1. Inyectar LocalBusinessSchema en layout
+2. Agregar FAQSchema en homepage o pagina dedicada
+3. Implementar BreadcrumbSchema completo
+
+Fase 3 - Contenido:
+1. Crear paginas legales
+2. Expandir a paginas de categorias
+3. Crear paginas de servicios detalladas
+
+Fase 4 - Integracion Backend:
+1. Migrar datos mock a Supabase
+2. Configurar Cloudinary para imagenes
+3. Implementar panel de administracion
+
+================================================================================
+                              FIN DEL INFORME
+================================================================================
+
+Generado por: Claude Code
+Proyecto: libreria-seo
+Framework: Next.js 16.1.3 + React 19.2.3
+Fecha de auditoria: Enero 2026
+
+Para consultas sobre este informe, revisar la documentacion del proyecto
+o consultar con el equipo de desarrollo.
