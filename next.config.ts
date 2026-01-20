@@ -8,8 +8,16 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com', // Preparado para cuando uses Cloudinary
+        hostname: 'unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', // Seguramente ya usas este
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com', // A veces usan este subdominio
+      }
     ],
   },
 };

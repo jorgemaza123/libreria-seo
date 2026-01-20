@@ -19,6 +19,8 @@ import {
   User,
   Key,
   ExternalLink,
+  Star,
+  Download,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BUSINESS_INFO } from '@/lib/constants'
@@ -30,6 +32,8 @@ const navItems = [
   { href: '/admin/categorias', label: 'Categorías', icon: FolderTree },
   { href: '/admin/servicios', label: 'Servicios', icon: Wrench },
   { href: '/admin/promociones', label: 'Promociones', icon: Tags },
+  { href: '/admin/catalogos', label: 'Catálogos', icon: Download },
+  { href: '/admin/resenas', label: 'Reseñas', icon: Star },
   { href: '/admin/contenido', label: 'Contenido', icon: FileText },
   { href: '/admin/temas', label: 'Temas', icon: Palette },
   { href: '/admin/configuracion', label: 'Configuración', icon: Settings },

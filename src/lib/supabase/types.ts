@@ -333,6 +333,109 @@ export interface Database {
           updated_at?: string
         }
       }
+      catalogs: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          season: string
+          year: string
+          file_url: string | null
+          cover_image: string | null
+          page_count: number
+          is_new: boolean
+          is_active: boolean
+          downloads: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          season: string
+          year: string
+          file_url?: string | null
+          cover_image?: string | null
+          page_count?: number
+          is_new?: boolean
+          is_active?: boolean
+          downloads?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          season?: string
+          year?: string
+          file_url?: string | null
+          cover_image?: string | null
+          page_count?: number
+          is_new?: boolean
+          is_active?: boolean
+          downloads?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      reviews: {
+        Row: {
+          id: string
+          customer_name: string
+          customer_email: string | null
+          avatar_url: string | null
+          rating: number
+          comment: string
+          product_id: string | null
+          service_id: string | null
+          is_featured: boolean
+          is_verified: boolean
+          is_active: boolean
+          source: string
+          response: string | null
+          responded_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          customer_name: string
+          customer_email?: string | null
+          avatar_url?: string | null
+          rating: number
+          comment: string
+          product_id?: string | null
+          service_id?: string | null
+          is_featured?: boolean
+          is_verified?: boolean
+          is_active?: boolean
+          source?: string
+          response?: string | null
+          responded_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          customer_name?: string
+          customer_email?: string | null
+          avatar_url?: string | null
+          rating?: number
+          comment?: string
+          product_id?: string | null
+          service_id?: string | null
+          is_featured?: boolean
+          is_verified?: boolean
+          is_active?: boolean
+          source?: string
+          response?: string | null
+          responded_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

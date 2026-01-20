@@ -7,18 +7,23 @@ import { Button } from '@/components/ui/button';
 import { mockPromotions, mockSiteContent } from '@/lib/mock-data';
 import { getWhatsAppUrl } from '@/lib/constants';
 
-// Countdown hook
+// Countdown hook - Solo calcula después de que la página carga en el navegador
 function useCountdown(hours: number) {
-  const [endTime] = useState(() => {
-    // Verificamos si estamos en el cliente para evitar errores de hidratación con fechas
-    if (typeof window === 'undefined') return new Date();
+  const [mounted, setMounted] = useState(false);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  // Marcar como montado y establecer el tiempo final solo en el cliente
+  useEffect(() => {
+    setMounted(true);
     const end = new Date();
     end.setHours(end.getHours() + hours);
-    return end;
-  });
+    setEndTime(end);
+  }, [hours]);
 
+  // Calcular el tiempo restante
   const calculateTimeLeft = useCallback(() => {
-    if (typeof window === 'undefined') return { hours: 0, minutes: 0, seconds: 0 };
+    if (!endTime) return { hours: 0, minutes: 0, seconds: 0 };
     const difference = endTime.getTime() - new Date().getTime();
     if (difference <= 0) return { hours: 0, minutes: 0, seconds: 0 };
     return {
@@ -28,21 +33,22 @@ function useCountdown(hours: number) {
     };
   }, [endTime]);
 
-  // Inicializar con valores calculados para evitar setState inmediato en useEffect
-  const [timeLeft, setTimeLeft] = useState(() => {
-    if (typeof window === 'undefined') return { hours: 0, minutes: 0, seconds: 0 };
-    return calculateTimeLeft();
-  });
-
+  // Iniciar el intervalo solo después de montar
   useEffect(() => {
-    // Solo configurar el intervalo, el estado inicial ya está calculado
+    if (!mounted || !endTime) return;
+
+    // Calcular inmediatamente al montar
+    setTimeLeft(calculateTimeLeft());
+
+    // Luego actualizar cada segundo
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-    return () => clearInterval(timer);
-  }, [calculateTimeLeft]);
 
-  return timeLeft;
+    return () => clearInterval(timer);
+  }, [mounted, endTime, calculateTimeLeft]);
+
+  return { timeLeft, mounted };
 }
 
 // Flash deals data
@@ -92,7 +98,7 @@ const flashDeals = [
 export function PromotionsSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const activePromotions = mockPromotions.filter((p) => p.isActive);
-  const timeLeft = useCountdown(8); // 8 hours flash sale
+  const { timeLeft, mounted } = useCountdown(8); // 8 hours flash sale
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % activePromotions.length);
@@ -132,24 +138,30 @@ export function PromotionsSection() {
             {mockSiteContent.promotionsTitle}
           </h2>
 
-          {/* Main countdown */}
+          {/* Main countdown - Solo muestra valores reales después de cargar */}
           <div className="flex justify-center">
             <div className="inline-flex items-center gap-4 px-6 py-4 bg-card border-2 border-destructive/30 rounded-2xl shadow-lg">
               <Clock className="w-6 h-6 text-destructive" />
               <span className="text-muted-foreground font-medium hidden sm:inline">La oferta termina en:</span>
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center bg-secondary text-secondary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl">
-                  <span className="text-xl md:text-3xl font-bold font-mono">{String(timeLeft.hours).padStart(2, '0')}</span>
+                  <span className="text-xl md:text-3xl font-bold font-mono">
+                    {mounted ? String(timeLeft.hours).padStart(2, '0') : '--'}
+                  </span>
                   <span className="text-[10px] md:text-xs uppercase opacity-70">hrs</span>
                 </div>
                 <span className="text-xl md:text-2xl font-bold text-muted-foreground">:</span>
                 <div className="flex flex-col items-center bg-secondary text-secondary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl">
-                  <span className="text-xl md:text-3xl font-bold font-mono">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                  <span className="text-xl md:text-3xl font-bold font-mono">
+                    {mounted ? String(timeLeft.minutes).padStart(2, '0') : '--'}
+                  </span>
                   <span className="text-[10px] md:text-xs uppercase opacity-70">min</span>
                 </div>
                 <span className="text-xl md:text-2xl font-bold text-muted-foreground">:</span>
-                <div className="flex flex-col items-center bg-destructive text-destructive-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl animate-pulse">
-                  <span className="text-xl md:text-3xl font-bold font-mono">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                <div className={`flex flex-col items-center bg-destructive text-destructive-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl ${mounted ? 'animate-pulse' : ''}`}>
+                  <span className="text-xl md:text-3xl font-bold font-mono">
+                    {mounted ? String(timeLeft.seconds).padStart(2, '0') : '--'}
+                  </span>
                   <span className="text-[10px] md:text-xs uppercase opacity-70">seg</span>
                 </div>
               </div>

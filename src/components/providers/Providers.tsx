@@ -5,9 +5,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { CartProvider } from "@/contexts/CartContext"
 import { SeasonalThemeProvider } from "@/contexts/SeasonalThemeContext"
-import { Toaster } from "@/components/ui/toaster"
+import { SiteContentProvider } from "@/contexts/SiteContentContext"
+import { SearchProvider } from "@/contexts/SearchContext"
 import { Toaster as SonnerToaster } from "sonner"
 import { getQueryClient } from "@/lib/query-client"
+import { PreviewBar } from "@/components/PreviewBar"
+import { ContentPreviewBar } from "@/components/ContentPreviewBar"
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -25,11 +28,24 @@ export function Providers({ children }: ProvidersProps) {
         disableTransitionOnChange
       >
         <SeasonalThemeProvider>
-          <CartProvider>
-            {children}
-            <Toaster />
-            <SonnerToaster position="top-right" richColors />
-          </CartProvider>
+          <SiteContentProvider>
+            <CartProvider>
+              <SearchProvider>
+                <PreviewBar />
+                <ContentPreviewBar />
+                {children}
+                <SonnerToaster
+                  position="bottom-right"
+                  richColors
+                  toastOptions={{
+                    style: {
+                      marginBottom: '1rem',
+                    },
+                  }}
+                />
+              </SearchProvider>
+            </CartProvider>
+          </SiteContentProvider>
         </SeasonalThemeProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />

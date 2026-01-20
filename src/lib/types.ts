@@ -27,6 +27,7 @@ export interface Category {
   description?: string;
   image?: string;
   icon?: string;
+  gallery?: string[];  // Imágenes para mostrar en el modal
   order: number;
   isActive: boolean;
 }

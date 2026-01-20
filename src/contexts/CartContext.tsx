@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { Product } from '@/lib/types';
-import { getWhatsAppUrl } from '@/lib/constants';
+import { useSiteContent } from '@/contexts/SiteContentContext';
+import { CONTACT } from '@/lib/constants';
 
 export interface CartItem {
   product: Product;
@@ -24,9 +25,15 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Helper para limpiar número de teléfono
+function cleanPhoneNumber(phone: string): string {
+  return phone.replace(/[\s\-\+\(\)]/g, '');
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const { effectiveContent } = useSiteContent();
 
   const addToCart = useCallback((product: Product) => {
     setItems((prev) => {
@@ -77,9 +84,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const sendToWhatsApp = useCallback(() => {
     if (items.length === 0) return;
 
+    // Obtener número de WhatsApp del contexto o fallback
+    const contextNumber = effectiveContent?.contact?.whatsapp;
+    const whatsappNumber = contextNumber && contextNumber.trim()
+      ? cleanPhoneNumber(contextNumber)
+      : CONTACT.whatsapp;
+
     const message = buildWhatsAppMessage(items, getTotal());
-    window.open(getWhatsAppUrl(message), '_blank');
-  }, [items, getTotal]);
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }, [items, getTotal, effectiveContent]);
 
   return (
     <CartContext.Provider

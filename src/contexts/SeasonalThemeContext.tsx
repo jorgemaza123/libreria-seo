@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
 
 export interface SeasonalTheme {
   id: string
@@ -12,10 +12,26 @@ export interface SeasonalTheme {
   bannerImage?: string | null
 }
 
+interface PreviewState {
+  isActive: boolean
+  theme: SeasonalTheme | null
+  returnUrl: string
+}
+
 interface SeasonalThemeContextType {
+  // Current active theme (from DB)
   theme: SeasonalTheme | null
   isLoading: boolean
   setTheme: (theme: SeasonalTheme | null) => void
+
+  // Preview mode
+  previewState: PreviewState
+  startPreview: (theme: SeasonalTheme, returnUrl?: string) => void
+  cancelPreview: () => void
+  publishPreview: () => Promise<boolean>
+
+  // Helper to get the effective theme (preview or active)
+  effectiveTheme: SeasonalTheme | null
 }
 
 const SeasonalThemeContext = createContext<SeasonalThemeContextType | undefined>(undefined)
@@ -91,35 +107,186 @@ function applyThemeToDOM(theme: SeasonalTheme | null) {
   root.style.setProperty('--theme-accent', theme.accentColor)
 }
 
+// Storage key for preview state
+const PREVIEW_STORAGE_KEY = 'libreria-preview-state'
+
+function getStoredPreviewState(): PreviewState | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const stored = sessionStorage.getItem(PREVIEW_STORAGE_KEY)
+    return stored ? JSON.parse(stored) : null
+  } catch {
+    return null
+  }
+}
+
+function setStoredPreviewState(state: PreviewState | null) {
+  if (typeof window === 'undefined') return
+  try {
+    if (state) {
+      sessionStorage.setItem(PREVIEW_STORAGE_KEY, JSON.stringify(state))
+    } else {
+      sessionStorage.removeItem(PREVIEW_STORAGE_KEY)
+    }
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<SeasonalTheme | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [previewState, setPreviewState] = useState<PreviewState>({
+    isActive: false,
+    theme: null,
+    returnUrl: '/admin/temas',
+  })
 
-  const setTheme = (newTheme: SeasonalTheme | null) => {
+  const setTheme = useCallback((newTheme: SeasonalTheme | null) => {
     setThemeState(newTheme)
-    applyThemeToDOM(newTheme)
-  }
+    // Always apply theme to DOM when setting it (unless in preview mode)
+    const storedPreview = getStoredPreviewState()
+    if (!storedPreview?.isActive) {
+      applyThemeToDOM(newTheme)
+    }
+  }, [])
 
+  // Get the effective theme (preview takes precedence)
+  const effectiveTheme = previewState.isActive ? previewState.theme : theme
+
+  // Start preview mode
+  const startPreview = useCallback((previewTheme: SeasonalTheme, returnUrl = '/admin/temas') => {
+    const newState: PreviewState = {
+      isActive: true,
+      theme: previewTheme,
+      returnUrl,
+    }
+    setPreviewState(newState)
+    setStoredPreviewState(newState)
+    applyThemeToDOM(previewTheme)
+  }, [])
+
+  // Cancel preview and return to normal
+  const cancelPreview = useCallback(() => {
+    const newState: PreviewState = {
+      isActive: false,
+      theme: null,
+      returnUrl: '/admin/temas',
+    }
+    setPreviewState(newState)
+    setStoredPreviewState(null)
+    // Restore the actual theme
+    applyThemeToDOM(theme)
+  }, [theme])
+
+  // Publish preview changes to database
+  const publishPreview = useCallback(async (): Promise<boolean> => {
+    if (!previewState.theme) return false
+
+    try {
+      // First, check if this theme exists in DB
+      const existingResponse = await fetch(`/api/themes?slug=${previewState.theme.slug}`)
+      const existingData = await existingResponse.json()
+
+      let savedTheme: SeasonalTheme | null = null
+
+      if (existingData.themes?.length > 0) {
+        // Update existing theme and activate it
+        const existingThemeId = existingData.themes[0].id
+        const updateResponse = await fetch(`/api/themes/${existingThemeId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            primary_color: previewState.theme.primaryColor,
+            secondary_color: previewState.theme.secondaryColor,
+            accent_color: previewState.theme.accentColor,
+            banner_image: previewState.theme.bannerImage,
+            is_active: true,
+          }),
+        })
+
+        if (updateResponse.ok) {
+          savedTheme = previewState.theme
+        }
+      } else {
+        // Create new theme
+        const createResponse = await fetch('/api/themes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: previewState.theme.name,
+            slug: previewState.theme.slug,
+            primary_color: previewState.theme.primaryColor,
+            secondary_color: previewState.theme.secondaryColor,
+            accent_color: previewState.theme.accentColor,
+            banner_image: previewState.theme.bannerImage,
+            is_active: true,
+          }),
+        })
+
+        if (createResponse.ok) {
+          const data = await createResponse.json()
+          savedTheme = {
+            ...previewState.theme,
+            id: data.theme?.id || previewState.theme.id,
+          }
+        }
+      }
+
+      if (savedTheme) {
+        // Successfully saved - update actual theme and exit preview
+        setThemeState(savedTheme)
+        const newState: PreviewState = {
+          isActive: false,
+          theme: null,
+          returnUrl: '/admin/temas',
+        }
+        setPreviewState(newState)
+        setStoredPreviewState(null)
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error('Error publishing theme:', error)
+      return false
+    }
+  }, [previewState.theme])
+
+  // Load theme and check for existing preview state
   useEffect(() => {
     async function loadTheme() {
       try {
+        // Check for stored preview state first
+        const storedPreview = getStoredPreviewState()
+        if (storedPreview?.isActive && storedPreview.theme) {
+          setPreviewState(storedPreview)
+          applyThemeToDOM(storedPreview.theme)
+          // Still load the real theme from DB but don't apply it
+        }
+
         // Check if Supabase is configured
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
         if (!supabaseUrl || !supabaseKey) {
           // Use default theme when Supabase is not configured
-          setTheme(null)
+          setThemeState(null)
+          if (!storedPreview?.isActive) {
+            applyThemeToDOM(null)
+          }
           setIsLoading(false)
           return
         }
 
         // Try to fetch active theme from API
-        const response = await fetch('/api/themes/active')
+        const response = await fetch('/api/themes/active', {
+          cache: 'no-store', // Prevent caching to always get fresh data
+        })
         if (response.ok) {
           const data = await response.json()
           if (data.theme) {
-            setTheme({
+            const loadedTheme: SeasonalTheme = {
               id: data.theme.id,
               name: data.theme.name,
               slug: data.theme.slug,
@@ -127,7 +294,19 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
               secondaryColor: data.theme.secondary_color,
               accentColor: data.theme.accent_color,
               bannerImage: data.theme.banner_image,
-            })
+            }
+            setThemeState(loadedTheme)
+
+            // Only apply to DOM if not in preview mode
+            if (!storedPreview?.isActive) {
+              applyThemeToDOM(loadedTheme)
+            }
+          } else {
+            // No active theme in DB
+            setThemeState(null)
+            if (!storedPreview?.isActive) {
+              applyThemeToDOM(null)
+            }
           }
         }
       } catch (error) {
@@ -138,10 +317,39 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
     }
 
     loadTheme()
+
+    // Re-apply theme on visibility change (when user returns to the tab)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const storedPreview = getStoredPreviewState()
+        if (storedPreview?.isActive && storedPreview.theme) {
+          applyThemeToDOM(storedPreview.theme)
+        } else {
+          // Re-fetch in case theme changed in another tab
+          loadTheme()
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   return (
-    <SeasonalThemeContext.Provider value={{ theme, isLoading, setTheme }}>
+    <SeasonalThemeContext.Provider
+      value={{
+        theme,
+        isLoading,
+        setTheme,
+        previewState,
+        startPreview,
+        cancelPreview,
+        publishPreview,
+        effectiveTheme,
+      }}
+    >
       {children}
     </SeasonalThemeContext.Provider>
   )

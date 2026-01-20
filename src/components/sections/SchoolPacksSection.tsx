@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Check, Star, Crown, Leaf, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getWhatsAppUrl } from '@/lib/constants';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 
 const packs = [
   {
@@ -66,6 +66,8 @@ const packs = [
 ];
 
 export function SchoolPacksSection() {
+  const { getWhatsAppUrl } = useWhatsApp();
+
   const handleSelectPack = (packName: string) => {
     window.open(
       getWhatsAppUrl(`¡Hola! Me interesa el Pack ${packName} para mi lista escolar. ¿Pueden darme más información?`),

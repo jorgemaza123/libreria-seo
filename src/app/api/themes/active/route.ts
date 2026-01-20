@@ -12,26 +12,24 @@ export async function GET() {
 
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
-    const now = new Date().toISOString()
 
+    // Buscar el tema activo (sin filtro de fechas para simplificar)
     const { data, error } = await supabase
       .from('seasonal_themes')
       .select('*')
       .eq('is_active', true)
-      .lte('start_date', now)
-      .gte('end_date', now)
+      .order('updated_at', { ascending: false })
       .limit(1)
       .single()
 
     if (error && error.code !== 'PGRST116') {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Error fetching active theme:', error)
+      return NextResponse.json({ theme: null })
     }
 
     return NextResponse.json({ theme: data || null })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    console.error('Error in active theme route:', error)
+    return NextResponse.json({ theme: null })
   }
 }

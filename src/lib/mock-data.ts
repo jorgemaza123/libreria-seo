@@ -4,12 +4,90 @@
 import type { Product, Category, Service, Promotion, FAQ, ContactInfo, SiteContent, NavItem } from './types';
 
 export const mockCategories: Category[] = [
-  { id: '1', name: 'Útiles Escolares', slug: 'utiles-escolares', icon: '📚', order: 1, isActive: true },
-  { id: '2', name: 'Papelería', slug: 'papeleria', icon: '📝', order: 2, isActive: true },
-  { id: '3', name: 'Tecnología', slug: 'tecnologia', icon: '💻', order: 3, isActive: true },
-  { id: '4', name: 'Arte y Manualidades', slug: 'arte-manualidades', icon: '🎨', order: 4, isActive: true },
-  { id: '5', name: 'Oficina', slug: 'oficina', icon: '🏢', order: 5, isActive: true },
-  { id: '6', name: 'Juguetería', slug: 'jugueteria', icon: '🎮', order: 6, isActive: true },
+  {
+    id: '1',
+    name: 'Útiles Escolares',
+    slug: 'utiles-escolares',
+    icon: '📚',
+    description: 'Todo lo que necesitas para el colegio: cuadernos, lápices, mochilas y más.',
+    gallery: [
+      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=600&h=400&fit=crop',
+    ],
+    order: 1,
+    isActive: true,
+  },
+  {
+    id: '2',
+    name: 'Papelería',
+    slug: 'papeleria',
+    icon: '📝',
+    description: 'Hojas, cuadernos, agendas, post-its y todo tipo de papelería.',
+    gallery: [
+      'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1568702846914-96b305d2uj16?w=600&h=400&fit=crop',
+    ],
+    order: 2,
+    isActive: true,
+  },
+  {
+    id: '3',
+    name: 'Tecnología',
+    slug: 'tecnologia',
+    icon: '💻',
+    description: 'Calculadoras, accesorios de computadora, USB, audifonos y más.',
+    gallery: [
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=600&h=400&fit=crop',
+    ],
+    order: 3,
+    isActive: true,
+  },
+  {
+    id: '4',
+    name: 'Arte y Manualidades',
+    slug: 'arte-manualidades',
+    icon: '🎨',
+    description: 'Colores, pinturas, pinceles, cartulinas y materiales para manualidades.',
+    gallery: [
+      'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1499892477393-f675706cbe6e?w=600&h=400&fit=crop',
+    ],
+    order: 4,
+    isActive: true,
+  },
+  {
+    id: '5',
+    name: 'Oficina',
+    slug: 'oficina',
+    icon: '🏢',
+    description: 'Artículos de oficina: grapadoras, perforadoras, archivadores y más.',
+    gallery: [
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&h=400&fit=crop',
+    ],
+    order: 5,
+    isActive: true,
+  },
+  {
+    id: '6',
+    name: 'Juguetería',
+    slug: 'jugueteria',
+    icon: '🎮',
+    description: 'Juguetes educativos, rompecabezas, muñecos y entretenimiento para niños.',
+    gallery: [
+      'https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1472457897821-70d3819a0e24?w=600&h=400&fit=crop',
+    ],
+    order: 6,
+    isActive: true,
+  },
 ];
 
 export const mockProducts: Product[] = [

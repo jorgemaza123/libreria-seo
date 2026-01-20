@@ -12,6 +12,7 @@ import { PromotionsSection } from '@/components/sections/PromotionsSection';
 import { ContactSection } from '@/components/sections/ContactSection';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection';
 import { CategoriesSection } from '@/components/sections/CategoriesSection';
+import { CatalogsSection } from '@/components/sections/CatalogsSection';
 import { ChatBot } from '@/components/chat/ChatBot';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCart } from '@/components/cart/FloatingCart';
@@ -43,7 +44,7 @@ export default function Home() {
       <TopBanner />
       <Navbar />
 
-      <main className="pt-16 lg:pt-20">
+      <main>
         <HeroSection />
         <TrustSection />
         <CategoriesSection />
@@ -51,6 +52,7 @@ export default function Home() {
         <ProductsSection />
         <PromotionsSection />
         <ServicesSection />
+        <CatalogsSection />
         <TestimonialsSection />
         <ContactSection />
       </main>

@@ -115,6 +115,39 @@ export async function deleteImage(publicId: string): Promise<boolean> {
   return result.result === 'ok'
 }
 
+// Upload PDF to Cloudinary (server-side only)
+export async function uploadPdf(
+  file: Buffer | string,
+  options?: {
+    folder?: string
+    publicId?: string
+    tags?: string[]
+  }
+): Promise<{ publicId: string; url: string; secureUrl: string; pages?: number }> {
+  const result = await cloudinary.uploader.upload(
+    typeof file === 'string' ? file : `data:application/pdf;base64,${file.toString('base64')}`,
+    {
+      folder: options?.folder || 'libreria-central/catalogs',
+      public_id: options?.publicId,
+      tags: options?.tags,
+      resource_type: 'raw', // 'raw' for non-image files like PDFs
+    }
+  )
+
+  return {
+    publicId: result.public_id,
+    url: result.url,
+    secureUrl: result.secure_url,
+    pages: result.pages,
+  }
+}
+
+// Delete any file from Cloudinary (server-side only)
+export async function deleteFile(publicId: string, resourceType: 'image' | 'raw' = 'raw'): Promise<boolean> {
+  const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType })
+  return result.result === 'ok'
+}
+
 // Get image info
 export async function getImageInfo(publicId: string) {
   return cloudinary.api.resource(publicId)

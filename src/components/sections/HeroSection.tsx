@@ -16,7 +16,7 @@ import {
   Palette
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CONTACT, getWhatsAppUrl, getPhoneUrl } from '@/lib/constants';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 
 type CategoryKey = 'escolar' | 'tecnologia' | 'tramites' | 'regalos';
 
@@ -101,7 +101,8 @@ const categories: CategoryData[] = [
 
 export function HeroSection() {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('escolar');
-  
+  const { getWhatsAppUrl, getPhoneUrl } = useWhatsApp();
+
   const currentCategory = categories.find(c => c.id === activeCategory)!;
 
   const handleCTAClick = () => {
@@ -111,7 +112,7 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative min-h-[90vh] flex items-center pt-28 pb-16 overflow-hidden"
+      className="relative min-h-[85vh] flex items-center pt-8 pb-16 overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 hero-pattern" />
@@ -191,29 +192,40 @@ export function HeroSection() {
           {/* Right Side - Interactive Panel */}
           <div className="animate-fade-up stagger-2">
             <div className="relative">
+              {/* Decorative elements */}
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl" />
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-cta/20 to-transparent rounded-full blur-2xl" />
+
               {/* Glassmorphism Panel */}
-              <div className="relative bg-card/40 backdrop-blur-xl rounded-3xl border border-border/50 shadow-2xl overflow-hidden">
-                {/* Glow Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${currentCategory.bgColor} opacity-5 transition-all duration-500`} />
-                
-                {/* Category Pills/Tabs */}
-                <div className="relative p-4 border-b border-border/50">
+              <div className="relative bg-card/60 backdrop-blur-xl rounded-3xl border border-border/50 shadow-2xl overflow-hidden">
+                {/* Animated Glow Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${currentCategory.bgColor} opacity-10 transition-all duration-700`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
+
+                {/* Category Pills/Tabs - Improved */}
+                <div className="relative p-4 border-b border-border/30">
                   <div className="flex flex-wrap gap-2 justify-center">
                     {categories.map((category) => (
                       <button
                         key={category.id}
                         onClick={() => setActiveCategory(category.id)}
                         className={`
-                          flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm
-                          transition-all duration-300 transform
-                          ${activeCategory === category.id 
-                            ? `bg-gradient-to-r ${category.bgColor} text-white shadow-lg scale-105` 
-                            : 'bg-card/60 text-muted-foreground hover:text-foreground hover:bg-card border border-border/50'
+                          relative flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm
+                          transition-all duration-300 transform overflow-hidden
+                          ${activeCategory === category.id
+                            ? `bg-gradient-to-r ${category.bgColor} text-white shadow-lg scale-105 ring-2 ring-white/20`
+                            : 'bg-card/80 text-muted-foreground hover:text-foreground hover:bg-card hover:scale-102 border border-border/50'
                           }
                         `}
                       >
-                        <span>{category.emoji}</span>
-                        <span>{category.label}</span>
+                        {/* Active indicator animation */}
+                        {activeCategory === category.id && (
+                          <span className="absolute inset-0 bg-white/10 animate-pulse" />
+                        )}
+                        <span className={`relative transition-transform duration-300 ${activeCategory === category.id ? 'scale-110' : ''}`}>
+                          {category.emoji}
+                        </span>
+                        <span className="relative">{category.label}</span>
                       </button>
                     ))}
                   </div>
@@ -221,17 +233,21 @@ export function HeroSection() {
 
                 {/* Dynamic Content Area */}
                 <div className="relative p-6 md:p-8 min-h-[350px]">
-                  {/* Category Icon */}
+                  {/* Category Icon with enhanced animation */}
                   <div className="flex justify-center mb-6">
-                    <div className={`
-                      w-24 h-24 rounded-2xl bg-gradient-to-br ${currentCategory.bgColor}
-                      flex items-center justify-center shadow-xl transform transition-all duration-500
-                      animate-scale-in
-                    `}>
-                      {activeCategory === 'escolar' && <Backpack className="w-12 h-12 text-white" />}
-                      {activeCategory === 'tecnologia' && <Code className="w-12 h-12 text-white" />}
-                      {activeCategory === 'tramites' && <Printer className="w-12 h-12 text-white" />}
-                      {activeCategory === 'regalos' && <Palette className="w-12 h-12 text-white" />}
+                    <div className="relative">
+                      {/* Glow ring */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${currentCategory.bgColor} rounded-2xl blur-xl opacity-40 animate-pulse`} />
+                      <div className={`
+                        relative w-24 h-24 rounded-2xl bg-gradient-to-br ${currentCategory.bgColor}
+                        flex items-center justify-center shadow-2xl transform transition-all duration-500
+                        hover:scale-110 hover:rotate-3
+                      `}>
+                        {activeCategory === 'escolar' && <Backpack className="w-12 h-12 text-white drop-shadow-lg" />}
+                        {activeCategory === 'tecnologia' && <Code className="w-12 h-12 text-white drop-shadow-lg" />}
+                        {activeCategory === 'tramites' && <Printer className="w-12 h-12 text-white drop-shadow-lg" />}
+                        {activeCategory === 'regalos' && <Palette className="w-12 h-12 text-white drop-shadow-lg" />}
+                      </div>
                     </div>
                   </div>
 
@@ -245,60 +261,65 @@ export function HeroSection() {
                     </p>
                   </div>
 
-                  {/* Features List */}
+                  {/* Features List - Enhanced */}
                   <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {currentCategory.features.map((feature, i) => (
-                      <span 
+                      <span
                         key={i}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold bg-card border ${currentCategory.borderColor} ${currentCategory.color}`}
+                        className={`
+                          px-3 py-1.5 rounded-full text-xs font-semibold
+                          bg-card/80 backdrop-blur-sm border ${currentCategory.borderColor} ${currentCategory.color}
+                          transition-all duration-300 hover:scale-105
+                          animate-fade-up
+                        `}
+                        style={{ animationDelay: `${i * 0.1}s` }}
                       >
                         ✓ {feature}
                       </span>
                     ))}
                   </div>
 
-                  {/* Main CTA Button */}
-                  <Button 
+                  {/* Main CTA Button - Enhanced */}
+                  <Button
                     onClick={handleCTAClick}
-                    size="lg" // Next.js UI no suele tener 'xl' por defecto, usa 'lg' o configúralo
+                    size="lg"
                     className={`
-                      w-full h-12 bg-gradient-to-r ${currentCategory.bgColor} 
-                      hover:opacity-90 text-white font-bold text-lg 
-                      shadow-xl transition-all duration-300
+                      w-full h-14 bg-gradient-to-r ${currentCategory.bgColor}
+                      hover:opacity-90 hover:scale-[1.02] text-white font-bold text-lg
+                      shadow-xl transition-all duration-300 group
+                      relative overflow-hidden
                     `}
                   >
-                    <span className="mr-2 text-xl">{currentCategory.buttonEmoji}</span>
-                    {currentCategory.buttonText}
+                    {/* Shine effect on hover */}
+                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    <span className="relative flex items-center justify-center gap-2">
+                      <span className="text-xl group-hover:scale-110 transition-transform">{currentCategory.buttonEmoji}</span>
+                      {currentCategory.buttonText}
+                    </span>
                   </Button>
+
+                  {/* Quick stats */}
+                  <div className="flex justify-center gap-6 mt-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      Respuesta inmediata
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                      4.9 en atención
+                    </span>
+                  </div>
                 </div>
 
-                {/* Highlight for Technology */}
+                {/* Highlight for Technology - Enhanced */}
                 {activeCategory !== 'tecnologia' && (
                   <div className="absolute top-4 right-4">
-                    <button
-                      onClick={() => setActiveCategory('tecnologia')}
-                      className="flex items-center gap-1 px-2 py-1 bg-cyan-500/20 text-cyan-400 text-xs font-bold rounded-full border border-cyan-500/30 hover:bg-cyan-500/30 transition-colors animate-pulse"
-                    >
-                      <Laptop className="w-3 h-3" />
-                      Soporte Tech
-                    </button>
+                    
                   </div>
                 )}
               </div>
 
-              {/* Floating Stats Cards */}
-              <div className="absolute -top-4 -left-4 bg-card rounded-2xl p-3 shadow-xl animate-float border border-border/50 hidden md:block">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-whatsapp/10 rounded-xl flex items-center justify-center">
-                    <span className="text-lg">✅</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-foreground text-sm">+500 familias</p>
-                    <p className="text-xs text-muted-foreground">confían en nosotros</p>
-                  </div>
-                </div>
-              </div>
-
+              {/* Floating Rating Card */}
               <div className="absolute -bottom-4 -right-4 bg-card rounded-2xl p-3 shadow-xl animate-float border border-border/50 hidden md:block" style={{ animationDelay: '2s' }}>
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 text-sm">★★★★★</span>

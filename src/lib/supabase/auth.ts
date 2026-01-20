@@ -15,6 +15,8 @@ function getSupabaseClient() {
 // FUNCIONES DE AUTENTICACIÓN
 // =============================================
 
+type AdminUser = Database['public']['Tables']['admin_users']['Row']
+
 /**
  * Iniciar sesión con email y contraseña
  */
@@ -31,11 +33,12 @@ export async function signIn(email: string, password: string) {
   }
 
   // Verificar si el usuario es admin
-  const { data: adminUser, error: adminError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: adminUser, error: adminError } = await (supabase as any)
     .from('admin_users')
     .select('role')
     .eq('id', data.user.id)
-    .single()
+    .single() as { data: { role: AdminUser['role'] } | null; error: Error | null }
 
   if (adminError || !adminUser) {
     // Si no es admin, cerrar sesión
@@ -95,7 +98,8 @@ export async function isCurrentUserAdmin() {
 
   if (!user) return false
 
-  const { data: adminUser } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: adminUser } = await (supabase as any)
     .from('admin_users')
     .select('role')
     .eq('id', user.id)
@@ -107,19 +111,32 @@ export async function isCurrentUserAdmin() {
 /**
  * Obtener información del admin actual
  */
-export async function getCurrentAdmin() {
+export async function getCurrentAdmin(): Promise<{
+  id: string
+  email: string
+  name: string
+  role: 'admin' | 'editor'
+} | null> {
   const supabase = getSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) return null
 
-  const { data: adminUser } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: adminUser } = await (supabase as any)
     .from('admin_users')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single() as { data: AdminUser | null }
 
-  return adminUser
+  if (!adminUser) return null
+
+  return {
+    id: adminUser.id,
+    email: adminUser.email,
+    name: adminUser.name,
+    role: adminUser.role,
+  }
 }
 
 // =============================================
@@ -192,7 +209,8 @@ export async function updateAdminProfile(name: string) {
     throw new Error('No hay sesión activa')
   }
 
-  const { error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from('admin_users')
     .update({ name })
     .eq('id', user.id)

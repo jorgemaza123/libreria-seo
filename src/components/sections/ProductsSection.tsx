@@ -1,33 +1,50 @@
 "use client"
 
 import { useState, useMemo } from 'react';
-import Image from 'next/image'; // IMPORTANTE: Optimización de imágenes
-import Link from 'next/link';   // IMPORTANTE: Navegación rápida
-import { ShoppingCart, Heart, Eye, Star, Search, Filter, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ShoppingCart, Heart, Eye, Star, Search, Filter, ChevronDown, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
+import { useSearch } from '@/contexts/SearchContext';
 import { mockProducts, mockCategories, mockSiteContent } from '@/lib/mock-data';
 import type { Product } from '@/lib/types';
 
+// Placeholder para productos sin imagen
+const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
+
 function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
+  const [imageError, setImageError] = useState(false);
   const hasDiscount = product.salePrice && product.salePrice < product.price;
-  const discountPercent = hasDiscount && product.salePrice // Verificación adicional de tipos
+  const discountPercent = hasDiscount && product.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
 
+  // Verificar si hay imagen válida
+  const hasValidImage = product.image && product.image.trim() !== '' && !imageError;
+
   return (
     <article className="group bg-card rounded-xl overflow-hidden shadow-sm card-elevated hover:shadow-lg transition-shadow h-full flex flex-col">
-      {/* Image Container - Next.js Optimized */}
+      {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-muted">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-        />
+        {hasValidImage ? (
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          /* Placeholder cuando no hay imagen */
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+            <Package className="w-16 h-16 text-muted-foreground/30" />
+            <span className="text-xs text-muted-foreground/50 mt-2">Sin imagen</span>
+          </div>
+        )}
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
@@ -109,9 +126,16 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export function ProductsSection() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery, clearSearch } = useSearch();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAllProducts, setShowAllProducts] = useState(false);
+
+  // Productos destacados - máximo 5
+  const featuredProducts = useMemo(() => {
+    return mockProducts
+      .filter((p) => p.isActive && p.isFeatured)
+      .slice(0, 5);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let products = mockProducts.filter((p) => p.isActive);
@@ -141,7 +165,37 @@ export function ProductsSection() {
   return (
     <section id="productos" className="py-12 sm:py-16 md:py-20 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Productos Destacados - Una sola línea */}
+        {featuredProducts.length > 0 && (
+          <div className="mb-16">
+            <div className="text-center mb-8 space-y-3">
+              <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                ⭐ Los Más Vendidos
+              </span>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold">
+                Productos <span className="text-primary">Destacados</span>
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Nuestros productos más populares y recomendados
+              </p>
+            </div>
+
+            {/* Contenedor flex que solo muestra una línea */}
+            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-hidden">
+              {featuredProducts.map((product, index) => (
+                <div
+                  key={product.id}
+                  className="animate-fade-up flex-shrink-0 w-[calc(50%-6px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-13px)]"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Catálogo Completo */}
         <div className="text-center mb-8 space-y-3">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
             🛒 Catálogo Completo
@@ -194,13 +248,13 @@ export function ProductsSection() {
           </div>
         </div>
 
-        {/* Products Grid - Mobile First */}
+        {/* Products Grid - Centrado en última fila */}
         {displayedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">
             {displayedProducts.map((product, index) => (
               <div
                 key={product.id}
-                className="animate-fade-up h-full"
+                className="animate-fade-up w-[calc(50%-6px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] xl:w-[calc(20%-19px)]"
                 style={{ animationDelay: `${Math.min(index * 0.05, 0.5)}s` }}
               >
                 <ProductCard product={product} />
@@ -214,7 +268,7 @@ export function ProductsSection() {
               variant="outline"
               className="mt-4"
               onClick={() => {
-                setSearchQuery('');
+                clearSearch();
                 setSelectedCategory('all');
               }}
             >

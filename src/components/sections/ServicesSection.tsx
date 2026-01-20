@@ -2,7 +2,7 @@
 
 import { Printer, Laptop, FileCheck, Palette, ArrowRight, Shirt, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getWhatsAppUrl } from '@/lib/constants';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 
 const services = [
   {
@@ -36,7 +36,7 @@ const services = [
     id: 4,
     name: 'Trámites Online',
     description: 'SUNAT, ATU, RENIEC, AFP, brevetes y más.',
-    price: 'Desde S/ 5',
+    price: 'Desde S/ 15',
     icon: FileCheck,
     color: 'from-emerald-500 to-emerald-600',
     popular: false,
@@ -62,6 +62,8 @@ const services = [
 ];
 
 export function ServicesSection() {
+  const { getWhatsAppUrl } = useWhatsApp();
+
   const handleServiceClick = (serviceName: string) => {
     window.open(
       getWhatsAppUrl(`¡Hola! Me interesa el servicio de ${serviceName}. ¿Pueden darme más información?`),

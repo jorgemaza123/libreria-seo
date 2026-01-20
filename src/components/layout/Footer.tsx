@@ -19,7 +19,7 @@ export function Footer() {
                 LC
               </div>
               <span className="font-heading font-bold text-xl">
-                Librería Central
+                Librería H & J
               </span>
             </div>
             <p className="text-secondary-foreground/80 text-sm leading-relaxed">
@@ -172,7 +172,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-secondary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-secondary-foreground/60 text-sm">
-            © {new Date().getFullYear()} Librería Central. Todos los derechos reservados.
+            © {new Date().getFullYear()} Librería H & J. Todos los derechos reservados.
           </p>
           <div className="flex gap-6 text-sm text-secondary-foreground/60">
             <a href="#" className="hover:text-primary transition-colors">
