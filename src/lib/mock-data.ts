@@ -378,7 +378,7 @@ export const mockSiteContent: SiteContent = {
 export const mockNavItems: NavItem[] = [
   { id: '1', label: 'Inicio', href: '#hero', order: 1, isVisible: true },
   { id: '2', label: 'Productos', href: '#productos', order: 2, isVisible: true },
-  { id: '3', label: 'Servicios', href: '#servicios', order: 3, isVisible: true },
-  { id: '4', label: 'Promociones', href: '#promociones', order: 4, isVisible: true },
-  { id: '5', label: 'Contacto', href: '#contacto', order: 5, isVisible: true },
+  { id: '3', label: 'Promociones', href: '#promociones', order: 3, isVisible: true },
+  { id: '4', label: 'Servicios', href: '#servicios', order: 4, isVisible: true },
+  { id: '5', label: 'Catálogos', href: '#catalogos', order: 5, isVisible: true },
 ];

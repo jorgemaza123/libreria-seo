@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Disable caching for this API route
+export const dynamic = 'force-dynamic'
+
 const isSupabaseConfigured = () => {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 }
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('[API/themes] GET - Cargando temas...')
     if (!isSupabaseConfigured()) {
+      console.log('[API/themes] Supabase no configurado')
       return NextResponse.json({ themes: [] })
     }
 
@@ -30,9 +35,11 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query
 
     if (error) {
+      console.error('[API/themes] Error:', error.message)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log('[API/themes] Temas cargados:', data?.length || 0)
     return NextResponse.json({ themes: data })
   } catch (error) {
     return NextResponse.json(

@@ -50,9 +50,9 @@ export const BUSINESS_HOURS = {
 } as const;
 
 export const SOCIAL_MEDIA = {
-  facebook: 'https://facebook.com/libreriacentral',
-  instagram: 'https://instagram.com/libreriacentral',
-  tiktok: 'https://tiktok.com/@libreriacentral',
+  facebook: 'https://facebook.com/libreriahyj',
+  instagram: 'https://instagram.com/libreriahyj',
+  tiktok: 'https://tiktok.com/@libreriahyj',
 } as const;
 
 // Helpers para URLs

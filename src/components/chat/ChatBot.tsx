@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockFAQs } from '@/lib/mock-data';
-import { CONTACT, getWhatsAppUrl } from '@/lib/constants';
+import { useWhatsApp } from '@/hooks/use-whatsapp';
 
 interface Message {
   id: string;
@@ -33,6 +33,7 @@ export function ChatBot() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { getWhatsAppUrl } = useWhatsApp();
 
   const activeFAQs = mockFAQs.filter((f) => f.isActive).sort((a, b) => a.order - b.order);
 

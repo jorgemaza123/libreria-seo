@@ -3,7 +3,7 @@ import { Store, Truck, CreditCard, Shield, Clock, MapPin } from 'lucide-react';
 const trustItems = [
   {
     icon: Store,
-    title: 'Más de 20 años',
+    title: 'Años',
     subtitle: 'en el barrio',
     highlight: true,
   },
@@ -42,7 +42,7 @@ const trustItems = [
 
 export function TrustSection() {
   return (
-    <section className="py-8 bg-secondary text-secondary-foreground overflow-hidden">
+    <section className="py-6 bg-secondary text-secondary-foreground overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {trustItems.map((item, index) => {

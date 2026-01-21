@@ -1,0 +1,308 @@
+================================================================================
+                    LIBRERÍA H & J - DIAGRAMA DE ARQUITECTURA
+================================================================================
+
+LEYENDA:
+  [DB]     = Conectado a Supabase (dinámico)
+  [STATIC] = Usa datos estáticos/hardcodeados
+  [PARTIAL]= Parcialmente conectado
+  [API]    = Tiene endpoint API
+  [PENDING]= Pendiente de conectar
+
+================================================================================
+                              FLUJO DE DATOS
+================================================================================
+
+  ┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+  │   ADMIN PANEL   │ ──────► │    SUPABASE     │ ──────► │   WEB PÚBLICA   │
+  │  /admin/*       │  POST   │   (Base Datos)  │  GET    │   /             │
+  └─────────────────┘         └─────────────────┘         └─────────────────┘
+         │                           │                           │
+         │                           │                           │
+         ▼                           ▼                           ▼
+  ┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
+  │ Formularios de  │         │   Tablas:       │         │ SiteContent     │
+  │ edición         │         │ - products      │         │ Context         │
+  │                 │         │ - categories    │         │ (React Context) │
+  │                 │         │ - services      │         │                 │
+  │                 │         │ - promotions    │         │ effectiveContent│
+  │                 │         │ - site_settings │         │                 │
+  │                 │         │ - seasonal_theme│         │                 │
+  └─────────────────┘         └─────────────────┘         └─────────────────┘
+
+
+================================================================================
+                         ESTRUCTURA DE ARCHIVOS
+================================================================================
+
+libreria-seo/
+│
+├── src/
+│   │
+│   ├── app/                          # Next.js App Router
+│   │   │
+│   │   ├── page.tsx                  # Página principal (/)
+│   │   │   └── Renderiza todas las secciones
+│   │   │
+│   │   ├── api/                      # API Routes [API]
+│   │   │   ├── products/route.ts     [DB] GET/POST productos
+│   │   │   ├── categories/route.ts   [DB] GET/POST categorías
+│   │   │   ├── services/route.ts     [DB] GET/POST servicios
+│   │   │   ├── promotions/route.ts   [DB] GET/POST promociones
+│   │   │   ├── promotions/[id]/      [DB] PUT/DELETE promoción
+│   │   │   ├── settings/route.ts     [DB] GET/POST configuración sitio
+│   │   │   ├── themes/route.ts       [DB] GET/POST temas
+│   │   │   ├── themes/active/        [DB] GET tema activo
+│   │   │   ├── themes/[id]/          [DB] PUT/DELETE tema
+│   │   │   ├── catalogs/route.ts     [DB] GET/POST catálogos PDF
+│   │   │   ├── reviews/route.ts      [PENDING] No implementado aún
+│   │   │   └── upload/route.ts       [DB] Subida de imágenes
+│   │   │
+│   │   └── admin/                    # Panel de Administración
+│   │       ├── page.tsx              Dashboard principal
+│   │       ├── productos/            [DB] CRUD productos
+│   │       │   ├── page.tsx          Lista productos
+│   │       │   ├── nuevo/page.tsx    Crear producto
+│   │       │   └── [id]/page.tsx     Editar producto
+│   │       ├── categorias/           [DB] CRUD categorías
+│   │       ├── servicios/            [DB] CRUD servicios
+│   │       ├── promociones/          [DB] CRUD promociones
+│   │       ├── catalogos/            [DB] CRUD catálogos PDF
+│   │       ├── temas/                [DB] Temas de temporada
+│   │       ├── contenido/            [PARTIAL] Edita site_settings
+│   │       │   └── (Los componentes no leen todos los datos)
+│   │       ├── resenas/              [STATIC] Solo useState, NO guarda
+│   │       └── configuracion/        [DB] Configuración general
+│   │
+│   ├── components/
+│   │   │
+│   │   ├── layout/                   # Componentes de estructura
+│   │   │   ├── Navbar.tsx            [STATIC] Navegación (usa mock-data)
+│   │   │   ├── Footer.tsx            [DB] ✅ Conectado a effectiveContent
+│   │   │   ├── TopBanner.tsx         [PENDING] Necesita conectar
+│   │   │   └── StickyContactBar.tsx  [DB] ✅ Usa hook useWhatsApp
+│   │   │
+│   │   ├── sections/                 # Secciones de la página principal
+│   │   │   ├── HeroSection.tsx       [STATIC] Datos hardcodeados internos
+│   │   │   ├── TrustSection.tsx      [STATIC] Badges de confianza fijos
+│   │   │   ├── CategoriesSection.tsx [STATIC] Usa mockCategories
+│   │   │   ├── SchoolPacksSection.tsx[STATIC] Packs escolares fijos
+│   │   │   ├── ProductsSection.tsx   [DB] ✅ Usa useSiteContent()
+│   │   │   ├── PromotionsSection.tsx [DB] ✅ Usa useSiteContent()
+│   │   │   ├── ServicesSection.tsx   [DB] ✅ Usa useSiteContent()
+│   │   │   ├── CatalogsSection.tsx   [STATIC] Datos de ejemplo fijos
+│   │   │   └── TestimonialsSection.tsx[STATIC] Testimonios hardcodeados
+│   │   │
+│   │   ├── chat/
+│   │   │   └── ChatBot.tsx           [DB] ✅ Usa hook useWhatsApp
+│   │   │
+│   │   └── cart/                     # Carrito de compras
+│   │       ├── CartDrawer.tsx        [STATIC] Funcionalidad local
+│   │       └── FloatingCart.tsx      [STATIC] Funcionalidad local
+│   │
+│   ├── contexts/                     # React Contexts
+│   │   ├── SiteContentContext.tsx    [DB] ✅ Carga datos de Supabase
+│   │   │   ├── products             → desde /api/products
+│   │   │   ├── categories           → desde /api/categories
+│   │   │   ├── services             → desde /api/services
+│   │   │   ├── promotions           → desde /api/promotions
+│   │   │   └── content (settings)   → desde /api/settings
+│   │   │
+│   │   ├── SeasonalThemeContext.tsx  [DB] ✅ Aplica colores CSS dinámicos
+│   │   ├── CartContext.tsx           [STATIC] Estado local del carrito
+│   │   └── SearchContext.tsx         [STATIC] Estado local de búsqueda
+│   │
+│   ├── hooks/
+│   │   └── use-whatsapp.ts           [DB] ✅ Lee contact del contexto
+│   │
+│   └── lib/
+│       ├── constants.ts              [STATIC] ⚠️ Datos estáticos de respaldo
+│       │   ├── CONTACT (teléfono, whatsapp, email)
+│       │   ├── BUSINESS_INFO (nombre, dirección, coordenadas)
+│       │   ├── BUSINESS_HOURS (horarios)
+│       │   └── SOCIAL_MEDIA (redes sociales)
+│       │
+│       ├── mock-data.ts              [STATIC] ⚠️ Datos de ejemplo
+│       │   ├── mockProducts
+│       │   ├── mockCategories
+│       │   ├── mockServices
+│       │   ├── mockPromotions
+│       │   ├── mockNavItems
+│       │   └── mockFAQs
+│       │
+│       ├── types.ts                  Definiciones TypeScript
+│       └── supabase/                 Cliente Supabase
+│           ├── client.ts             Cliente navegador
+│           └── server.ts             Cliente servidor
+
+
+================================================================================
+                    ESTADO DE CONEXIÓN POR COMPONENTE
+================================================================================
+
+COMPONENTES CONECTADOS A SUPABASE (Funcionan dinámicamente):
+─────────────────────────────────────────────────────────────
+  ✅ ProductsSection      → Lee productos de Supabase
+  ✅ PromotionsSection    → Lee promociones de Supabase
+  ✅ ServicesSection      → Lee servicios de Supabase
+  ✅ Footer               → Lee contact/social/footer del contexto
+  ✅ ChatBot              → Lee WhatsApp del contexto (via hook)
+  ✅ StickyContactBar     → Lee WhatsApp del contexto (via hook)
+  ✅ SeasonalThemeContext → Aplica colores de tema activo
+
+
+COMPONENTES CON DATOS ESTÁTICOS (No se actualizan desde admin):
+─────────────────────────────────────────────────────────────
+  ❌ HeroSection          → Categorías y textos hardcodeados
+  ❌ TrustSection         → Badges de confianza fijos
+  ❌ CategoriesSection    → Usa mockCategories (botones de categoría)
+  ❌ SchoolPacksSection   → Packs escolares fijos
+  ❌ CatalogsSection      → Catálogos de ejemplo fijos
+  ❌ TestimonialsSection  → Testimonios hardcodeados
+  ❌ TopBanner            → Pendiente conectar
+  ❌ Navbar               → Usa mockNavItems
+
+
+PANEL ADMIN - ESTADO:
+─────────────────────────────────────────────────────────────
+  ✅ /admin/productos     → Funciona con Supabase
+  ✅ /admin/categorias    → Funciona con Supabase
+  ✅ /admin/servicios     → Funciona con Supabase
+  ✅ /admin/promociones   → Funciona con Supabase
+  ✅ /admin/temas         → Funciona con Supabase
+  ✅ /admin/catalogos     → Funciona con Supabase
+  ⚠️ /admin/contenido     → Guarda en Supabase pero no todos los
+  │                         componentes leen los datos
+  ❌ /admin/resenas       → NO GUARDA - Solo usa useState local
+
+
+================================================================================
+                         TABLAS EN SUPABASE
+================================================================================
+
+products
+├── id (uuid)
+├── name (text)
+├── slug (text)
+├── description (text)
+├── price (numeric)
+├── sale_price (numeric)
+├── sku (text)
+├── category_id (uuid) → FK a categories
+├── stock (integer)
+├── image (text)
+├── gallery (text[])
+├── is_active (boolean)
+├── is_featured (boolean)
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+categories
+├── id (uuid)
+├── name (text)
+├── slug (text)
+├── icon (text)
+├── description (text)
+├── gallery (text[])
+├── order (integer)
+└── is_active (boolean)
+
+services
+├── id (uuid)
+├── name (text)
+├── slug (text)
+├── description (text)
+├── short_description (text)
+├── icon (text)
+├── price (text)
+├── image (text)
+├── is_active (boolean)
+└── order (integer)
+
+promotions
+├── id (uuid)
+├── title (text)
+├── description (text)
+├── image (text)
+├── discount (integer)
+├── discount_type (text)
+├── start_date (date)
+├── end_date (date)
+├── is_active (boolean)
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+site_settings
+├── id (uuid)
+├── key (text) UNIQUE
+├── value (jsonb)
+└── updated_at (timestamp)
+
+seasonal_themes
+├── id (uuid)
+├── name (text)
+├── primary_color (text)
+├── secondary_color (text)
+├── accent_color (text)
+├── cta_color (text)
+├── banner_image (text)
+├── is_active (boolean)
+├── start_date (date)
+├── end_date (date)
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+reviews (PENDIENTE CREAR)
+├── id (uuid)
+├── name (text)
+├── role (text)
+├── avatar (text)
+├── rating (integer)
+├── comment (text)
+├── date (text)
+├── service (text)
+├── is_active (boolean)
+├── created_at (timestamp)
+└── updated_at (timestamp)
+
+
+================================================================================
+                    TAREAS PENDIENTES DE CONEXIÓN
+================================================================================
+
+PRIORIDAD ALTA:
+───────────────
+1. TopBanner         - Conectar a effectiveContent.topBanner
+2. Reseñas           - Crear API /api/reviews + conectar TestimonialsSection
+
+PRIORIDAD MEDIA:
+───────────────
+3. CatalogsSection   - Conectar a /api/catalogs (API ya existe)
+4. CategoriesSection - Leer de useSiteContent().categories
+
+PRIORIDAD BAJA (Requiere más trabajo):
+───────────────
+5. HeroSection       - Refactorizar para ser dinámico
+6. SchoolPacksSection- Crear gestión de packs en admin
+7. TrustSection      - Hacer editable los badges
+8. Navbar            - Hacer navegación editable desde admin
+
+
+================================================================================
+                         NOTAS IMPORTANTES
+================================================================================
+
+1. FALLBACKS: El sistema usa lib/constants.ts y lib/mock-data.ts como
+   respaldo cuando Supabase no está configurado o no hay datos.
+
+2. CACHE: Las APIs tienen `export const dynamic = 'force-dynamic'` para
+   evitar cache de Next.js y mostrar datos actualizados.
+
+3. CONTEXTO: SiteContentContext.tsx es el puente central entre Supabase
+   y los componentes. Los componentes deben usar useSiteContent() para
+   obtener datos dinámicos.
+
+4. PREVIEW: El sistema de vista previa (effectiveContent) funciona cuando
+   los componentes leen de effectiveContent en lugar de datos estáticos.
+
+================================================================================

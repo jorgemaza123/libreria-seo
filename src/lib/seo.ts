@@ -15,7 +15,7 @@ export const seoConfig: SEOConfig = {
   siteName: "Librería Central",
   siteUrl: "https://libreria-central.com", // ACTUALIZAR CUANDO TENGAS EL DOMINIO FINAL
   defaultTitle: "Librería Central - Útiles Escolares, Impresiones y Servicios TI",
-  defaultDescription: "Tu librería de confianza en SJL. Útiles escolares, papelería, impresiones, copias, servicios de tecnología y más. Precios increíbles y atención personalizada.",
+  defaultDescription: "Tu librería de confianza en VMT. Útiles escolares, papelería, impresiones, copias, servicios de tecnología y más. Precios increíbles y atención personalizada.",
   defaultImage: "/og-image.jpg",
   twitterHandle: "@libreriacentral",
   locale: "es_PE", // Ajustado para Perú

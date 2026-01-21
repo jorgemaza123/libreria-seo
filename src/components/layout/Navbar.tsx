@@ -140,12 +140,24 @@ export function Navbar() {
                 <Search className="h-5 w-5" />
               </Button>
 
-              {/* Share Button */}
+              {/* Share Button - Desktop */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsShareModalOpen(true)}
+                className="hidden sm:flex items-center gap-2 border-primary/30 hover:border-primary hover:bg-primary/10 text-primary"
+              >
+                <Share2 className="h-4 w-4" />
+                <span className="text-sm">Compartir</span>
+              </Button>
+
+              {/* Share Button - Mobile (icon only) */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsShareModalOpen(true)}
-                title="Compartir página"
+                className="sm:hidden"
+                title="Compartir la página"
               >
                 <Share2 className="h-5 w-5" />
               </Button>
@@ -238,14 +250,14 @@ export function Navbar() {
               <div className="px-4 pt-2 flex gap-2">
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 border-primary/30 text-primary"
                   onClick={() => {
                     setIsShareModalOpen(true);
                     setIsMobileMenuOpen(false);
                   }}
                 >
                   <Share2 className="mr-2 h-4 w-4" />
-                  Compartir
+                  Compartir la página
                 </Button>
               </div>
             </div>

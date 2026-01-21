@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingCart, Heart, Eye, Star, Search, Filter, ChevronDown, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useSearch } from '@/contexts/SearchContext';
-import { mockProducts, mockCategories, mockSiteContent } from '@/lib/mock-data';
+import { useSiteContent } from '@/contexts/SiteContentContext';
 import type { Product } from '@/lib/types';
 
 // Placeholder para productos sin imagen
@@ -127,28 +127,67 @@ function ProductCard({ product }: { product: Product }) {
 
 export function ProductsSection() {
   const { searchQuery, setSearchQuery, clearSearch } = useSearch();
+  const { products, categories } = useSiteContent();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAllProducts, setShowAllProducts] = useState(false);
 
-  // Productos destacados - máximo 5
-  const featuredProducts = useMemo(() => {
-    return mockProducts
-      .filter((p) => p.isActive && p.isFeatured)
-      .slice(0, 5);
+  // Función para extraer categoría de la URL
+  const getCategoryFromUrl = useCallback(() => {
+    if (typeof window === 'undefined') return null;
+    const url = new URL(window.location.href);
+    return url.searchParams.get('category');
   }, []);
 
+  // Efecto para leer categoría de la URL al cargar y cuando cambia
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const categoryFromUrl = getCategoryFromUrl();
+      if (categoryFromUrl) {
+        setSelectedCategory(categoryFromUrl);
+        setShowAllProducts(true); // Mostrar todos los productos de esa categoría
+
+        // Scroll suave a la sección de productos
+        setTimeout(() => {
+          const productsSection = document.getElementById('productos');
+          if (productsSection) {
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    };
+
+    // Ejecutar al montar
+    handleUrlChange();
+
+    // Escuchar cambios en el hash/URL (para navegación desde modales)
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, [getCategoryFromUrl]);
+
+  // Productos destacados - máximo 5
+  const featuredProducts = useMemo(() => {
+    return products
+      .filter((p) => p.isActive && p.isFeatured)
+      .slice(0, 5);
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
-    let products = mockProducts.filter((p) => p.isActive);
+    let filtered = products.filter((p) => p.isActive);
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      products = products.filter((p) => p.categorySlug === selectedCategory);
+      filtered = filtered.filter((p) => p.categorySlug === selectedCategory);
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      products = products.filter(
+      filtered = filtered.filter(
         (p) =>
           p.name.toLowerCase().includes(query) ||
           p.description.toLowerCase().includes(query) ||
@@ -156,21 +195,21 @@ export function ProductsSection() {
       );
     }
 
-    return products;
-  }, [searchQuery, selectedCategory]);
+    return filtered;
+  }, [searchQuery, selectedCategory, products]);
 
   // Show first 12 products or all if showAllProducts is true
   const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 12);
 
   return (
-    <section id="productos" className="py-12 sm:py-16 md:py-20 bg-muted/30">
+    <section id="productos" className="py-12 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Productos Destacados - Una sola línea */}
         {featuredProducts.length > 0 && (
-          <div className="mb-16">
-            <div className="text-center mb-8 space-y-3">
+          <div className="mb-12">
+            <div className="text-center mb-6 space-y-2">
               <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
-                ⭐ Los Más Vendidos
+                Los Más Vendidos
               </span>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold">
                 Productos <span className="text-primary">Destacados</span>
@@ -196,15 +235,15 @@ export function ProductsSection() {
         )}
 
         {/* Catálogo Completo */}
-        <div className="text-center mb-8 space-y-3">
+        <div className="text-center mb-6 space-y-2">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
-            🛒 Catálogo Completo
+            Catálogo Completo
           </span>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold">
-            {mockSiteContent.productsTitle}
+            Todos Nuestros <span className="text-primary">Productos</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {mockSiteContent.productsSubtitle}
+            Descubre nuestra selección de productos de alta calidad
           </p>
         </div>
 
@@ -232,7 +271,7 @@ export function ProductsSection() {
                 className="appearance-none pl-10 pr-10 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all min-w-[200px]"
               >
                 <option value="all">Todas las categorías</option>
-                {mockCategories.filter(c => c.isActive).map((category) => (
+                {categories.filter(c => c.isActive).map((category) => (
                   <option key={category.id} value={category.slug}>
                     {category.name}
                   </option>
@@ -278,7 +317,7 @@ export function ProductsSection() {
         )}
 
         {/* Show More / CTA */}
-        <div className="text-center mt-10 space-y-4">
+        <div className="text-center mt-8 space-y-4">
           {!showAllProducts && filteredProducts.length > 12 && (
             <Button
               size="lg"
@@ -288,7 +327,7 @@ export function ProductsSection() {
               Ver Todos los Productos ({filteredProducts.length})
             </Button>
           )}
-          
+
           {showAllProducts && (
             <Button
               variant="outline"

@@ -1,6 +1,8 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import { mockProducts, mockCategories, mockServices, mockPromotions } from '@/lib/mock-data'
+import type { Product, Category, Service, Promotion } from '@/lib/types'
 
 // Definición de todas las secciones editables de la web
 export interface HeroContent {
@@ -192,6 +194,20 @@ interface SiteContentContextType {
 
   // Effective content
   effectiveContent: SiteContent
+
+  // Data from Supabase
+  products: Product[]
+  categories: Category[]
+  services: Service[]
+  promotions: Promotion[]
+  isLoadingData: boolean
+
+  // Refresh functions
+  refreshProducts: () => Promise<void>
+  refreshCategories: () => Promise<void>
+  refreshServices: () => Promise<void>
+  refreshPromotions: () => Promise<void>
+  refreshAll: () => Promise<void>
 }
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(undefined)
@@ -230,14 +246,143 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     returnUrl: '/admin/contenido',
   })
 
+  // Data states
+  const [products, setProducts] = useState<Product[]>(mockProducts)
+  const [categories, setCategories] = useState<Category[]>(mockCategories)
+  const [services, setServices] = useState<Service[]>(mockServices)
+  const [promotions, setPromotions] = useState<Promotion[]>(mockPromotions)
+  const [isLoadingData, setIsLoadingData] = useState(true)
+
   const effectiveContent = previewContentState.isActive && previewContentState.content
     ? previewContentState.content
     : content
+
+  // Fetch products from API
+  const refreshProducts = useCallback(async () => {
+    try {
+      console.log('[SiteContent] Cargando productos desde API...')
+      const response = await fetch('/api/products')
+      if (response.ok) {
+        const data = await response.json()
+        console.log('[SiteContent] Productos recibidos de Supabase:', data.products?.length || 0)
+        if (data.products && data.products.length > 0) {
+          // Transform DB format to frontend format
+          const transformedProducts = data.products.map((p: Record<string, unknown>) => ({
+            id: p.id as string,
+            name: p.name as string,
+            slug: p.slug as string,
+            description: p.description as string || '',
+            price: p.price as number,
+            salePrice: p.sale_price as number | undefined,
+            sku: p.sku as string || '',
+            category: (p.category as Record<string, string>)?.name || p.category_name as string || '',
+            categorySlug: (p.category as Record<string, string>)?.slug || p.category_slug as string || '',
+            stock: p.stock as number || 0,
+            image: p.image as string || '',
+            gallery: p.gallery as string[] || [],
+            isActive: p.is_active as boolean ?? true,
+            isFeatured: p.is_featured as boolean ?? false,
+            createdAt: p.created_at as string,
+            updatedAt: p.updated_at as string,
+          }))
+          setProducts(transformedProducts)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading products:', error)
+    }
+  }, [])
+
+  // Fetch categories from API
+  const refreshCategories = useCallback(async () => {
+    try {
+      console.log('[SiteContent] Cargando categorías desde API...')
+      const response = await fetch('/api/categories')
+      if (response.ok) {
+        const data = await response.json()
+        console.log('[SiteContent] Categorías recibidas de Supabase:', data.categories?.length || 0, data)
+        if (data.categories && data.categories.length > 0) {
+          const transformedCategories = data.categories.map((c: Record<string, unknown>) => ({
+            id: c.id as string,
+            name: c.name as string,
+            slug: c.slug as string,
+            icon: c.icon as string || '',
+            description: c.description as string || '',
+            gallery: c.gallery as string[] || [],
+            order: c.order as number || 0,
+            isActive: c.is_active as boolean ?? true,
+          }))
+          setCategories(transformedCategories)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error)
+    }
+  }, [])
+
+  // Fetch services from API
+  const refreshServices = useCallback(async () => {
+    try {
+      console.log('[SiteContent] Cargando servicios desde API...')
+      const response = await fetch('/api/services')
+      if (response.ok) {
+        const data = await response.json()
+        console.log('[SiteContent] Servicios recibidos de Supabase:', data.services?.length || 0, data)
+        if (data.services && data.services.length > 0) {
+          const transformedServices = data.services.map((s: Record<string, unknown>) => ({
+            id: s.id as string,
+            name: s.name as string,
+            slug: s.slug as string,
+            description: s.description as string || '',
+            shortDescription: s.short_description as string || '',
+            icon: s.icon as string || '',
+            price: s.price as string || '',
+            image: s.image as string || '',
+            isActive: s.is_active as boolean ?? true,
+            order: s.order as number || 0,
+          }))
+          setServices(transformedServices)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading services:', error)
+    }
+  }, [])
+
+  // Fetch promotions from API
+  const refreshPromotions = useCallback(async () => {
+    try {
+      console.log('[SiteContent] Cargando promociones desde API...')
+      const response = await fetch('/api/promotions')
+      if (response.ok) {
+        const data = await response.json()
+        console.log('[SiteContent] Promociones recibidas de Supabase:', data.promotions?.length || 0, data)
+        if (data.promotions && data.promotions.length > 0) {
+          setPromotions(data.promotions)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading promotions:', error)
+    }
+  }, [])
+
+  // Refresh all data
+  const refreshAll = useCallback(async () => {
+    setIsLoadingData(true)
+    await Promise.all([
+      refreshProducts(),
+      refreshCategories(),
+      refreshServices(),
+      refreshPromotions(),
+    ])
+    setIsLoadingData(false)
+  }, [refreshProducts, refreshCategories, refreshServices, refreshPromotions])
 
   // Load content from API
   useEffect(() => {
     async function loadContent() {
       try {
+        console.log('[SiteContent] Cargando configuración del sitio desde API...')
         // Check for stored preview state
         const storedPreview = getStoredPreviewContent()
         if (storedPreview?.isActive && storedPreview.content) {
@@ -247,7 +392,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         const response = await fetch('/api/settings')
         if (response.ok) {
           const data = await response.json()
+          console.log('[SiteContent] Settings cargados de Supabase:', data)
           if (data.settings?.site_content) {
+            console.log('[SiteContent] Aplicando site_content:', data.settings.site_content)
             setContent(prev => ({
               ...prev,
               ...data.settings.site_content,
@@ -263,6 +410,11 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
     loadContent()
   }, [])
+
+  // Load all data on mount
+  useEffect(() => {
+    refreshAll()
+  }, [refreshAll])
 
   const updateContent = useCallback((newContent: Partial<SiteContent>) => {
     setContent(prev => ({
@@ -363,6 +515,18 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         cancelContentPreview,
         publishContentPreview,
         effectiveContent,
+        // Data
+        products,
+        categories,
+        services,
+        promotions,
+        isLoadingData,
+        // Refresh functions
+        refreshProducts,
+        refreshCategories,
+        refreshServices,
+        refreshPromotions,
+        refreshAll,
       }}
     >
       {children}

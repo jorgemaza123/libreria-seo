@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+// Disable caching for this API route
+export const dynamic = 'force-dynamic'
+
 const isSupabaseConfigured = () => {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 }

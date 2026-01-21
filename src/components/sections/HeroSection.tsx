@@ -129,7 +129,7 @@ export function HeroSection() {
             <div className="animate-fade-up">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/15 text-primary rounded-full text-sm font-bold border border-primary/30">
                 <Star className="w-4 h-4 fill-current" />
-                +20 años sirviendo a familias de VMT
+                
               </div>
             </div>
 
@@ -139,7 +139,7 @@ export function HeroSection() {
                 Soluciones Integrales{' '}
                 <span className="text-primary">frente a tu Colegio</span>:{' '}
                 <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                  Papelería, Tecnología
+                  Librería, Tecnología
                 </span>{' '}
                 y Trámites
               </h1>
@@ -202,19 +202,19 @@ export function HeroSection() {
                 <div className={`absolute inset-0 bg-gradient-to-br ${currentCategory.bgColor} opacity-10 transition-all duration-700`} />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
 
-                {/* Category Pills/Tabs - Improved */}
+                {/* Category Pills/Tabs - Enhanced for accessibility */}
                 <div className="relative p-4 border-b border-border/30">
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <div className="flex flex-wrap gap-2.5 justify-center">
                     {categories.map((category) => (
                       <button
                         key={category.id}
                         onClick={() => setActiveCategory(category.id)}
                         className={`
-                          relative flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm
+                          relative flex items-center gap-2 px-5 py-3 rounded-full font-bold text-base
                           transition-all duration-300 transform overflow-hidden
                           ${activeCategory === category.id
                             ? `bg-gradient-to-r ${category.bgColor} text-white shadow-lg scale-105 ring-2 ring-white/20`
-                            : 'bg-card/80 text-muted-foreground hover:text-foreground hover:bg-card hover:scale-102 border border-border/50'
+                            : 'bg-card/90 text-foreground/80 dark:text-muted-foreground hover:text-foreground hover:bg-card hover:scale-102 border-2 border-border/60 shadow-sm'
                           }
                         `}
                       >
@@ -222,7 +222,7 @@ export function HeroSection() {
                         {activeCategory === category.id && (
                           <span className="absolute inset-0 bg-white/10 animate-pulse" />
                         )}
-                        <span className={`relative transition-transform duration-300 ${activeCategory === category.id ? 'scale-110' : ''}`}>
+                        <span className={`relative transition-transform duration-300 text-lg ${activeCategory === category.id ? 'scale-110' : ''}`}>
                           {category.emoji}
                         </span>
                         <span className="relative">{category.label}</span>
@@ -251,27 +251,22 @@ export function HeroSection() {
                     </div>
                   </div>
 
-                  {/* Title & Description */}
+                  {/* Title & Description - Enhanced for better readability */}
                   <div className="text-center space-y-4 mb-6">
-                    <h3 className="text-xl md:text-2xl font-heading font-bold text-foreground leading-tight">
+                    <h3 className="text-xl md:text-2xl lg:text-[1.65rem] font-heading font-extrabold text-foreground leading-tight drop-shadow-sm">
                       {currentCategory.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm md:text-base max-w-sm mx-auto">
+                    <p className="text-foreground/80 dark:text-foreground/70 text-base md:text-lg font-medium max-w-sm mx-auto leading-relaxed">
                       {currentCategory.description}
                     </p>
                   </div>
 
-                  {/* Features List - Enhanced */}
-                  <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  {/* Features List - Enhanced with better contrast and larger text */}
+                  <div className="flex flex-wrap justify-center gap-2.5 mb-6">
                     {currentCategory.features.map((feature, i) => (
                       <span
                         key={i}
-                        className={`
-                          px-3 py-1.5 rounded-full text-xs font-semibold
-                          bg-card/80 backdrop-blur-sm border ${currentCategory.borderColor} ${currentCategory.color}
-                          transition-all duration-300 hover:scale-105
-                          animate-fade-up
-                        `}
+                        className="px-4 py-2 rounded-full text-sm font-bold bg-amber-100 dark:bg-card/80 backdrop-blur-sm border-2 border-amber-600 dark:border-primary/50 text-amber-900 dark:text-primary shadow-sm transition-all duration-300 hover:scale-105 animate-fade-up"
                         style={{ animationDelay: `${i * 0.1}s` }}
                       >
                         ✓ {feature}
@@ -298,14 +293,14 @@ export function HeroSection() {
                     </span>
                   </Button>
 
-                  {/* Quick stats */}
-                  <div className="flex justify-center gap-6 mt-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  {/* Quick stats - Enhanced for better readability */}
+                  <div className="flex justify-center gap-6 mt-4 text-sm text-foreground/70 dark:text-muted-foreground font-medium">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
                       Respuesta inmediata
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                    <span className="flex items-center gap-1.5">
+                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                       4.9 en atención
                     </span>
                   </div>
@@ -320,13 +315,7 @@ export function HeroSection() {
               </div>
 
               {/* Floating Rating Card */}
-              <div className="absolute -bottom-4 -right-4 bg-card rounded-2xl p-3 shadow-xl animate-float border border-border/50 hidden md:block" style={{ animationDelay: '2s' }}>
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400 text-sm">★★★★★</span>
-                  <span className="font-bold text-sm">4.9</span>
-                  <span className="text-xs text-muted-foreground">(523)</span>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>

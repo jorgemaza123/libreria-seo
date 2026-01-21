@@ -1,12 +1,33 @@
+"use client"
+
 import Link from 'next/link';
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle, ArrowRight } from 'lucide-react';
 import { mockNavItems, mockCategories } from '@/lib/mock-data';
-import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, SOCIAL_MEDIA, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
+import { useSiteContent } from '@/contexts/SiteContentContext';
+import { BUSINESS_INFO } from '@/lib/constants'; // Solo para coordenadas del mapa
 
 export function Footer() {
+  const { effectiveContent } = useSiteContent();
+  const { contact, social, footer } = effectiveContent;
+
   const visibleNavItems = mockNavItems
     .filter((item) => item.isVisible)
     .sort((a, b) => a.order - b.order);
+
+  // Helpers para URLs dinámicas
+  const getWhatsAppUrl = (message?: string) => {
+    const phone = contact.whatsapp.replace(/\D/g, ''); // Solo números
+    const baseUrl = `https://wa.me/${phone}`;
+    return message ? `${baseUrl}?text=${encodeURIComponent(message)}` : baseUrl;
+  };
+
+  const getPhoneUrl = () => `tel:${contact.phone.replace(/\D/g, '')}`;
+  const getEmailUrl = () => `mailto:${contact.email}`;
+
+  // Formatear horarios para mostrar
+  const formatHours = (opens: string, closes: string) => {
+    return `${opens} - ${closes}`;
+  };
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
@@ -23,39 +44,40 @@ export function Footer() {
               </span>
             </div>
             <p className="text-secondary-foreground/80 text-sm leading-relaxed">
-              Tu librería de confianza con más de 20 años de experiencia.
-              Útiles escolares, papelería, impresiones, servicios TI y mucho más.
+              {footer.description || 'Tu librería de confianza con años de experiencia. Útiles escolares, papelería, impresiones, servicios TI y mucho más.'}
             </p>
-            <div className="flex gap-4 pt-2">
-              {SOCIAL_MEDIA.facebook && (
+            {footer.showSocialLinks && (
+              <div className="flex gap-4 pt-2">
+                {social.facebook && (
+                  <a
+                    href={social.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
+                  >
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                )}
+                {social.instagram && (
+                  <a
+                    href={social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                )}
                 <a
-                  href={SOCIAL_MEDIA.facebook}
+                  href={getWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
+                  className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-whatsapp hover:text-whatsapp-foreground flex items-center justify-center transition-colors"
                 >
-                  <Facebook className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" />
                 </a>
-              )}
-              {SOCIAL_MEDIA.instagram && (
-                <a
-                  href={SOCIAL_MEDIA.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-              )}
-              <a
-                href={getWhatsAppUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-secondary-foreground/10 hover:bg-whatsapp hover:text-whatsapp-foreground flex items-center justify-center transition-colors"
-              >
-                <MessageCircle className="w-5 h-5" />
-              </a>
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Quick Links */}
@@ -82,7 +104,7 @@ export function Footer() {
               {mockCategories.slice(0, 6).map((category) => (
                 <li key={category.id}>
                   <Link
-                    href={`/#productos?category=${category.slug}`}
+                    href={`/?category=${category.slug}#productos`}
                     className="text-secondary-foreground/70 hover:text-primary transition-colors flex items-center gap-2"
                   >
                     <span>{category.icon}</span> {category.name}
@@ -99,9 +121,7 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="text-secondary-foreground/70 text-sm">
-                  {BUSINESS_INFO.address.street}
-                  <br />
-                  {BUSINESS_INFO.address.city}, {BUSINESS_INFO.address.state}
+                  {contact.address}
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -110,7 +130,7 @@ export function Footer() {
                   href={getPhoneUrl()}
                   className="text-secondary-foreground/70 hover:text-primary text-sm"
                 >
-                  {CONTACT.phone}
+                  {contact.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -119,18 +139,56 @@ export function Footer() {
                   href={getEmailUrl()}
                   className="text-secondary-foreground/70 hover:text-primary text-sm"
                 >
-                  {CONTACT.email}
+                  {contact.email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                 <div className="text-secondary-foreground/70 text-sm">
-                  <p>{BUSINESS_HOURS.weekdays.label}: {BUSINESS_HOURS.weekdays.hours}</p>
-                  <p>{BUSINESS_HOURS.saturday.label}: {BUSINESS_HOURS.saturday.hours}</p>
-                  <p>{BUSINESS_HOURS.sunday.label}: {BUSINESS_HOURS.sunday.hours}</p>
+                  <p>Lun-Vie: {formatHours(contact.businessHours.weekdays.opens, contact.businessHours.weekdays.closes)}</p>
+                  <p>Sábado: {formatHours(contact.businessHours.saturday.opens, contact.businessHours.saturday.closes)}</p>
+                  <p>Domingo: {formatHours(contact.businessHours.sunday.opens, contact.businessHours.sunday.closes)}</p>
                 </div>
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Mini Location Map */}
+        <div className="mt-8 bg-secondary-foreground/5 rounded-xl overflow-hidden border border-secondary-foreground/10">
+          <div className="flex flex-col md:flex-row">
+            <div className="flex-1 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-secondary-foreground">Ubícanos</p>
+                  <p className="text-xs text-secondary-foreground/70">{contact.address}</p>
+                </div>
+              </div>
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+              >
+                Abrir GPS <ArrowRight className="w-3 h-3" />
+              </a>
+            </div>
+            <div className="w-full md:w-64 h-32 bg-muted">
+              <iframe
+                src={`https://maps.google.com/maps?q=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}&z=16&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Ubicación de Librería H & J"
+                className="grayscale-[30%] hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
           </div>
         </div>
 
@@ -172,14 +230,12 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-secondary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-secondary-foreground/60 text-sm">
-            © {new Date().getFullYear()} Librería H & J. Todos los derechos reservados.
+            {footer.copyrightText || `© ${new Date().getFullYear()} Librería H & J. Librería multi-servicios.`}
           </p>
           <div className="flex gap-6 text-sm text-secondary-foreground/60">
             <a href="#" className="hover:text-primary transition-colors">
-              Aviso de Privacidad
             </a>
             <a href="#" className="hover:text-primary transition-colors">
-              Términos y Condiciones
             </a>
           </div>
         </div>

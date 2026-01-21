@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { X, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from 'lucide-react';
 import { mockCategories } from '@/lib/mock-data';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ interface CategoryModalProps {
 function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { getWhatsAppUrl } = useWhatsApp();
+  const router = useRouter();
   const images = category?.gallery || [];
 
   const nextImage = () => {
@@ -32,6 +34,22 @@ function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
       getWhatsAppUrl(`¡Hola! Me interesa ver los productos de ${category?.name}. ¿Qué opciones tienen disponibles?`),
       '_blank'
     );
+  };
+
+  const handleViewProducts = () => {
+    // Cerrar el modal
+    onClose();
+
+    // Navegar a la sección de productos con el filtro de categoría
+    router.push(`/?category=${category.slug}#productos`);
+
+    // Scroll suave después de un pequeño delay
+    setTimeout(() => {
+      const productsSection = document.getElementById('productos');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
   };
 
   if (!isOpen || !category) return null;
@@ -128,12 +146,11 @@ function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
             </Button>
             <Button
               variant="outline"
-              asChild
-              className="flex-1"
+              onClick={handleViewProducts}
+              className="flex-1 font-bold"
             >
-              <a href={`/#productos?category=${category.slug}`}>
-                Ver Productos
-              </a>
+              <ShoppingBag className="w-5 h-5 mr-2" />
+              Ver Productos
             </Button>
           </div>
         </div>
@@ -148,7 +165,7 @@ export function CategoriesSection() {
 
   return (
     <>
-      <section className="py-12 bg-muted/50">
+      <section className="py-8 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {activeCategories.map((category, index) => (

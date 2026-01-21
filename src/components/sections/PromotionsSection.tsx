@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Clock, Flame, Gift, Zap, ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockPromotions, mockSiteContent } from '@/lib/mock-data';
+import { useSiteContent } from '@/contexts/SiteContentContext';
 import { getWhatsAppUrl } from '@/lib/constants';
 
 // Countdown hook - Solo calcula después de que la página carga en el navegador
@@ -51,7 +51,7 @@ function useCountdown(hours: number) {
   return { timeLeft, mounted };
 }
 
-// Flash deals data
+// Flash deals data - estos se pueden mover a la base de datos en el futuro
 const flashDeals = [
   {
     id: 'flash-1',
@@ -96,8 +96,9 @@ const flashDeals = [
 ];
 
 export function PromotionsSection() {
+  const { promotions } = useSiteContent();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const activePromotions = mockPromotions.filter((p) => p.isActive);
+  const activePromotions = promotions.filter((p) => p.isActive);
   const { timeLeft, mounted } = useCountdown(8); // 8 hours flash sale
 
   const nextSlide = useCallback(() => {
@@ -112,14 +113,15 @@ export function PromotionsSection() {
 
   // Auto-advance slides
   useEffect(() => {
+    if (activePromotions.length <= 1) return;
     const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
-  }, [nextSlide]);
+  }, [nextSlide, activePromotions.length]);
 
   if (activePromotions.length === 0) return null;
 
   return (
-    <section id="promociones" className="py-16 md:py-24 relative overflow-hidden">
+    <section id="promociones" className="py-12 md:py-16 relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-destructive/5 via-transparent to-transparent" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-destructive/10 rounded-full blur-3xl" />
@@ -133,40 +135,11 @@ export function PromotionsSection() {
             <span className="font-bold uppercase tracking-wide">Ofertas que vuelan</span>
             <Flame className="w-5 h-5" />
           </div>
-          
+
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold">
-            {mockSiteContent.promotionsTitle}
           </h2>
 
-          {/* Main countdown - Solo muestra valores reales después de cargar */}
-          <div className="flex justify-center">
-            <div className="inline-flex items-center gap-4 px-6 py-4 bg-card border-2 border-destructive/30 rounded-2xl shadow-lg">
-              <Clock className="w-6 h-6 text-destructive" />
-              <span className="text-muted-foreground font-medium hidden sm:inline">La oferta termina en:</span>
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col items-center bg-secondary text-secondary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl">
-                  <span className="text-xl md:text-3xl font-bold font-mono">
-                    {mounted ? String(timeLeft.hours).padStart(2, '0') : '--'}
-                  </span>
-                  <span className="text-[10px] md:text-xs uppercase opacity-70">hrs</span>
-                </div>
-                <span className="text-xl md:text-2xl font-bold text-muted-foreground">:</span>
-                <div className="flex flex-col items-center bg-secondary text-secondary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl">
-                  <span className="text-xl md:text-3xl font-bold font-mono">
-                    {mounted ? String(timeLeft.minutes).padStart(2, '0') : '--'}
-                  </span>
-                  <span className="text-[10px] md:text-xs uppercase opacity-70">min</span>
-                </div>
-                <span className="text-xl md:text-2xl font-bold text-muted-foreground">:</span>
-                <div className={`flex flex-col items-center bg-destructive text-destructive-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-xl ${mounted ? 'animate-pulse' : ''}`}>
-                  <span className="text-xl md:text-3xl font-bold font-mono">
-                    {mounted ? String(timeLeft.seconds).padStart(2, '0') : '--'}
-                  </span>
-                  <span className="text-[10px] md:text-xs uppercase opacity-70">seg</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Flash Deals Grid */}
@@ -176,7 +149,7 @@ export function PromotionsSection() {
               <Zap className="w-6 h-6 text-yellow-500" />
               <h3 className="text-xl md:text-2xl font-heading font-bold">Flash Deals</h3>
               <span className="px-3 py-1 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-full text-sm font-medium">
-                ⚡ Solo hoy
+                Solo hoy
               </span>
             </div>
             <Button variant="ghost" className="group">
@@ -290,7 +263,7 @@ export function PromotionsSection() {
                     {/* Content */}
                     <div className="absolute inset-0 flex items-center">
                       <div className="p-8 md:p-12 max-w-xl space-y-4">
-                        {promo.discount && (
+                        {promo.discount && promo.discount > 0 && (
                           <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-destructive text-destructive-foreground rounded-full text-lg font-bold animate-pulse">
                             <Flame className="w-5 h-5" />
                             {promo.discountType === 'percentage'
@@ -362,30 +335,7 @@ export function PromotionsSection() {
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 bg-gradient-to-r from-primary/10 via-card to-accent/10 rounded-2xl border border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                <Gift className="w-6 h-6 text-primary" />
-              </div>
-              <div className="text-left">
-                <p className="font-bold text-lg">¿Buscas algo especial?</p>
-                <p className="text-sm text-muted-foreground">Te hacemos una cotización personalizada</p>
-              </div>
-            </div>
-            <Button size="lg" className="bg-gradient-to-r from-primary to-cta" asChild>
-              <a
-                href={getWhatsAppUrl('Hola! Quisiera una cotización personalizada')}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="mr-2 w-5 h-5" />
-                Cotizar ahora
-              </a>
-            </Button>
-          </div>
-        </div>
+       
       </div>
     </section>
   );

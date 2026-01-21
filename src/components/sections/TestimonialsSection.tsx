@@ -102,10 +102,10 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section id="testimonios" className="py-20 bg-muted/30">
+    <section id="testimonios" className="py-12 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
             <Star className="w-4 h-4 fill-primary" />
             Lo que dicen nuestros clientes
@@ -218,7 +218,7 @@ export function TestimonialsSection() {
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-8">
           <p className="text-muted-foreground mb-4">¿Ya eres nuestro cliente?</p>
           <Button variant="outline" size="lg" className="group" asChild>
             <a 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { mockCategories } from '@/lib/mock-data'
+export const dynamic = 'force-dynamic'
 
 const isSupabaseConfigured = () => {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)

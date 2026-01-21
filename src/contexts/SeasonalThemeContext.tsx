@@ -88,23 +88,72 @@ const defaultThemes: Record<string, SeasonalTheme> = {
   },
 }
 
+/**
+ * Aplica los colores del tema al DOM
+ * Los colores se aplican directamente a las variables CSS de Tailwind
+ */
 function applyThemeToDOM(theme: SeasonalTheme | null) {
   if (typeof document === 'undefined') return
 
   const root = document.documentElement
 
   if (!theme) {
-    // Reset to default
-    root.style.removeProperty('--theme-primary')
-    root.style.removeProperty('--theme-secondary')
-    root.style.removeProperty('--theme-accent')
+    console.log('[SeasonalTheme] Removiendo tema personalizado, usando valores por defecto de CSS')
+    // Remove custom theme properties - CSS will use the defaults defined in globals.css
+    root.style.removeProperty('--primary')
+    root.style.removeProperty('--primary-foreground')
+    root.style.removeProperty('--secondary')
+    root.style.removeProperty('--secondary-foreground')
+    root.style.removeProperty('--accent')
+    root.style.removeProperty('--accent-foreground')
+    root.style.removeProperty('--cta')
     return
   }
 
-  // Apply theme CSS custom properties
-  root.style.setProperty('--theme-primary', theme.primaryColor)
-  root.style.setProperty('--theme-secondary', theme.secondaryColor)
-  root.style.setProperty('--theme-accent', theme.accentColor)
+  console.log('[SeasonalTheme] Aplicando tema:', theme.name)
+  console.log('[SeasonalTheme] Colores:', {
+    primary: theme.primaryColor,
+    secondary: theme.secondaryColor,
+    accent: theme.accentColor,
+  })
+
+  // Convert HSL string "H S% L%" to CSS hsl() function
+  const formatHSL = (hslString: string) => {
+    // If it already looks like a valid color, return as-is
+    if (hslString.startsWith('hsl') || hslString.startsWith('rgb') || hslString.startsWith('#') || hslString.startsWith('oklch')) {
+      return hslString
+    }
+    // Convert "H S% L%" format to "hsl(H, S%, L%)"
+    const parts = hslString.trim().split(/\s+/)
+    if (parts.length === 3) {
+      return `hsl(${parts[0]}, ${parts[1]}, ${parts[2]})`
+    }
+    return hslString
+  }
+
+  // Apply primary color
+  const primaryHSL = formatHSL(theme.primaryColor)
+  root.style.setProperty('--primary', primaryHSL)
+  // Set foreground (white or black depending on lightness)
+  const primaryLightness = parseInt(theme.primaryColor.split(/\s+/)[2] || '50')
+  root.style.setProperty('--primary-foreground', primaryLightness > 50 ? 'hsl(0, 0%, 10%)' : 'hsl(0, 0%, 100%)')
+
+  // Apply secondary color
+  const secondaryHSL = formatHSL(theme.secondaryColor)
+  root.style.setProperty('--secondary', secondaryHSL)
+  const secondaryLightness = parseInt(theme.secondaryColor.split(/\s+/)[2] || '50')
+  root.style.setProperty('--secondary-foreground', secondaryLightness > 50 ? 'hsl(0, 0%, 10%)' : 'hsl(0, 0%, 100%)')
+
+  // Apply accent color
+  const accentHSL = formatHSL(theme.accentColor)
+  root.style.setProperty('--accent', accentHSL)
+  const accentLightness = parseInt(theme.accentColor.split(/\s+/)[2] || '50')
+  root.style.setProperty('--accent-foreground', accentLightness > 50 ? 'hsl(0, 0%, 10%)' : 'hsl(0, 0%, 100%)')
+
+  // Also update CTA to match primary for consistency
+  root.style.setProperty('--cta', primaryHSL)
+
+  console.log('[SeasonalTheme] Tema aplicado exitosamente al DOM')
 }
 
 // Storage key for preview state
@@ -256,10 +305,12 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
   // Load theme and check for existing preview state
   useEffect(() => {
     async function loadTheme() {
+      console.log('[SeasonalTheme] Iniciando carga de tema...')
       try {
         // Check for stored preview state first
         const storedPreview = getStoredPreviewState()
         if (storedPreview?.isActive && storedPreview.theme) {
+          console.log('[SeasonalTheme] Restaurando estado de preview:', storedPreview.theme.name)
           setPreviewState(storedPreview)
           applyThemeToDOM(storedPreview.theme)
           // Still load the real theme from DB but don't apply it
@@ -270,7 +321,7 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
         if (!supabaseUrl || !supabaseKey) {
-          // Use default theme when Supabase is not configured
+          console.log('[SeasonalTheme] Supabase no configurado, usando tema por defecto')
           setThemeState(null)
           if (!storedPreview?.isActive) {
             applyThemeToDOM(null)
@@ -280,21 +331,27 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
         }
 
         // Try to fetch active theme from API
+        console.log('[SeasonalTheme] Fetching tema activo desde API...')
         const response = await fetch('/api/themes/active', {
           cache: 'no-store', // Prevent caching to always get fresh data
         })
+
         if (response.ok) {
           const data = await response.json()
+          console.log('[SeasonalTheme] Respuesta de API:', data)
+
           if (data.theme) {
             const loadedTheme: SeasonalTheme = {
               id: data.theme.id,
               name: data.theme.name,
               slug: data.theme.slug,
+              // Map snake_case from DB to camelCase
               primaryColor: data.theme.primary_color,
               secondaryColor: data.theme.secondary_color,
               accentColor: data.theme.accent_color,
               bannerImage: data.theme.banner_image,
             }
+            console.log('[SeasonalTheme] Tema cargado desde Supabase:', loadedTheme)
             setThemeState(loadedTheme)
 
             // Only apply to DOM if not in preview mode
@@ -302,15 +359,17 @@ export function SeasonalThemeProvider({ children }: { children: ReactNode }) {
               applyThemeToDOM(loadedTheme)
             }
           } else {
-            // No active theme in DB
+            console.log('[SeasonalTheme] No hay tema activo en la BD')
             setThemeState(null)
             if (!storedPreview?.isActive) {
               applyThemeToDOM(null)
             }
           }
+        } else {
+          console.log('[SeasonalTheme] Error al cargar tema, status:', response.status)
         }
       } catch (error) {
-        console.error('Error loading theme:', error)
+        console.error('[SeasonalTheme] Error loading theme:', error)
       } finally {
         setIsLoading(false)
       }

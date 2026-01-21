@@ -126,7 +126,7 @@ export default function TemasPage() {
   const [savedThemes, setSavedThemes] = useState<SavedTheme[]>([])
   const [isLoadingThemes, setIsLoadingThemes] = useState(true)
 
-  // Editor de tema
+  // Editor de tema - todos los campos con valores por defecto
   const [editingTheme, setEditingTheme] = useState<SeasonalTheme>({
     id: '',
     name: '',
@@ -616,11 +616,11 @@ export default function TemasPage() {
               <Label htmlFor="theme-name">Nombre del Tema *</Label>
               <Input
                 id="theme-name"
-                value={editingTheme.name}
+                value={editingTheme.name || ''}
                 onChange={(e) => setEditingTheme(prev => ({
                   ...prev,
                   name: e.target.value,
-                  slug: isNewTheme ? generateSlug(e.target.value) : prev.slug,
+                  slug: isNewTheme ? generateSlug(e.target.value) : prev.slug || '',
                 }))}
                 placeholder="Mi Tema Personalizado"
               />
@@ -630,19 +630,19 @@ export default function TemasPage() {
               <div className="space-y-4">
                 <ColorPicker
                   label="Color Primario"
-                  value={editingTheme.primaryColor}
+                  value={editingTheme.primaryColor || '220 14% 10%'}
                   onChange={(value) => setEditingTheme(prev => ({ ...prev, primaryColor: value }))}
                 />
 
                 <ColorPicker
                   label="Color Secundario"
-                  value={editingTheme.secondaryColor}
+                  value={editingTheme.secondaryColor || '220 14% 96%'}
                   onChange={(value) => setEditingTheme(prev => ({ ...prev, secondaryColor: value }))}
                 />
 
                 <ColorPicker
                   label="Color de Acento"
-                  value={editingTheme.accentColor}
+                  value={editingTheme.accentColor || '142 72% 50%'}
                   onChange={(value) => setEditingTheme(prev => ({ ...prev, accentColor: value }))}
                 />
               </div>

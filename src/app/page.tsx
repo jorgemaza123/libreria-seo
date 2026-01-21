@@ -9,14 +9,12 @@ import { TrustSection } from '@/components/sections/TrustSection';
 import { ProductsSection } from '@/components/sections/ProductsSection';
 import { ServicesSection } from '@/components/sections/ServicesSection';
 import { PromotionsSection } from '@/components/sections/PromotionsSection';
-import { ContactSection } from '@/components/sections/ContactSection';
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection';
 import { CategoriesSection } from '@/components/sections/CategoriesSection';
 import { CatalogsSection } from '@/components/sections/CatalogsSection';
 import { ChatBot } from '@/components/chat/ChatBot';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCart } from '@/components/cart/FloatingCart';
-import { ExitIntentPopup } from '@/components/ui/ExitIntentPopup';
 import { seoConfig } from '@/lib/seo';
 
 export const metadata: Metadata = {
@@ -54,7 +52,6 @@ export default function Home() {
         <ServicesSection />
         <CatalogsSection />
         <TestimonialsSection />
-        <ContactSection />
       </main>
 
       <Footer />
@@ -64,7 +61,6 @@ export default function Home() {
       <CartDrawer />
       <FloatingCart />
       <StickyContactBar />
-      <ExitIntentPopup />
     </div>
   );
 }
