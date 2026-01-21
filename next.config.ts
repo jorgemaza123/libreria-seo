@@ -12,11 +12,16 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com', // Seguramente ya usas este
+        hostname: 'res.cloudinary.com',
       },
       {
         protocol: 'https',
-        hostname: 'plus.unsplash.com', // A veces usan este subdominio
+        hostname: 'plus.unsplash.com',
+      },
+      // Agregamos este nuevo para la imagen de prueba
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
       }
     ],
   },

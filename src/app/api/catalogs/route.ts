@@ -1,132 +1,95 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
-// Mock data para cuando Supabase no está configurado
-const mockCatalogs = [
-  {
-    id: '1',
-    title: 'Catálogo Escolar 2025',
-    description: 'Lista completa de útiles escolares, mochilas, loncheras y más.',
-    season: 'Regreso a Clases',
-    year: '2025',
-    file_url: null,
-    cover_image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-    page_count: 24,
-    is_new: true,
-    is_active: true,
-    downloads: 156,
-  },
-  {
-    id: '2',
-    title: 'Catálogo de Servicios',
-    description: 'Todos nuestros servicios: impresiones, sublimación, trámites y más.',
-    season: 'Todo el año',
-    year: '2025',
-    file_url: null,
-    cover_image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&h=300&fit=crop',
-    page_count: 12,
-    is_new: false,
-    is_active: true,
-    downloads: 89,
-  },
-  {
-    id: '3',
-    title: 'Ofertas de Temporada',
-    description: 'Promociones especiales y descuentos del mes.',
-    season: 'Enero 2025',
-    year: '2025',
-    file_url: null,
-    cover_image: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=300&fit=crop',
-    page_count: 8,
-    is_new: false,
-    is_active: true,
-    downloads: 45,
-  },
-]
+export const dynamic = 'force-dynamic'
 
-const isSupabaseConfigured = () => {
-  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-}
-
+// 1. GET (Leer Catálogos)
 export async function GET() {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json({ catalogs: mockCatalogs })
-    }
-
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('catalogs')
       .select('*')
-      .eq('is_active', true)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Supabase error:', error)
-      // Fallback a mock data si hay error
-      return NextResponse.json({ catalogs: mockCatalogs })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    return NextResponse.json({ catalogs: data })
+    // Mapeo snake_case -> camelCase para el frontend
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const catalogs = (data || []).map((c: any) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      season: c.season,
+      year: c.year,
+      fileUrl: c.file_url,
+      coverImage: c.cover_image,
+      pageCount: c.page_count,
+      isNew: c.is_new,
+      isActive: c.is_active,
+      downloads: c.downloads
+    }))
+
+    return NextResponse.json({ catalogs })
   } catch (error) {
-    console.error('API error:', error)
-    return NextResponse.json({ catalogs: mockCatalogs })
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
+// 2. POST (Crear Catálogo)
 export async function POST(request: NextRequest) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 503 }
-      )
-    }
-
-    const body = await request.json()
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
+    const body = await request.json()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('catalogs')
-      .insert(body)
+      .insert({
+        title: body.title,
+        description: body.description,
+        season: body.season,
+        year: body.year,
+        file_url: body.fileUrl,
+        cover_image: body.coverImage,
+        page_count: body.pageCount,
+        is_new: body.isNew,
+        is_active: body.isActive ?? true,
+        downloads: 0
+      })
       .select()
       .single()
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     return NextResponse.json({ catalog: data }, { status: 201 })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
+// 3. PUT (Editar Catálogo)
 export async function PUT(request: NextRequest) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 503 }
-      )
-    }
-
-    const body = await request.json()
-    const { id, ...updateData } = body as { id: string; [key: string]: unknown }
-
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-
-    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
+    const body = await request.json()
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+
+    const updateData: any = {}
+    if (body.title !== undefined) updateData.title = body.title
+    if (body.description !== undefined) updateData.description = body.description
+    if (body.season !== undefined) updateData.season = body.season
+    if (body.year !== undefined) updateData.year = body.year
+    if (body.fileUrl !== undefined) updateData.file_url = body.fileUrl
+    if (body.coverImage !== undefined) updateData.cover_image = body.coverImage
+    if (body.pageCount !== undefined) updateData.page_count = body.pageCount
+    if (body.isNew !== undefined) updateData.is_new = body.isNew
+    if (body.isActive !== undefined) updateData.is_active = body.isActive
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
@@ -136,37 +99,22 @@ export async function PUT(request: NextRequest) {
       .select()
       .single()
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     return NextResponse.json({ catalog: data })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
+// 4. DELETE (Borrar Catálogo)
 export async function DELETE(request: NextRequest) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 503 }
-      )
-    }
-
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-
-    const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)
@@ -174,15 +122,10 @@ export async function DELETE(request: NextRequest) {
       .delete()
       .eq('id', id)
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ message: 'Catálogo eliminado' })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

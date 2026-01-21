@@ -1,10 +1,10 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
-import { mockProducts, mockCategories, mockServices, mockPromotions } from '@/lib/mock-data'
+import { toast } from 'sonner'
 import type { Product, Category, Service, Promotion } from '@/lib/types'
 
-// Definición de todas las secciones editables de la web
+// --- 1. TUS INTERFACES ORIGINALES (INTACTAS) ---
 export interface HeroContent {
   title: string
   subtitle: string
@@ -99,8 +99,8 @@ export interface SiteContent {
   buttons: ButtonStyles
 }
 
-// Contenido por defecto
-const defaultContent: SiteContent = {
+// --- 2. CONTENIDO POR DEFECTO (FALLBACK) ---
+export const defaultContent: SiteContent = {
   hero: {
     title: 'Tu Librería de Confianza',
     subtitle: 'Todo lo que necesitas para el colegio, oficina y más. Calidad y precios justos.',
@@ -144,7 +144,7 @@ const defaultContent: SiteContent = {
   },
   footer: {
     description: 'Tu librería de confianza con los mejores productos escolares y de oficina.',
-    copyrightText: '© 2024 Librería Central. Todos los derechos reservados.',
+    copyrightText: '© 2026 Librería Central. Todos los derechos reservados.',
     showSocialLinks: true,
     quickLinks: [
       { label: 'Inicio', url: '/' },
@@ -173,6 +173,7 @@ const defaultContent: SiteContent = {
   },
 }
 
+// --- 3. LÓGICA DE PREVIEW (RESTAURADA) ---
 interface PreviewContentState {
   isActive: boolean
   content: SiteContent | null
@@ -192,7 +193,7 @@ interface SiteContentContextType {
   cancelContentPreview: () => void
   publishContentPreview: () => Promise<boolean>
 
-  // Effective content
+  // Effective content (Lo que se ve en pantalla)
   effectiveContent: SiteContent
 
   // Data from Supabase
@@ -237,6 +238,7 @@ function setStoredPreviewContent(state: PreviewContentState | null) {
   }
 }
 
+// --- 4. PROVIDER PRINCIPAL ---
 export function SiteContentProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<SiteContent>(defaultContent)
   const [isLoading, setIsLoading] = useState(true)
@@ -247,43 +249,42 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   })
 
   // Data states
-  const [products, setProducts] = useState<Product[]>(mockProducts)
-  const [categories, setCategories] = useState<Category[]>(mockCategories)
-  const [services, setServices] = useState<Service[]>(mockServices)
-  const [promotions, setPromotions] = useState<Promotion[]>(mockPromotions)
+  const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [services, setServices] = useState<Service[]>([])
+  const [promotions, setPromotions] = useState<Promotion[]>([])
   const [isLoadingData, setIsLoadingData] = useState(true)
 
   const effectiveContent = previewContentState.isActive && previewContentState.content
     ? previewContentState.content
     : content
 
-  // Fetch products from API
+  // --- REFRESH PRODUCTS (CONECTADO A API) ---
   const refreshProducts = useCallback(async () => {
     try {
-      console.log('[SiteContent] Cargando productos desde API...')
       const response = await fetch('/api/products')
       if (response.ok) {
         const data = await response.json()
-        console.log('[SiteContent] Productos recibidos de Supabase:', data.products?.length || 0)
-        if (data.products && data.products.length > 0) {
-          // Transform DB format to frontend format
-          const transformedProducts = data.products.map((p: Record<string, unknown>) => ({
-            id: p.id as string,
-            name: p.name as string,
-            slug: p.slug as string,
-            description: p.description as string || '',
-            price: p.price as number,
-            salePrice: p.sale_price as number | undefined,
-            sku: p.sku as string || '',
-            category: (p.category as Record<string, string>)?.name || p.category_name as string || '',
-            categorySlug: (p.category as Record<string, string>)?.slug || p.category_slug as string || '',
-            stock: p.stock as number || 0,
-            image: p.image as string || '',
-            gallery: p.gallery as string[] || [],
-            isActive: p.is_active as boolean ?? true,
-            isFeatured: p.is_featured as boolean ?? false,
-            createdAt: p.created_at as string,
-            updatedAt: p.updated_at as string,
+        if (data.products) {
+          // Mapeamos los datos crudos de DB a tu interfaz Product
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformedProducts = data.products.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            description: p.description || '',
+            price: p.price,
+            salePrice: p.sale_price,
+            sku: p.sku || '',
+            category: p.category?.name || '',
+            categorySlug: p.category?.slug || '',
+            stock: p.stock || 0,
+            image: p.image || '',
+            gallery: p.gallery || [],
+            isActive: p.is_active,
+            isFeatured: p.is_featured,
+            createdAt: p.created_at,
+            updatedAt: p.updated_at,
           }))
           setProducts(transformedProducts)
         }
@@ -293,26 +294,25 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Fetch categories from API
+  // --- REFRESH CATEGORIES (CONECTADO A API) ---
   const refreshCategories = useCallback(async () => {
     try {
-      console.log('[SiteContent] Cargando categorías desde API...')
       const response = await fetch('/api/categories')
       if (response.ok) {
         const data = await response.json()
-        console.log('[SiteContent] Categorías recibidas de Supabase:', data.categories?.length || 0, data)
-        if (data.categories && data.categories.length > 0) {
-          const transformedCategories = data.categories.map((c: Record<string, unknown>) => ({
-            id: c.id as string,
-            name: c.name as string,
-            slug: c.slug as string,
-            icon: c.icon as string || '',
-            description: c.description as string || '',
-            gallery: c.gallery as string[] || [],
-            order: c.order as number || 0,
-            isActive: c.is_active as boolean ?? true,
+        if (data.categories) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformed = data.categories.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            icon: c.icon || '',
+            description: c.description || '',
+            image: c.image || '',
+            order: c.order || 0,
+            isActive: c.is_active ?? true, // Mapeamos is_active de BD a isActive del frontend
           }))
-          setCategories(transformedCategories)
+          setCategories(transformed)
         }
       }
     } catch (error) {
@@ -320,28 +320,28 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Fetch services from API
+  // --- REFRESH SERVICES (CONECTADO A API) ---
   const refreshServices = useCallback(async () => {
     try {
-      console.log('[SiteContent] Cargando servicios desde API...')
       const response = await fetch('/api/services')
       if (response.ok) {
         const data = await response.json()
-        console.log('[SiteContent] Servicios recibidos de Supabase:', data.services?.length || 0, data)
-        if (data.services && data.services.length > 0) {
-          const transformedServices = data.services.map((s: Record<string, unknown>) => ({
-            id: s.id as string,
-            name: s.name as string,
-            slug: s.slug as string,
-            description: s.description as string || '',
-            shortDescription: s.short_description as string || '',
-            icon: s.icon as string || '',
-            price: s.price as string || '',
-            image: s.image as string || '',
-            isActive: s.is_active as boolean ?? true,
-            order: s.order as number || 0,
+        if (data.services) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformed = data.services.map((s: any) => ({
+            id: s.id,
+            title: s.title || s.name, // Compatibilidad con ambos nombres
+            name: s.name || s.title,
+            slug: s.slug,
+            description: s.description || '',
+            shortDescription: s.short_description || '',
+            icon: s.icon || '',
+            price: s.price || '',
+            image: s.image || '',
+            isActive: s.is_active ?? true,
+            order: s.order || 0,
           }))
-          setServices(transformedServices)
+          setServices(transformed)
         }
       }
     } catch (error) {
@@ -349,15 +349,13 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Fetch promotions from API
+  // --- REFRESH PROMOTIONS (CONECTADO A API) ---
   const refreshPromotions = useCallback(async () => {
     try {
-      console.log('[SiteContent] Cargando promociones desde API...')
       const response = await fetch('/api/promotions')
       if (response.ok) {
         const data = await response.json()
-        console.log('[SiteContent] Promociones recibidas de Supabase:', data.promotions?.length || 0, data)
-        if (data.promotions && data.promotions.length > 0) {
+        if (data.promotions) {
           setPromotions(data.promotions)
         }
       }
@@ -366,7 +364,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Refresh all data
+  // --- REFRESH ALL ---
   const refreshAll = useCallback(async () => {
     setIsLoadingData(true)
     await Promise.all([
@@ -378,26 +376,32 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     setIsLoadingData(false)
   }, [refreshProducts, refreshCategories, refreshServices, refreshPromotions])
 
-  // Load content from API
+  // --- LOAD CONTENT SETTINGS ---
   useEffect(() => {
     async function loadContent() {
       try {
-        console.log('[SiteContent] Cargando configuración del sitio desde API...')
-        // Check for stored preview state
+        // Restaurar preview si existe
         const storedPreview = getStoredPreviewContent()
         if (storedPreview?.isActive && storedPreview.content) {
           setPreviewContentState(storedPreview)
         }
 
+        // Cargar Configuración Real
         const response = await fetch('/api/settings')
         if (response.ok) {
           const data = await response.json()
-          console.log('[SiteContent] Settings cargados de Supabase:', data)
+          
           if (data.settings?.site_content) {
-            console.log('[SiteContent] Aplicando site_content:', data.settings.site_content)
+            // Merge con default para seguridad
+            const dbContent = data.settings.site_content
             setContent(prev => ({
               ...prev,
-              ...data.settings.site_content,
+              ...dbContent,
+              // Aseguramos sub-objetos críticos
+              hero: { ...defaultContent.hero, ...dbContent.hero },
+              contact: { ...defaultContent.contact, ...dbContent.contact },
+              footer: { ...defaultContent.footer, ...dbContent.footer },
+              sections: { ...defaultContent.sections, ...dbContent.sections },
             }))
           }
         }
@@ -411,26 +415,20 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     loadContent()
   }, [])
 
-  // Load all data on mount
+  // Cargar datos al montar
   useEffect(() => {
     refreshAll()
   }, [refreshAll])
 
   const updateContent = useCallback((newContent: Partial<SiteContent>) => {
-    setContent(prev => ({
-      ...prev,
-      ...newContent,
-    }))
+    setContent(prev => ({ ...prev, ...newContent }))
   }, [])
 
   const updateSection = useCallback(<K extends keyof SiteContent>(
     section: K,
     data: SiteContent[K]
   ) => {
-    setContent(prev => ({
-      ...prev,
-      [section]: data,
-    }))
+    setContent(prev => ({ ...prev, [section]: data }))
   }, [])
 
   const saveContent = useCallback(async (): Promise<boolean> => {
@@ -450,7 +448,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     }
   }, [content])
 
-  // Preview mode functions
+  // --- PREVIEW FUNCTIONS ---
   const startContentPreview = useCallback((previewContent: SiteContent, returnUrl = '/admin/contenido') => {
     const newState: PreviewContentState = {
       isActive: true,
@@ -541,5 +539,3 @@ export function useSiteContent() {
   }
   return context
 }
-
-export { defaultContent }

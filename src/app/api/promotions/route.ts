@@ -1,43 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Disable caching for this API route
-export const dynamic = 'force-dynamic'
 import { createClient } from '@/lib/supabase/server'
-import { mockPromotions } from '@/lib/mock-data'
-import type { Database } from '@/lib/supabase/types'
 
-type PromotionInsert = Database['public']['Tables']['promotions']['Insert']
+export const dynamic = 'force-dynamic'
 
-const isSupabaseConfigured = () => {
-  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-}
-
+// 1. GET (Leer Todas)
 export async function GET() {
   try {
-    console.log('[API/promotions] GET - Cargando promociones...')
-    if (!isSupabaseConfigured()) {
-      console.log('[API/promotions] Supabase no configurado, usando mock data')
-      return NextResponse.json({ promotions: mockPromotions })
-    }
-
     const supabase = await createClient()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('promotions')
       .select('*')
-      .eq('is_active', true)
+      // .eq('is_active', true) <--- ELIMINADO: Queremos ver TODAS en el admin
       .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Error fetching promotions:', error)
-      // Fallback to mock data if table doesn't exist
-      return NextResponse.json({ promotions: mockPromotions })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    console.log('[API/promotions] Datos recibidos de Supabase:', data?.length || 0, 'promociones')
-
-    // Transform DB data to match frontend format
+    // Mapeamos snake_case (BD) a camelCase (Frontend)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const promotions = (data || []).map((p: any) => ({
       id: p.id,
@@ -45,58 +25,44 @@ export async function GET() {
       description: p.description,
       image: p.image,
       discount: p.discount,
-      discountType: p.discount_type,
-      startDate: p.start_date,
-      endDate: p.end_date,
+      discountType: p.discount_type, // Mapeo importante
+      startDate: p.start_date,       // Mapeo importante
+      endDate: p.end_date,           // Mapeo importante
       isActive: p.is_active,
     }))
 
-    return NextResponse.json({ promotions: promotions.length > 0 ? promotions : mockPromotions })
+    return NextResponse.json({ promotions })
   } catch (error) {
-    console.error('Error in promotions API:', error)
-    return NextResponse.json({ promotions: mockPromotions })
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
+// 2. POST (Crear Nueva)
 export async function POST(request: NextRequest) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase not configured' },
-        { status: 503 }
-      )
-    }
-
-    const body = await request.json()
     const supabase = await createClient()
-
-    const insertData: PromotionInsert = {
-      title: body.title,
-      description: body.description || '',
-      image: body.image || '',
-      discount: body.discount,
-      discount_type: body.discountType || body.discount_type || 'percentage',
-      start_date: body.startDate || body.start_date || new Date().toISOString().split('T')[0],
-      end_date: body.endDate || body.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      is_active: body.isActive ?? body.is_active ?? true,
-    }
+    const body = await request.json()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('promotions')
-      .insert(insertData)
+      .insert({
+        title: body.title,
+        description: body.description,
+        image: body.image,
+        discount: body.discount,
+        discount_type: body.discountType, // camelCase -> snake_case
+        start_date: body.startDate || null,
+        end_date: body.endDate || null,
+        is_active: body.isActive ?? true,
+      })
       .select()
       .single()
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     return NextResponse.json({ promotion: data }, { status: 201 })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

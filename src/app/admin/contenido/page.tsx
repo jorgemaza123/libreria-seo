@@ -14,7 +14,6 @@ import {
   LayoutGrid,
   Palette,
   Type,
-  Image as ImageIcon,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
@@ -35,8 +34,7 @@ import { useSiteContent, defaultContent, SiteContent } from '@/contexts/SiteCont
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
-type SectionKey = 'hero' | 'banner' | 'about' | 'contact' | 'social' | 'footer' | 'sections' | 'buttons'
-
+// --- Componente de Sección Colapsable ---
 interface CollapsibleSectionProps {
   title: string
   icon: React.ReactNode
@@ -48,7 +46,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false }: Coll
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -67,7 +65,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false }: Coll
         )}
       </button>
       {isOpen && (
-        <div className="p-4 pt-0 border-t border-border">
+        <div className="p-4 pt-0 border-t border-border animate-in slide-in-from-top-2 duration-200">
           {children}
         </div>
       )}
@@ -75,29 +73,33 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false }: Coll
   )
 }
 
+// --- Página Principal ---
 export default function ContenidoPage() {
   const router = useRouter()
-  const { content, isLoading, updateContent, saveContent, startContentPreview } = useSiteContent()
+  const { content, isLoading, updateContent, startContentPreview } = useSiteContent()
+  
+  // Estado local para editar sin afectar la web hasta guardar
   const [localContent, setLocalContent] = useState<SiteContent>(defaultContent)
   const [isSaving, setIsSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
-  // Sync local content with context
+  // 1. Sincronizar estado local con el contexto al cargar
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && content) {
       setLocalContent(content)
     }
   }, [content, isLoading])
 
-  // Track changes
+  // 2. Detectar cambios sin guardar
   useEffect(() => {
     setHasChanges(JSON.stringify(localContent) !== JSON.stringify(content))
   }, [localContent, content])
 
+  // Helper para cambios directos (ej: hero.title)
   const handleChange = <K extends keyof SiteContent>(
     section: K,
     field: keyof SiteContent[K],
-    value: SiteContent[K][keyof SiteContent[K]]
+    value: any
   ) => {
     setLocalContent(prev => ({
       ...prev,
@@ -108,35 +110,48 @@ export default function ContenidoPage() {
     }))
   }
 
-  const handleNestedChange = <K extends keyof SiteContent>(
-    section: K,
-    field: string,
-    nestedField: string,
-    value: string
-  ) => {
-    setLocalContent(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...(prev[section] as any)[field],
-          [nestedField]: value,
-        },
-      },
-    }))
+  // Helper para cambios profundos (ej: contact.businessHours.weekdays.opens)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDeepChange = (section: keyof SiteContent, path: string[], value: any) => {
+    setLocalContent(prev => {
+      const newSection = { ...prev[section] }
+      let current = newSection as any
+      
+      // Navegar hasta el penúltimo nivel
+      for (let i = 0; i < path.length - 1; i++) {
+        current = current[path[i]]
+      }
+      
+      // Asignar valor
+      current[path[path.length - 1]] = value
+      
+      return {
+        ...prev,
+        [section]: newSection
+      }
+    })
   }
 
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      updateContent(localContent)
-      const success = await saveContent()
-      if (success) {
-        toast.success('Contenido guardado correctamente')
+      // 1. Guardamos directamente en la API para persistencia inmediata
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key: 'site_content',
+          value: localContent,
+        }),
+      })
+
+      if (response.ok) {
+        // 2. Actualizamos el contexto global para que la app lo vea sin recargar
+        updateContent(localContent)
         setHasChanges(false)
+        toast.success('Contenido guardado y publicado correctamente')
       } else {
-        toast.error('Error al guardar el contenido')
+        throw new Error('Error en la API')
       }
     } catch (error) {
       console.error('Error saving:', error)
@@ -165,47 +180,41 @@ export default function ContenidoPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in pb-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sticky top-0 z-10 bg-background/80 backdrop-blur-md p-4 -mx-4 border-b border-border/50">
         <div>
           <h2 className="text-2xl font-heading font-bold">Contenido del Sitio</h2>
-          <p className="text-muted-foreground">
-            Edita todos los textos, imágenes y configuraciones de tu web
+          <p className="text-muted-foreground text-sm">
+            Personaliza la apariencia y textos de tu web
           </p>
         </div>
         <div className="flex items-center gap-2">
           {hasChanges && (
-            <Button variant="outline" onClick={handleReset}>
+            <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
               <RotateCcw className="w-4 h-4 mr-2" />
               Descartar
             </Button>
           )}
-          <Button variant="outline" onClick={handlePreview}>
+          <Button variant="outline" size="sm" onClick={handlePreview}>
             <Eye className="w-4 h-4 mr-2" />
-            Vista Previa
+            Previsualizar
           </Button>
-          <Button onClick={handleSave} disabled={isSaving || !hasChanges}>
+          <Button onClick={handleSave} disabled={isSaving || !hasChanges} size="sm">
             {isSaving ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <Save className="w-4 h-4 mr-2" />
             )}
-            Guardar
+            Guardar Cambios
           </Button>
         </div>
       </div>
 
-      {/* Changes indicator */}
-      {hasChanges && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-amber-800 text-sm">
-          Tienes cambios sin guardar. No olvides guardar antes de salir.
-        </div>
-      )}
-
       {/* Sections */}
       <div className="space-y-4">
-        {/* Hero Section */}
+        
+        {/* 1. HERO SECTION */}
         <CollapsibleSection title="Hero / Portada Principal" icon={<Home className="w-5 h-5" />} defaultOpen>
           <div className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,48 +240,44 @@ export default function ContenidoPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="hero-cta">Texto del Botón Principal</Label>
+                <Label htmlFor="hero-cta">Botón Principal (Texto)</Label>
                 <Input
                   id="hero-cta"
                   value={localContent.hero.ctaText}
                   onChange={(e) => handleChange('hero', 'ctaText', e.target.value)}
-                  placeholder="Ver Productos"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="hero-cta-link">Enlace del Botón Principal</Label>
+                <Label htmlFor="hero-cta-link">Botón Principal (Enlace)</Label>
                 <Input
                   id="hero-cta-link"
                   value={localContent.hero.ctaLink}
                   onChange={(e) => handleChange('hero', 'ctaLink', e.target.value)}
-                  placeholder="/productos"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="hero-secondary-cta">Texto del Botón Secundario</Label>
+                <Label htmlFor="hero-sec-cta">Botón Secundario (Texto)</Label>
                 <Input
-                  id="hero-secondary-cta"
+                  id="hero-sec-cta"
                   value={localContent.hero.secondaryCtaText || ''}
                   onChange={(e) => handleChange('hero', 'secondaryCtaText', e.target.value)}
-                  placeholder="Contáctanos"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="hero-secondary-link">Enlace del Botón Secundario</Label>
+                <Label htmlFor="hero-sec-link">Botón Secundario (Enlace)</Label>
                 <Input
-                  id="hero-secondary-link"
+                  id="hero-sec-link"
                   value={localContent.hero.secondaryCtaLink || ''}
                   onChange={(e) => handleChange('hero', 'secondaryCtaLink', e.target.value)}
-                  placeholder="/contacto"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Imagen de Fondo del Hero</Label>
+              <Label>Imagen de Fondo</Label>
               <ImageUploader
                 value={localContent.hero.backgroundImage}
                 onChange={(url) => handleChange('hero', 'backgroundImage', url || '')}
@@ -281,18 +286,18 @@ export default function ContenidoPage() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pt-2">
               <Switch
                 id="hero-search"
                 checked={localContent.hero.showSearch}
                 onCheckedChange={(checked) => handleChange('hero', 'showSearch', checked)}
               />
-              <Label htmlFor="hero-search">Mostrar barra de búsqueda en el Hero</Label>
+              <Label htmlFor="hero-search">Mostrar barra de búsqueda</Label>
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* Top Banner */}
+        {/* 2. TOP BANNER */}
         <CollapsibleSection title="Banner Superior" icon={<Type className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="flex items-center gap-2">
@@ -301,47 +306,44 @@ export default function ContenidoPage() {
                 checked={localContent.topBanner.isVisible}
                 onCheckedChange={(checked) => handleChange('topBanner', 'isVisible', checked)}
               />
-              <Label htmlFor="banner-visible">Mostrar banner superior</Label>
+              <Label htmlFor="banner-visible">Activar banner superior</Label>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="banner-text">Texto del Banner</Label>
-              <Input
-                id="banner-text"
-                value={localContent.topBanner.text}
-                onChange={(e) => handleChange('topBanner', 'text', e.target.value)}
-                placeholder="Envío gratis en compras mayores a S/50"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="banner-link">Enlace (opcional)</Label>
-              <Input
-                id="banner-link"
-                value={localContent.topBanner.link || ''}
-                onChange={(e) => handleChange('topBanner', 'link', e.target.value)}
-                placeholder="/promociones"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                <Label htmlFor="banner-text">Texto del Banner</Label>
+                <Input
+                    id="banner-text"
+                    value={localContent.topBanner.text}
+                    onChange={(e) => handleChange('topBanner', 'text', e.target.value)}
+                />
+                </div>
+                <div className="space-y-2">
+                <Label htmlFor="banner-link">Enlace (Opcional)</Label>
+                <Input
+                    id="banner-link"
+                    value={localContent.topBanner.link || ''}
+                    onChange={(e) => handleChange('topBanner', 'link', e.target.value)}
+                />
+                </div>
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* About Section */}
-        <CollapsibleSection title="Sección Sobre Nosotros" icon={<MessageSquare className="w-5 h-5" />}>
+        {/* 3. ABOUT SECTION */}
+        <CollapsibleSection title="Sobre Nosotros" icon={<MessageSquare className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="about-title">Título</Label>
+                <Label>Título</Label>
                 <Input
-                  id="about-title"
                   value={localContent.about.title}
                   onChange={(e) => handleChange('about', 'title', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="about-subtitle">Subtítulo</Label>
+                <Label>Subtítulo</Label>
                 <Input
-                  id="about-subtitle"
                   value={localContent.about.subtitle}
                   onChange={(e) => handleChange('about', 'subtitle', e.target.value)}
                 />
@@ -349,9 +351,8 @@ export default function ContenidoPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="about-description">Descripción</Label>
+              <Label>Descripción</Label>
               <Textarea
-                id="about-description"
                 value={localContent.about.description}
                 onChange={(e) => handleChange('about', 'description', e.target.value)}
                 rows={4}
@@ -359,7 +360,7 @@ export default function ContenidoPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Imagen de la Sección</Label>
+              <Label>Imagen Ilustrativa</Label>
               <ImageUploader
                 value={localContent.about.image}
                 onChange={(url) => handleChange('about', 'image', url || '')}
@@ -370,22 +371,20 @@ export default function ContenidoPage() {
           </div>
         </CollapsibleSection>
 
-        {/* Contact Section */}
+        {/* 4. CONTACT SECTION */}
         <CollapsibleSection title="Información de Contacto" icon={<Phone className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contact-title">Título</Label>
+                <Label>Título</Label>
                 <Input
-                  id="contact-title"
                   value={localContent.contact.title}
                   onChange={(e) => handleChange('contact', 'title', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contact-subtitle">Subtítulo</Label>
+                <Label>Subtítulo</Label>
                 <Input
-                  id="contact-subtitle"
                   value={localContent.contact.subtitle}
                   onChange={(e) => handleChange('contact', 'subtitle', e.target.value)}
                 />
@@ -394,17 +393,15 @@ export default function ContenidoPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contact-phone">Teléfono</Label>
+                <Label>Teléfono</Label>
                 <Input
-                  id="contact-phone"
                   value={localContent.contact.phone}
                   onChange={(e) => handleChange('contact', 'phone', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contact-whatsapp">WhatsApp</Label>
+                <Label>WhatsApp</Label>
                 <Input
-                  id="contact-whatsapp"
                   value={localContent.contact.whatsapp}
                   onChange={(e) => handleChange('contact', 'whatsapp', e.target.value)}
                 />
@@ -413,18 +410,15 @@ export default function ContenidoPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contact-email">Email</Label>
+                <Label>Email</Label>
                 <Input
-                  id="contact-email"
-                  type="email"
                   value={localContent.contact.email}
                   onChange={(e) => handleChange('contact', 'email', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contact-address">Dirección</Label>
+                <Label>Dirección</Label>
                 <Input
-                  id="contact-address"
                   value={localContent.contact.address}
                   onChange={(e) => handleChange('contact', 'address', e.target.value)}
                 />
@@ -434,127 +428,54 @@ export default function ContenidoPage() {
             <div className="space-y-2">
               <Label>Horarios de Atención</Label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                {/* Lunes a Viernes */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Lunes a Viernes</Label>
-                  <div className="flex gap-2">
+                  <Label className="text-xs text-muted-foreground uppercase">Lunes a Viernes</Label>
+                  <div className="flex gap-2 items-center">
                     <Input
-                      placeholder="08:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.weekdays.opens}
-                      onChange={(e) => handleNestedChange('contact', 'businessHours', 'weekdays', e.target.value)}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'weekdays', 'opens'], e.target.value)}
                     />
-                    <span className="self-center">-</span>
+                    <span>-</span>
                     <Input
-                      placeholder="20:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.weekdays.closes}
-                      onChange={(e) => {
-                        setLocalContent(prev => ({
-                          ...prev,
-                          contact: {
-                            ...prev.contact,
-                            businessHours: {
-                              ...prev.contact.businessHours,
-                              weekdays: {
-                                ...prev.contact.businessHours.weekdays,
-                                closes: e.target.value,
-                              },
-                            },
-                          },
-                        }))
-                      }}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'weekdays', 'closes'], e.target.value)}
                     />
                   </div>
                 </div>
+                {/* Sábado */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Sábado</Label>
-                  <div className="flex gap-2">
+                  <Label className="text-xs text-muted-foreground uppercase">Sábado</Label>
+                  <div className="flex gap-2 items-center">
                     <Input
-                      placeholder="08:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.saturday.opens}
-                      onChange={(e) => {
-                        setLocalContent(prev => ({
-                          ...prev,
-                          contact: {
-                            ...prev.contact,
-                            businessHours: {
-                              ...prev.contact.businessHours,
-                              saturday: {
-                                ...prev.contact.businessHours.saturday,
-                                opens: e.target.value,
-                              },
-                            },
-                          },
-                        }))
-                      }}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'saturday', 'opens'], e.target.value)}
                     />
-                    <span className="self-center">-</span>
+                    <span>-</span>
                     <Input
-                      placeholder="18:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.saturday.closes}
-                      onChange={(e) => {
-                        setLocalContent(prev => ({
-                          ...prev,
-                          contact: {
-                            ...prev.contact,
-                            businessHours: {
-                              ...prev.contact.businessHours,
-                              saturday: {
-                                ...prev.contact.businessHours.saturday,
-                                closes: e.target.value,
-                              },
-                            },
-                          },
-                        }))
-                      }}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'saturday', 'closes'], e.target.value)}
                     />
                   </div>
                 </div>
+                {/* Domingo */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Domingo</Label>
-                  <div className="flex gap-2">
+                  <Label className="text-xs text-muted-foreground uppercase">Domingo</Label>
+                  <div className="flex gap-2 items-center">
                     <Input
-                      placeholder="09:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.sunday.opens}
-                      onChange={(e) => {
-                        setLocalContent(prev => ({
-                          ...prev,
-                          contact: {
-                            ...prev.contact,
-                            businessHours: {
-                              ...prev.contact.businessHours,
-                              sunday: {
-                                ...prev.contact.businessHours.sunday,
-                                opens: e.target.value,
-                              },
-                            },
-                          },
-                        }))
-                      }}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'sunday', 'opens'], e.target.value)}
                     />
-                    <span className="self-center">-</span>
+                    <span>-</span>
                     <Input
-                      placeholder="14:00"
+                      className="h-8 text-sm"
                       value={localContent.contact.businessHours.sunday.closes}
-                      onChange={(e) => {
-                        setLocalContent(prev => ({
-                          ...prev,
-                          contact: {
-                            ...prev.contact,
-                            businessHours: {
-                              ...prev.contact.businessHours,
-                              sunday: {
-                                ...prev.contact.businessHours.sunday,
-                                closes: e.target.value,
-                              },
-                            },
-                          },
-                        }))
-                      }}
-                      className="text-sm"
+                      onChange={(e) => handleDeepChange('contact', ['businessHours', 'sunday', 'closes'], e.target.value)}
                     />
                   </div>
                 </div>
@@ -563,122 +484,109 @@ export default function ContenidoPage() {
           </div>
         </CollapsibleSection>
 
-        {/* Social Media */}
+        {/* 5. SOCIAL MEDIA */}
         <CollapsibleSection title="Redes Sociales" icon={<Share2 className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="social-facebook">Facebook</Label>
+                <Label>Facebook URL</Label>
                 <Input
-                  id="social-facebook"
                   value={localContent.social.facebook || ''}
                   onChange={(e) => handleChange('social', 'facebook', e.target.value)}
-                  placeholder="https://facebook.com/tu-pagina"
+                  placeholder="https://facebook.com/..."
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="social-instagram">Instagram</Label>
+                <Label>Instagram URL</Label>
                 <Input
-                  id="social-instagram"
                   value={localContent.social.instagram || ''}
                   onChange={(e) => handleChange('social', 'instagram', e.target.value)}
-                  placeholder="https://instagram.com/tu-cuenta"
+                  placeholder="https://instagram.com/..."
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="social-tiktok">TikTok</Label>
+                <Label>TikTok URL</Label>
                 <Input
-                  id="social-tiktok"
                   value={localContent.social.tiktok || ''}
                   onChange={(e) => handleChange('social', 'tiktok', e.target.value)}
-                  placeholder="https://tiktok.com/@tu-cuenta"
+                  placeholder="https://tiktok.com/..."
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="social-youtube">YouTube</Label>
+                <Label>YouTube URL</Label>
                 <Input
-                  id="social-youtube"
                   value={localContent.social.youtube || ''}
                   onChange={(e) => handleChange('social', 'youtube', e.target.value)}
-                  placeholder="https://youtube.com/@tu-canal"
+                  placeholder="https://youtube.com/..."
                 />
               </div>
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* Footer */}
+        {/* 6. FOOTER */}
         <CollapsibleSection title="Pie de Página (Footer)" icon={<LayoutGrid className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="footer-description">Descripción del Footer</Label>
+              <Label>Descripción Corta</Label>
               <Textarea
-                id="footer-description"
                 value={localContent.footer.description}
                 onChange={(e) => handleChange('footer', 'description', e.target.value)}
                 rows={2}
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="footer-copyright">Texto de Copyright</Label>
+              <Label>Texto Copyright</Label>
               <Input
-                id="footer-copyright"
                 value={localContent.footer.copyrightText}
                 onChange={(e) => handleChange('footer', 'copyrightText', e.target.value)}
               />
             </div>
-
             <div className="flex items-center gap-2">
               <Switch
                 id="footer-social"
                 checked={localContent.footer.showSocialLinks}
                 onCheckedChange={(checked) => handleChange('footer', 'showSocialLinks', checked)}
               />
-              <Label htmlFor="footer-social">Mostrar enlaces de redes sociales</Label>
+              <Label htmlFor="footer-social">Mostrar iconos sociales</Label>
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* Section Visibility */}
-        <CollapsibleSection title="Visibilidad de Secciones" icon={<LayoutGrid className="w-5 h-5" />}>
+        {/* 7. VISIBILITY */}
+        <CollapsibleSection title="Visibilidad de Secciones" icon={<Eye className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              Activa o desactiva las secciones que deseas mostrar en la página principal.
+            <p className="text-sm text-muted-foreground mb-2">
+              Activa o desactiva los bloques de la página de inicio.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {Object.entries(localContent.sections).map(([key, value]) => {
                 const labels: Record<string, string> = {
                   hero: 'Hero / Portada',
                   topBanner: 'Banner Superior',
                   categories: 'Categorías',
-                  featuredProducts: 'Productos Destacados',
+                  featuredProducts: 'Destacados',
                   services: 'Servicios',
                   promotions: 'Promociones',
                   about: 'Sobre Nosotros',
                   testimonials: 'Testimonios',
                   faq: 'Preguntas Frecuentes',
                   contact: 'Contacto',
-                  newsletter: 'Newsletter',
+                  newsletter: 'Boletín',
                 }
                 return (
-                  <div key={key} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                  <div key={key} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border">
                     <Switch
                       id={`section-${key}`}
                       checked={value}
                       onCheckedChange={(checked) => {
                         setLocalContent(prev => ({
                           ...prev,
-                          sections: {
-                            ...prev.sections,
-                            [key]: checked,
-                          },
+                          sections: { ...prev.sections, [key]: checked }
                         }))
                       }}
                     />
-                    <Label htmlFor={`section-${key}`} className="text-sm">
+                    <Label htmlFor={`section-${key}`} className="cursor-pointer">
                       {labels[key] || key}
                     </Label>
                   </div>
@@ -688,58 +596,56 @@ export default function ContenidoPage() {
           </div>
         </CollapsibleSection>
 
-        {/* Button Styles */}
+        {/* 8. BUTTON STYLES */}
         <CollapsibleSection title="Estilo de Botones" icon={<Palette className="w-5 h-5" />}>
           <div className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label>Radio de Borde</Label>
+              <Label>Redondeo de Bordes</Label>
               <Select
                 value={localContent.buttons.borderRadius}
-                onValueChange={(value) => handleChange('buttons', 'borderRadius', value as 'none' | 'sm' | 'md' | 'lg' | 'full')}
+                onValueChange={(value) => handleChange('buttons', 'borderRadius', value as any)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Sin bordes redondeados</SelectItem>
-                  <SelectItem value="sm">Pequeño</SelectItem>
-                  <SelectItem value="md">Mediano</SelectItem>
-                  <SelectItem value="lg">Grande</SelectItem>
-                  <SelectItem value="full">Completamente redondeado</SelectItem>
+                  <SelectItem value="none">Cuadrado (None)</SelectItem>
+                  <SelectItem value="sm">Pequeño (Small)</SelectItem>
+                  <SelectItem value="md">Mediano (Medium)</SelectItem>
+                  <SelectItem value="lg">Grande (Large)</SelectItem>
+                  <SelectItem value="full">Redondo (Full)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-3">Vista previa de botones:</p>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  className={cn(
-                    localContent.buttons.borderRadius === 'none' && 'rounded-none',
-                    localContent.buttons.borderRadius === 'sm' && 'rounded-sm',
-                    localContent.buttons.borderRadius === 'md' && 'rounded-md',
-                    localContent.buttons.borderRadius === 'lg' && 'rounded-lg',
-                    localContent.buttons.borderRadius === 'full' && 'rounded-full'
-                  )}
-                >
-                  Botón Primario
-                </Button>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    localContent.buttons.borderRadius === 'none' && 'rounded-none',
-                    localContent.buttons.borderRadius === 'sm' && 'rounded-sm',
-                    localContent.buttons.borderRadius === 'md' && 'rounded-md',
-                    localContent.buttons.borderRadius === 'lg' && 'rounded-lg',
-                    localContent.buttons.borderRadius === 'full' && 'rounded-full'
-                  )}
-                >
-                  Botón Secundario
-                </Button>
-              </div>
+            <div className="p-6 bg-muted/50 rounded-lg flex gap-4 items-center justify-center border border-dashed">
+              <Button
+                className={cn(
+                  localContent.buttons.borderRadius === 'none' && 'rounded-none',
+                  localContent.buttons.borderRadius === 'sm' && 'rounded-sm',
+                  localContent.buttons.borderRadius === 'md' && 'rounded-md',
+                  localContent.buttons.borderRadius === 'lg' && 'rounded-lg',
+                  localContent.buttons.borderRadius === 'full' && 'rounded-full'
+                )}
+              >
+                Botón Principal
+              </Button>
+              <Button
+                variant="outline"
+                className={cn(
+                  localContent.buttons.borderRadius === 'none' && 'rounded-none',
+                  localContent.buttons.borderRadius === 'sm' && 'rounded-sm',
+                  localContent.buttons.borderRadius === 'md' && 'rounded-md',
+                  localContent.buttons.borderRadius === 'lg' && 'rounded-lg',
+                  localContent.buttons.borderRadius === 'full' && 'rounded-full'
+                )}
+              >
+                Botón Secundario
+              </Button>
             </div>
           </div>
         </CollapsibleSection>
+
       </div>
     </div>
   )

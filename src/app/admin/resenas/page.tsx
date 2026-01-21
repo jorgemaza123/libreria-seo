@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Plus, Edit, Trash2, Save, X, Star, User } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, X, Star, User, Loader2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
@@ -18,57 +18,19 @@ interface Testimonial {
   isActive: boolean
 }
 
-const defaultTestimonials: Testimonial[] = [
-  {
-    id: '1',
-    name: 'María García',
-    role: 'Dueña de negocio',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-    rating: 5,
-    comment: 'Excelente servicio! Me ayudaron con los trámites de mi negocio y la atención fue rapidísima. Los recomiendo al 100%.',
-    date: 'Hace 2 días',
-    service: 'Trámites Online',
-    isActive: true,
-  },
-  {
-    id: '2',
-    name: 'Carlos Mendoza',
-    role: 'Estudiante universitario',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-    rating: 5,
-    comment: 'Los mejores precios en útiles escolares de todo SJL. La sublimación de mi polo quedó increíble, muy buena calidad.',
-    date: 'Hace 1 semana',
-    service: 'Sublimación',
-    isActive: true,
-  },
-  {
-    id: '3',
-    name: 'Ana Lucía Pérez',
-    role: 'Profesora',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-    rating: 5,
-    comment: 'Siempre vengo aquí para mis impresiones y copias. El servicio es rápido y el precio es muy accesible. ¡Muy recomendado!',
-    date: 'Hace 3 días',
-    service: 'Impresiones',
-    isActive: true,
-  },
-]
-
 const serviceOptions = [
-  'Útiles Escolares',
-  'Impresiones',
-  'Sublimación',
-  'Trámites Online',
-  'Soporte Técnico',
-  'Diseño Gráfico',
-  'Recargas y Pagos',
-  'Otro',
+  'Útiles Escolares', 'Impresiones', 'Sublimación',
+  'Trámites Online', 'Soporte Técnico', 'Diseño Gráfico',
+  'Recargas y Pagos', 'Otro',
 ]
 
 export default function ResenasPage() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  
   const [formData, setFormData] = useState({
     name: '',
     role: '',
@@ -79,64 +41,104 @@ export default function ResenasPage() {
     service: 'Útiles Escolares',
   })
 
+  // 1. Cargar Reseñas Reales
+  useEffect(() => {
+    fetchReviews()
+  }, [])
+
+  const fetchReviews = async () => {
+    try {
+      setIsLoading(true)
+      const res = await fetch('/api/reviews')
+      if (res.ok) {
+        const data = await res.json()
+        setTestimonials(data || [])
+      }
+    } catch (error) {
+      toast.error('Error al cargar reseñas')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // 2. Preparar Edición
   const handleEdit = (testimonial: Testimonial) => {
     setEditingId(testimonial.id)
+    setIsAdding(true)
     setFormData({
       name: testimonial.name,
-      role: testimonial.role,
-      avatar: testimonial.avatar,
+      role: testimonial.role || '',
+      avatar: testimonial.avatar || '',
       rating: testimonial.rating,
       comment: testimonial.comment,
-      date: testimonial.date,
-      service: testimonial.service,
+      date: testimonial.date || 'Hace poco',
+      service: testimonial.service || 'Otro',
     })
   }
 
-  const handleSave = (id: string) => {
-    setTestimonials(prev => prev.map(t =>
-      t.id === id ? { ...t, ...formData } : t
-    ))
-    setEditingId(null)
-    toast.success('Reseña actualizada')
-  }
-
-  const handleAdd = () => {
-    const newTestimonial: Testimonial = {
-      id: Date.now().toString(),
-      name: formData.name,
-      role: formData.role,
-      avatar: formData.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      rating: formData.rating,
-      comment: formData.comment,
-      date: formData.date,
-      service: formData.service,
-      isActive: true,
-    }
-    setTestimonials(prev => [newTestimonial, ...prev])
+  const resetForm = () => {
     setIsAdding(false)
+    setEditingId(null)
     setFormData({
-      name: '',
-      role: '',
-      avatar: '',
-      rating: 5,
-      comment: '',
-      date: 'Hace poco',
-      service: 'Útiles Escolares',
+      name: '', role: '', avatar: '', rating: 5,
+      comment: '', date: 'Hace poco', service: 'Útiles Escolares'
     })
-    toast.success('Reseña agregada')
   }
 
-  const handleDelete = (id: string) => {
-    if (confirm('¿Estás seguro de eliminar esta reseña?')) {
-      setTestimonials(prev => prev.filter(t => t.id !== id))
-      toast.success('Reseña eliminada')
+  // 3. Guardar (Crear o Editar)
+  const handleSave = async () => {
+    if (!formData.name || !formData.comment) return toast.error("Nombre y comentario obligatorios")
+
+    setIsSaving(true)
+    try {
+      const url = editingId ? `/api/reviews/${editingId}` : '/api/reviews'
+      const method = editingId ? 'PUT' : 'POST'
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      if (res.ok) {
+        toast.success(editingId ? 'Reseña actualizada' : 'Reseña creada')
+        resetForm()
+        fetchReviews()
+      } else {
+        toast.error('Error al guardar')
+      }
+    } catch (error) {
+      toast.error('Error de conexión')
+    } finally {
+      setIsSaving(false)
     }
   }
 
-  const toggleActive = (id: string) => {
-    setTestimonials(prev => prev.map(t =>
-      t.id === id ? { ...t, isActive: !t.isActive } : t
-    ))
+  // 4. Eliminar
+  const handleDelete = async (id: string) => {
+    if (!confirm('¿Eliminar esta reseña?')) return
+    try {
+      await fetch(`/api/reviews/${id}`, { method: 'DELETE' })
+      toast.success('Reseña eliminada')
+      fetchReviews()
+    } catch (error) { toast.error('Error al eliminar') }
+  }
+
+  // 5. Activar/Desactivar
+  const toggleActive = async (testimonial: Testimonial) => {
+    const newStatus = !testimonial.isActive
+    setTestimonials(prev => prev.map(t => t.id === testimonial.id ? { ...t, isActive: newStatus } : t))
+    
+    try {
+        await fetch(`/api/reviews/${testimonial.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isActive: newStatus })
+        })
+    } catch (error) {
+        toast.error('Error al cambiar estado')
+        fetchReviews()
+    }
   }
 
   const RatingStars = ({ rating, onChange }: { rating: number; onChange?: (r: number) => void }) => (
@@ -151,9 +153,7 @@ export default function ResenasPage() {
         >
           <Star
             className={`w-5 h-5 ${
-              star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-muted-foreground'
+              star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
             }`}
           />
         </button>
@@ -162,243 +162,148 @@ export default function ResenasPage() {
   )
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-heading font-bold">Reseñas y Testimonios</h2>
-          <p className="text-muted-foreground">
-            Gestiona las reseñas que se muestran en la página principal
-          </p>
+          <h2 className="text-2xl font-heading font-bold">Reseñas</h2>
+          <p className="text-muted-foreground">Testimonios de clientes en tu web</p>
         </div>
-        <Button onClick={() => setIsAdding(true)} disabled={isAdding}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nueva Reseña
-        </Button>
+        <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={fetchReviews} disabled={isLoading}>
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+            {!isAdding && (
+                <Button onClick={() => setIsAdding(true)}>
+                <Plus className="w-4 h-4 mr-2" /> Nueva Reseña
+                </Button>
+            )}
+        </div>
       </div>
 
-      {/* Info sobre Google Reviews */}
-      <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
-        <h4 className="font-bold text-blue-600 dark:text-blue-400 mb-2">
-          ¿Cómo funcionan las reseñas de Google?
-        </h4>
-        <p className="text-sm text-blue-600/80 dark:text-blue-400/80">
-          Las reseñas de Google se publican en Google Maps y no se pueden eliminar directamente desde aquí.
-          Solo puedes responder a ellas o reportarlas si violan las políticas de Google.
-          Esta sección gestiona los <strong>testimonios internos</strong> que se muestran en tu página web,
-          los cuales puedes agregar, editar y eliminar libremente.
-        </p>
-      </div>
-
-      {/* Add Form */}
       {isAdding && (
-        <div className="bg-card rounded-xl p-6 border border-border space-y-4">
-          <h3 className="font-bold">Nueva Reseña</h3>
+        <div className="bg-card rounded-xl p-6 border border-border space-y-4 shadow-lg">
+          <h3 className="font-bold text-lg">{editingId ? 'Editar Reseña' : 'Nueva Reseña'}</h3>
+          
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Nombre del cliente</label>
+              <label className="block text-sm font-medium mb-2">Nombre Cliente *</label>
               <input
-                type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background"
                 placeholder="Ej: Juan Pérez"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Profesión/Ocupación</label>
+              <label className="block text-sm font-medium mb-2">Rol / Ocupación</label>
               <input
-                type="text"
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Ej: Estudiante, Contador, etc."
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+                placeholder="Ej: Estudiante"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Servicio/Producto</label>
+              <label className="block text-sm font-medium mb-2">Servicio</label>
               <select
                 value={formData.service}
                 onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background"
               >
-                {serviceOptions.map(service => (
-                  <option key={service} value={service}>{service}</option>
-                ))}
+                {serviceOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Fecha (texto)</label>
-              <input
-                type="text"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Ej: Hace 2 días, Hace 1 semana"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-medium mb-2">Calificación</label>
-              <RatingStars rating={formData.rating} onChange={(r) => setFormData({ ...formData, rating: r })} />
+              <div className="pt-2"><RatingStars rating={formData.rating} onChange={(r) => setFormData({...formData, rating: r})} /></div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">URL de foto (opcional)</label>
-              <input
-                type="text"
-                value={formData.avatar}
-                onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="https://..."
-              />
-            </div>
+            
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2">Comentario</label>
+              <label className="block text-sm font-medium mb-2">Comentario *</label>
               <textarea
                 value={formData.comment}
                 onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                rows={3}
-                placeholder="El comentario del cliente..."
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background h-24 resize-none"
+                placeholder="Opinión del cliente..."
               />
             </div>
+            
+            <div className="grid grid-cols-2 gap-4 md:col-span-2">
+                <div>
+                    <label className="block text-sm font-medium mb-2">Fecha (Texto)</label>
+                    <input
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+                        placeholder="Ej: Hace 2 días"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium mb-2">URL Avatar (Opcional)</label>
+                    <input
+                        value={formData.avatar}
+                        onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-input bg-background"
+                        placeholder="https://..."
+                    />
+                </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAdd} disabled={!formData.name || !formData.comment}>
-              <Save className="w-4 h-4 mr-2" />
+
+          <div className="flex gap-2 justify-end pt-4 border-t border-border">
+            <Button variant="outline" onClick={resetForm}>Cancelar</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : <Save className="w-4 h-4 mr-2" />}
               Guardar
             </Button>
-            <Button variant="outline" onClick={() => {
-              setIsAdding(false)
-              setFormData({
-                name: '',
-                role: '',
-                avatar: '',
-                rating: 5,
-                comment: '',
-                date: 'Hace poco',
-                service: 'Útiles Escolares',
-              })
-            }}>
-              <X className="w-4 h-4 mr-2" />
-              Cancelar
-            </Button>
           </div>
         </div>
       )}
 
-      {/* Testimonials Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {testimonials.map((testimonial) => (
-          <div
-            key={testimonial.id}
-            className={`bg-card rounded-xl p-6 border border-border ${
-              !testimonial.isActive ? 'opacity-50' : ''
-            }`}
-          >
-            {editingId === testimonial.id ? (
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  placeholder="Nombre"
-                />
-                <input
-                  type="text"
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  placeholder="Ocupación"
-                />
-                <textarea
-                  value={formData.comment}
-                  onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  rows={3}
-                  placeholder="Comentario"
-                />
-                <RatingStars rating={formData.rating} onChange={(r) => setFormData({ ...formData, rating: r })} />
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => handleSave(testimonial.id)}>
-                    <Save className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Header */}
+        {isLoading ? (
+            <div className="col-span-full text-center py-12">Cargando reseñas...</div>
+        ) : testimonials.length === 0 && !isAdding ? (
+            <div className="col-span-full text-center py-12 bg-muted/30 rounded-xl border border-dashed">
+               <p className="text-muted-foreground">No hay reseñas registradas.</p>
+            </div>
+        ) : (
+            testimonials.map((t) => (
+              <div key={t.id} className={`bg-card rounded-xl p-6 border border-border group hover:shadow-md transition-all ${!t.isActive ? 'opacity-60' : ''}`}>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    {testimonial.avatar ? (
-                      <Image
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
+                    {t.avatar ? (
+                      <Image src={t.avatar} alt={t.name} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="w-6 h-6 text-primary" />
-                      </div>
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary"><User className="w-5 h-5"/></div>
                     )}
                     <div>
-                      <h4 className="font-bold">{testimonial.name}</h4>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                      <h4 className="font-bold text-sm">{t.name}</h4>
+                      <p className="text-xs text-muted-foreground">{t.role}</p>
                     </div>
                   </div>
-                  <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                    {testimonial.service}
-                  </span>
-                </div>
-
-                {/* Rating */}
-                <RatingStars rating={testimonial.rating} />
-
-                {/* Comment */}
-                <p className="text-sm mt-3 mb-4 line-clamp-3">
-                  &ldquo;{testimonial.comment}&rdquo;
-                </p>
-
-                {/* Date */}
-                <p className="text-xs text-muted-foreground mb-4">{testimonial.date}</p>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <button
-                    onClick={() => toggleActive(testimonial.id)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      testimonial.isActive
-                        ? 'bg-emerald-500/10 text-emerald-600'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {testimonial.isActive ? 'Visible' : 'Oculto'}
-                  </button>
-                  <div className="flex gap-1">
-                    <Button size="sm" variant="ghost" onClick={() => handleEdit(testimonial)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(testimonial.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleEdit(t)}><Edit className="w-3 h-3"/></Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => handleDelete(t.id)}><Trash2 className="w-3 h-3"/></Button>
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-        ))}
-      </div>
 
-      {testimonials.length === 0 && (
-        <div className="text-center py-12 bg-muted/50 rounded-xl">
-          <p className="text-muted-foreground">No hay reseñas. ¡Agrega tu primera reseña!</p>
-        </div>
-      )}
+                <RatingStars rating={t.rating} />
+                <p className="text-sm mt-3 mb-3 italic text-muted-foreground line-clamp-3">"{t.comment}"</p>
+                
+                <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
+                    <span className="text-xs bg-muted px-2 py-1 rounded">{t.service}</span>
+                    <button 
+                        onClick={() => toggleActive(t)}
+                        className={`text-xs px-2 py-1 rounded font-medium ${t.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}
+                    >
+                        {t.isActive ? 'Visible' : 'Oculto'}
+                    </button>
+                </div>
+              </div>
+            ))
+        )}
+      </div>
     </div>
   )
 }

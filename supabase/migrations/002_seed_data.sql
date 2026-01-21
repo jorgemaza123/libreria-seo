@@ -118,12 +118,12 @@ ON CONFLICT (slug) DO NOTHING;
 -- SERVICIOS
 -- =============================================
 INSERT INTO services (name, slug, description, short_description, icon, price, "order", is_active) VALUES
-('Impresiones', 'impresiones', 'Servicio de impresiones a color y blanco/negro en diferentes tamaños. Calidad profesional garantizada.', 'Impresiones a color y B/N desde S/0.10', 'Printer', 'Desde S/0.10', 1, true),
-('Fotocopias', 'fotocopias', 'Copias rápidas y de calidad. Servicio express para documentos urgentes.', 'Copias rápidas B/N y color', 'Copy', 'Desde S/0.05', 2, true),
-('Anillados', 'anillados', 'Anillado profesional para tesis, trabajos y documentos. Varios colores de espiral disponibles.', 'Anillado profesional para tus documentos', 'BookOpen', 'Desde S/3.00', 3, true),
-('Plastificado', 'plastificado', 'Protege tus documentos importantes con nuestro servicio de plastificado de alta calidad.', 'Plastificado para proteger documentos', 'Shield', 'Desde S/2.00', 4, true),
+('Impresiones y Copias', 'Impresiones y Copias', 'Servicio de impresiones a color, B/N, copias, anillados, escaneos.', 'Impresiones a color y B/N desde S/0.10', 'Printer', 'Desde S/0.10', 1, true),
+('Sublimación', 'Sublimación', 'Polos, tazas, gorras, llaveros personalizados.', 'Totalmente personalizado', 'Copy', 'Desde S/0.05', 2, true),
+('Diseño Gráfico', 'Diseño Gráfico', 'Logos, banners, tarjetas, invitaciones.', 'Todo profesional para tus documentos', 'BookOpen', 'Desde S/3.00', 3, true),
+('Trámites Online', 'Trámites Online', 'SUNAT, ATU, RENIEC, AFP, brevetes y más.', 'Trámites Online para proteger documentos', 'Shield', 'Desde S/2.00', 4, true),
 ('Soporte Técnico', 'soporte-tecnico', 'Reparación de computadoras, laptops, formateo, instalación de programas y más.', 'Reparación y mantenimiento de PCs', 'Wrench', 'Consultar', 5, true),
-('Diseño e Impresión', 'diseno-impresion', 'Diseño de tarjetas, volantes, afiches y más. Impresión en alta calidad.', 'Diseño gráfico e impresión publicitaria', 'PenTool', 'Consultar', 6, true)
+('Monografias - trabajos escolares', 'Todo tipo de trabajos escolares de primaria y secundaria', 'PenTool', 'Consultar', 6, true)
 ON CONFLICT (slug) DO NOTHING;
 
 -- =============================================

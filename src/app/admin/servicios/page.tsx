@@ -1,369 +1,263 @@
 "use client"
 
-import { useState } from 'react'
-import { Plus, Edit, Trash2, Save, X, ArrowUpDown } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Plus, Edit, Trash2, Save, X, Loader2, Sparkles, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
+import { DynamicIcon } from '@/components/DynamicIcon' // <--- Importamos la magia
 
 interface Service {
   id: string
   name: string
+  slug: string
   description: string
-  price: string
+  short_description: string
   icon: string
-  color: string
-  popular: boolean
+  price: string
   isActive: boolean
+  order: number
 }
 
-const defaultServices: Service[] = [
-  {
-    id: '1',
-    name: 'Impresiones y Copias',
-    description: 'Impresiones a color, B/N, copias, anillados, escaneos.',
-    price: 'Desde S/ 0.10',
-    icon: 'Printer',
-    color: 'from-blue-500 to-blue-600',
-    popular: true,
-    isActive: true,
-  },
-  {
-    id: '2',
-    name: 'Soporte Técnico',
-    description: 'Reparación de laptops, PCs, formateo, mantenimiento.',
-    price: 'Desde S/ 30',
-    icon: 'Laptop',
-    color: 'from-violet-500 to-violet-600',
-    popular: false,
-    isActive: true,
-  },
-  {
-    id: '3',
-    name: 'Sublimación',
-    description: 'Polos, tazas, gorras, llaveros personalizados.',
-    price: 'Desde S/ 15',
-    icon: 'Shirt',
-    color: 'from-pink-500 to-pink-600',
-    popular: true,
-    isActive: true,
-  },
-  {
-    id: '4',
-    name: 'Trámites Online',
-    description: 'SUNAT, ATU, RENIEC, AFP, brevetes y más.',
-    price: 'Desde S/ 15',
-    icon: 'FileCheck',
-    color: 'from-emerald-500 to-emerald-600',
-    popular: false,
-    isActive: true,
-  },
-  {
-    id: '5',
-    name: 'Diseño Gráfico',
-    description: 'Logos, banners, tarjetas, invitaciones.',
-    price: 'Desde S/ 20',
-    icon: 'Palette',
-    color: 'from-amber-500 to-amber-600',
-    popular: false,
-    isActive: true,
-  },
-  {
-    id: '6',
-    name: 'Recargas y Pagos',
-    description: 'Recargas celulares, pagos de servicios.',
-    price: 'Sin comisión',
-    icon: 'Smartphone',
-    color: 'from-teal-500 to-teal-600',
-    popular: false,
-    isActive: true,
-  },
-]
-
-const iconOptions = ['Printer', 'Laptop', 'Shirt', 'FileCheck', 'Palette', 'Smartphone', 'Package', 'Camera', 'Wrench']
-const colorOptions = [
-  { name: 'Azul', value: 'from-blue-500 to-blue-600' },
-  { name: 'Violeta', value: 'from-violet-500 to-violet-600' },
-  { name: 'Rosa', value: 'from-pink-500 to-pink-600' },
-  { name: 'Esmeralda', value: 'from-emerald-500 to-emerald-600' },
-  { name: 'Ámbar', value: 'from-amber-500 to-amber-600' },
-  { name: 'Teal', value: 'from-teal-500 to-teal-600' },
-  { name: 'Rojo', value: 'from-red-500 to-red-600' },
-  { name: 'Indigo', value: 'from-indigo-500 to-indigo-600' },
-]
-
 export default function ServiciosPage() {
-  const [services, setServices] = useState<Service[]>(defaultServices)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [services, setServices] = useState<Service[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     description: '',
+    short_description: '',
+    icon: '',
     price: '',
-    icon: 'Package',
-    color: 'from-blue-500 to-blue-600',
-    popular: false,
   })
+
+  // Cargar Servicios
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      const res = await fetch('/api/services')
+      if (res.ok) {
+        const data = await res.json()
+        const mappedData = (data.services || []).map((item: any) => ({
+            ...item,
+            isActive: item.is_active
+        }))
+        setServices(mappedData)
+      }
+    } catch (error) {
+      toast.error('Error al cargar servicios')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleEdit = (service: Service) => {
     setEditingId(service.id)
     setFormData({
       name: service.name,
-      description: service.description,
-      price: service.price,
-      icon: service.icon,
-      color: service.color,
-      popular: service.popular,
+      slug: service.slug,
+      description: service.description || '',
+      short_description: service.short_description || '',
+      icon: service.icon || 'Star', // Valor por defecto si no hay icono
+      price: service.price || '',
+    })
+    setIsAdding(true)
+  }
+
+  const handleCancel = () => {
+    setIsAdding(false)
+    setEditingId(null)
+    setFormData({ name: '', slug: '', description: '', short_description: '', icon: '', price: '' })
+  }
+
+  const handleSave = async () => {
+    if (!formData.name) return toast.error("El nombre es obligatorio")
+
+    setIsSaving(true)
+    try {
+        const slug = formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        const payload = {
+            ...formData,
+            slug,
+            isActive: true 
+        }
+
+        const url = editingId ? `/api/services?id=${editingId}` : '/api/services'
+        const method = editingId ? 'PUT' : 'POST'
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+
+        if (res.ok) {
+            toast.success(editingId ? 'Servicio actualizado' : 'Servicio creado')
+            handleCancel()
+            fetchServices()
+        } else {
+            toast.error('Error al guardar')
+        }
+    } catch (error) {
+        toast.error('Error de conexión')
+    } finally {
+        setIsSaving(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('¿Eliminar servicio?')) return
+    try {
+        await fetch(`/api/services?id=${id}`, { method: 'DELETE' })
+        toast.success('Servicio eliminado')
+        fetchServices()
+    } catch (error) { toast.error('Error al eliminar') }
+  }
+
+  const toggleActive = async (service: Service) => {
+    const newStatus = !service.isActive
+    setServices(prev => prev.map(s => s.id === service.id ? { ...s, isActive: newStatus } : s))
+    await fetch(`/api/services?id=${service.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...service, isActive: newStatus })
     })
   }
 
-  const handleSave = (id: string) => {
-    setServices(prev => prev.map(s =>
-      s.id === id ? { ...s, ...formData } : s
-    ))
-    setEditingId(null)
-    toast.success('Servicio actualizado')
-  }
-
-  const handleAdd = () => {
-    const newService: Service = {
-      id: Date.now().toString(),
-      name: formData.name,
-      description: formData.description,
-      price: formData.price,
-      icon: formData.icon,
-      color: formData.color,
-      popular: formData.popular,
-      isActive: true,
-    }
-    setServices(prev => [...prev, newService])
-    setIsAdding(false)
-    setFormData({ name: '', description: '', price: '', icon: 'Package', color: 'from-blue-500 to-blue-600', popular: false })
-    toast.success('Servicio agregado')
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('¿Estás seguro de eliminar este servicio?')) {
-      setServices(prev => prev.filter(s => s.id !== id))
-      toast.success('Servicio eliminado')
-    }
-  }
-
-  const toggleActive = (id: string) => {
-    setServices(prev => prev.map(s =>
-      s.id === id ? { ...s, isActive: !s.isActive } : s
-    ))
-  }
-
-  const togglePopular = (id: string) => {
-    setServices(prev => prev.map(s =>
-      s.id === id ? { ...s, popular: !s.popular } : s
-    ))
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-heading font-bold">Servicios</h2>
-          <p className="text-muted-foreground">
-            Gestiona los servicios de la sección &quot;Más que una Librería&quot;
-          </p>
+          <p className="text-muted-foreground">Administra tus servicios</p>
         </div>
-        <Button onClick={() => setIsAdding(true)} disabled={isAdding}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Servicio
-        </Button>
+        {!isAdding && (
+            <Button onClick={() => setIsAdding(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Nuevo Servicio
+            </Button>
+        )}
       </div>
 
-      {/* Add Form */}
       {isAdding && (
-        <div className="bg-card rounded-xl p-6 border border-border space-y-4">
-          <h3 className="font-bold">Nuevo Servicio</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+        <div className="bg-card rounded-xl p-6 border border-border space-y-4 shadow-lg">
+          <h3 className="font-bold text-lg">{editingId ? 'Editar Servicio' : 'Nuevo Servicio'}</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium mb-2">Nombre del Servicio *</label>
+                    <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                        placeholder="Ej: Impresiones"
+                    />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-2 flex justify-between">
+                            Nombre del Icono
+                            <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="text-xs text-primary flex items-center hover:underline">
+                                Ver lista <ExternalLink className="w-3 h-3 ml-1"/>
+                            </a>
+                        </label>
+                        <div className="flex gap-2">
+                             {/* Previsualización del Icono */}
+                            <div className="w-10 h-10 rounded border flex items-center justify-center bg-muted">
+                                <DynamicIcon name={formData.icon || 'HelpCircle'} className="w-5 h-5" />
+                            </div>
+                            <input
+                                type="text"
+                                value={formData.icon}
+                                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                                className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                                placeholder="Ej: Printer"
+                            />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Escribe el nombre en inglés (Printer, Zap, Home...)</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Precio (Texto)</label>
+                        <input
+                            type="text"
+                            value={formData.price}
+                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                            className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                            placeholder="Ej: Desde S/0.10"
+                        />
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium mb-2">Descripción Corta</label>
+                    <input
+                        type="text"
+                        value={formData.short_description}
+                        onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                        className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                        placeholder="Resumen para la tarjeta..."
+                    />
+                </div>
+            </div>
+            
             <div>
-              <label className="block text-sm font-medium mb-2">Nombre</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Ej: Impresiones y Copias"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Precio</label>
-              <input
-                type="text"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Ej: Desde S/ 0.10"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2">Descripción</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                rows={2}
-                placeholder="Descripción del servicio..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Icono</label>
-              <select
-                value={formData.icon}
-                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                {iconOptions.map(icon => (
-                  <option key={icon} value={icon}>{icon}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Color</label>
-              <select
-                value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                {colorOptions.map(color => (
-                  <option key={color.value} value={color.value}>{color.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="popular"
-                checked={formData.popular}
-                onChange={(e) => setFormData({ ...formData, popular: e.target.checked })}
-                className="w-4 h-4 rounded border-input"
-              />
-              <label htmlFor="popular" className="text-sm font-medium">Marcar como Popular</label>
+                <label className="block text-sm font-medium mb-2">Descripción Completa</label>
+                <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-input bg-background h-[150px] resize-none"
+                    placeholder="Detalles del servicio..."
+                />
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAdd}>
-              <Save className="w-4 h-4 mr-2" />
+          <div className="flex gap-2 justify-end pt-4">
+            <Button variant="outline" onClick={handleCancel}>Cancelar</Button>
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : <Save className="w-4 h-4 mr-2" />}
               Guardar
-            </Button>
-            <Button variant="outline" onClick={() => {
-              setIsAdding(false)
-              setFormData({ name: '', description: '', price: '', icon: 'Package', color: 'from-blue-500 to-blue-600', popular: false })
-            }}>
-              <X className="w-4 h-4 mr-2" />
-              Cancelar
             </Button>
           </div>
         </div>
       )}
 
-      {/* Services Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {services.map((service) => (
-          <div
-            key={service.id}
-            className={`bg-card rounded-xl p-6 border border-border ${
-              !service.isActive ? 'opacity-50' : ''
-            }`}
-          >
-            {editingId === service.id ? (
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  placeholder="Nombre"
-                />
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  rows={2}
-                  placeholder="Descripción"
-                />
-                <input
-                  type="text"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-3 py-2 rounded border border-input bg-background text-sm"
-                  placeholder="Precio"
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => handleSave(service.id)}>
-                    <Save className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
-                    <X className="w-4 h-4" />
-                  </Button>
+      {/* Grid de Servicios */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {isLoading ? (
+            <div className="col-span-full text-center py-12">Cargando...</div>
+        ) : services.map((service) => (
+            <div key={service.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-all">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        {/* Aquí usamos el Icono Dinámico */}
+                        <DynamicIcon name={service.icon} className="w-6 h-6" />
+                    </div>
+                    <Switch checked={service.isActive} onCheckedChange={() => toggleActive(service)} />
                 </div>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center`}>
-                    <span className="text-white text-lg font-bold">
-                      {service.icon.charAt(0)}
-                    </span>
-                  </div>
-                  {service.popular && (
-                    <span className="bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full text-[10px] font-bold">
-                      POPULAR
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-bold text-lg mb-2">{service.name}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-                <p className="text-primary font-bold mb-4">{service.price}</p>
-
+                
+                <h4 className="font-bold text-lg mb-1">{service.name}</h4>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-[40px]">
+                    {service.short_description || service.description}
+                </p>
+                
                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => toggleActive(service.id)}
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        service.isActive
-                          ? 'bg-emerald-500/10 text-emerald-600'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {service.isActive ? 'Activo' : 'Inactivo'}
-                    </button>
-                    <button
-                      onClick={() => togglePopular(service.id)}
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        service.popular
-                          ? 'bg-destructive/10 text-destructive'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      Popular
-                    </button>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button size="sm" variant="ghost" onClick={() => handleEdit(service)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(service.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+                    <span className="font-mono text-sm font-medium">{service.price}</span>
+                    <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEdit(service)}>
+                            <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => handleDelete(service.id)}>
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                    </div>
                 </div>
-              </>
-            )}
-          </div>
+            </div>
         ))}
-      </div>
-
-      {/* Info */}
-      <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
-        <p className="text-sm text-blue-600 dark:text-blue-400">
-          <strong>Nota:</strong> Los servicios editados aquí se mostrarán en la sección &quot;Más que una Librería&quot; de la página principal. Al hacer clic en cualquier servicio, el cliente será redirigido a WhatsApp con un mensaje predefinido.
-        </p>
       </div>
     </div>
   )

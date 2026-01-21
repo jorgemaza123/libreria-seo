@@ -1,48 +1,14 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Save, Phone, Mail, MapPin, Instagram, Key, User, Eye, EyeOff, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Save, Key, User, Eye, EyeOff, Loader2, CheckCircle, AlertCircle, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { CONTACT, BUSINESS_INFO, SOCIAL_MEDIA } from '@/lib/constants'
 import { toast } from 'sonner'
+// Importamos tus funciones de auth.ts existente
 import { changePassword, updateAdminProfile, getCurrentAdmin } from '@/lib/supabase/auth'
 
 export default function ConfiguracionPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'general' | 'password' | 'profile'>('general')
-
-  // Estado para información de contacto
-  const [contactInfo, setContactInfo] = useState<{
-    whatsapp: string
-    phone: string
-    email: string
-  }>({
-    whatsapp: CONTACT.whatsapp,
-    phone: CONTACT.phone,
-    email: CONTACT.email,
-  })
-
-  // Estado para información del negocio
-  const [businessInfo, setBusinessInfo] = useState<{
-    name: string
-    street: string
-    city: string
-    state: string
-  }>({
-    name: BUSINESS_INFO.name,
-    street: BUSINESS_INFO.address.street,
-    city: BUSINESS_INFO.address.city,
-    state: BUSINESS_INFO.address.state,
-  })
-
-  // Estado para redes sociales
-  const [socialMedia, setSocialMedia] = useState<{
-    facebook: string
-    instagram: string
-  }>({
-    facebook: SOCIAL_MEDIA.facebook,
-    instagram: SOCIAL_MEDIA.instagram,
-  })
+  const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile')
 
   // Estado para cambio de contraseña
   const [passwordForm, setPasswordForm] = useState({
@@ -61,35 +27,23 @@ export default function ConfiguracionPage() {
   })
   const [profileLoading, setProfileLoading] = useState(false)
 
-  // Cargar datos del admin actual
+  // Cargar datos del admin actual al entrar
   useEffect(() => {
-    getCurrentAdmin().then(admin => {
-      if (admin) {
-        setProfileForm({
-          name: admin.name,
-          email: admin.email,
-        })
+    async function loadAdmin() {
+      try {
+        const admin = await getCurrentAdmin()
+        if (admin) {
+          setProfileForm({
+            name: admin.name || '',
+            email: admin.email || '',
+          })
+        }
+      } catch (error) {
+        console.error("Error cargando admin:", error)
       }
-    })
-
-    // Check if we need to scroll to password section
-    if (window.location.hash === '#password') {
-      setActiveTab('password')
     }
+    loadAdmin()
   }, [])
-
-  const handleSave = async () => {
-    setIsLoading(true)
-    try {
-      // TODO: Save to Supabase when configured
-      toast.success('Configuración guardada')
-      toast.info('Nota: Para cambios permanentes, edita src/lib/constants.ts')
-    } catch (error) {
-      toast.error('Error al guardar')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -114,8 +68,10 @@ export default function ConfiguracionPage() {
       setPasswordForm({ newPassword: '', confirmPassword: '' })
       toast.success('Contraseña actualizada correctamente')
     } catch (error) {
+      // Manejo seguro del error
       const message = error instanceof Error ? error.message : 'Error al cambiar la contraseña'
       setPasswordError(message)
+      toast.error(message)
     } finally {
       setPasswordLoading(false)
     }
@@ -127,8 +83,9 @@ export default function ConfiguracionPage() {
 
     try {
       await updateAdminProfile(profileForm.name)
-      toast.success('Perfil actualizado')
+      toast.success('Perfil actualizado correctamente')
     } catch (error) {
+      console.error(error)
       toast.error('Error al actualizar el perfil')
     } finally {
       setProfileLoading(false)
@@ -136,27 +93,30 @@ export default function ConfiguracionPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl animate-fade-in pb-10">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-heading font-bold">Configuración</h2>
+        <h2 className="text-2xl font-heading font-bold">Mi Cuenta</h2>
         <p className="text-muted-foreground">
-          Información general, perfil y seguridad
+          Gestiona tus credenciales de acceso y perfil de administrador.
         </p>
+      </div>
+
+      {/* Info Box */}
+      <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20 flex gap-3 items-start">
+        <ShieldCheck className="w-5 h-5 text-blue-600 mt-0.5" />
+        <div>
+            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                ¿Buscas cambiar el teléfono o la dirección?
+            </p>
+            <p className="text-sm text-blue-600/80 dark:text-blue-400/80">
+                Esa información ahora se gestiona en la sección <strong>Contenido</strong> para que se actualice automáticamente en toda la página web.
+            </p>
+        </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-2 border-b border-border">
-        <button
-          onClick={() => setActiveTab('general')}
-          className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
-            activeTab === 'general'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          General
-        </button>
         <button
           onClick={() => setActiveTab('profile')}
           className={`px-4 py-2 font-medium transition-colors border-b-2 -mb-px ${
@@ -175,220 +135,83 @@ export default function ConfiguracionPage() {
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
-          Contraseña
+          Seguridad
         </button>
       </div>
 
-      {/* General Tab */}
-      {activeTab === 'general' && (
-        <div className="space-y-6">
-          {/* Contact Info */}
-          <div className="bg-card rounded-xl p-6 border border-border space-y-4">
-            <h3 className="font-heading font-bold flex items-center gap-2">
-              <Phone className="w-5 h-5 text-primary" />
-              Información de Contacto
-            </h3>
-
-            <div className="grid gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">WhatsApp</label>
-                <input
-                  type="text"
-                  value={contactInfo.whatsapp}
-                  onChange={(e) => setContactInfo({ ...contactInfo, whatsapp: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="51987654321"
-                />
-                <p className="text-xs text-muted-foreground mt-1">Sin espacios ni símbolos, solo números con código de país</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Teléfono (formato display)</label>
-                <input
-                  type="text"
-                  value={contactInfo.phone}
-                  onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="+51 987 654 321"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
-                  type="email"
-                  value={contactInfo.email}
-                  onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="contacto@ejemplo.com"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Business Info */}
-          <div className="bg-card rounded-xl p-6 border border-border space-y-4">
-            <h3 className="font-heading font-bold flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              Información del Negocio
-            </h3>
-
-            <div className="grid gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Nombre del Negocio</label>
-                <input
-                  type="text"
-                  value={businessInfo.name}
-                  onChange={(e) => setBusinessInfo({ ...businessInfo, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Dirección</label>
-                <input
-                  type="text"
-                  value={businessInfo.street}
-                  onChange={(e) => setBusinessInfo({ ...businessInfo, street: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Ciudad</label>
-                  <input
-                    type="text"
-                    value={businessInfo.city}
-                    onChange={(e) => setBusinessInfo({ ...businessInfo, city: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Estado/Región</label>
-                  <input
-                    type="text"
-                    value={businessInfo.state}
-                    onChange={(e) => setBusinessInfo({ ...businessInfo, state: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Social Media */}
-          <div className="bg-card rounded-xl p-6 border border-border space-y-4">
-            <h3 className="font-heading font-bold flex items-center gap-2">
-              <Instagram className="w-5 h-5 text-primary" />
-              Redes Sociales
-            </h3>
-
-            <div className="grid gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Facebook</label>
-                <input
-                  type="url"
-                  value={socialMedia.facebook}
-                  onChange={(e) => setSocialMedia({ ...socialMedia, facebook: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="https://facebook.com/..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Instagram</label>
-                <input
-                  type="url"
-                  value={socialMedia.instagram}
-                  onChange={(e) => setSocialMedia({ ...socialMedia, instagram: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="https://instagram.com/..."
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isLoading}>
-              <Save className="w-4 h-4 mr-2" />
-              {isLoading ? 'Guardando...' : 'Guardar Cambios'}
-            </Button>
-          </div>
-
-          {/* Info */}
-          <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/20">
-            <p className="text-sm text-amber-600 dark:text-amber-400">
-              <strong>Nota:</strong> Los cambios aquí se guardarán en Supabase.
-              Mientras configuras la base de datos, puedes editar directamente el archivo <code className="bg-muted px-1 rounded">src/lib/constants.ts</code>
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <h3 className="font-heading font-bold flex items-center gap-2 mb-6">
+        <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
+          <h3 className="font-heading font-bold flex items-center gap-2 mb-6 text-lg">
             <User className="w-5 h-5 text-primary" />
-            Información del Perfil
+            Información del Administrador
           </h3>
 
           <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-md">
             <div>
-              <label className="block text-sm font-medium mb-2">Nombre</label>
+              <label className="block text-sm font-medium mb-2">Nombre para mostrar</label>
               <input
                 type="text"
                 value={profileForm.name}
                 onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Admin"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">Correo Electrónico</label>
               <input
                 type="email"
                 value={profileForm.email}
                 disabled
-                className="w-full px-4 py-2 rounded-lg border border-input bg-muted text-muted-foreground cursor-not-allowed"
+                className="w-full px-4 py-2 rounded-lg border border-input bg-muted text-muted-foreground cursor-not-allowed opacity-70"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                El email no se puede cambiar directamente. Contacta al administrador.
+                El correo electrónico es tu identificador único y no se puede cambiar aquí.
               </p>
             </div>
 
-            <Button type="submit" disabled={profileLoading}>
-              {profileLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Perfil
-                </>
-              )}
-            </Button>
+            <div className="pt-2">
+                <Button type="submit" disabled={profileLoading}>
+                {profileLoading ? (
+                    <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Guardando...
+                    </>
+                ) : (
+                    <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Actualizar Perfil
+                    </>
+                )}
+                </Button>
+            </div>
           </form>
         </div>
       )}
 
       {/* Password Tab */}
       {activeTab === 'password' && (
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <h3 className="font-heading font-bold flex items-center gap-2 mb-6">
+        <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
+          <h3 className="font-heading font-bold flex items-center gap-2 mb-6 text-lg">
             <Key className="w-5 h-5 text-primary" />
             Cambiar Contraseña
           </h3>
 
           {passwordSuccess ? (
-            <div className="flex items-center gap-3 p-4 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
-              <CheckCircle className="w-5 h-5" />
-              <span>Tu contraseña ha sido actualizada correctamente.</span>
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3 p-4 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <CheckCircle className="w-6 h-6" />
+                    <div>
+                        <p className="font-bold">¡Contraseña actualizada!</p>
+                        <p className="text-sm">Tu contraseña ha sido cambiada exitosamente. Úsala la próxima vez que inicies sesión.</p>
+                    </div>
+                </div>
+                <Button variant="outline" onClick={() => setPasswordSuccess(false)} className="w-fit">
+                    Cambiar otra vez
+                </Button>
             </div>
           ) : (
             <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
@@ -407,12 +230,12 @@ export default function ConfiguracionPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Mínimo 6 caracteres</p>
+                <p className="text-xs text-muted-foreground mt-1">Mínimo 6 caracteres.</p>
               </div>
 
               <div>
@@ -429,25 +252,27 @@ export default function ConfiguracionPage() {
               </div>
 
               {passwordError && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+                <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm border border-destructive/20">
                   <AlertCircle className="w-5 h-5" />
                   <span>{passwordError}</span>
                 </div>
               )}
 
-              <Button type="submit" disabled={passwordLoading}>
-                {passwordLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Actualizando...
-                  </>
-                ) : (
-                  <>
-                    <Key className="w-4 h-4 mr-2" />
-                    Cambiar Contraseña
-                  </>
-                )}
-              </Button>
+              <div className="pt-2">
+                <Button type="submit" disabled={passwordLoading} variant="destructive">
+                    {passwordLoading ? (
+                    <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Actualizando...
+                    </>
+                    ) : (
+                    <>
+                        <Key className="w-4 h-4 mr-2" />
+                        Actualizar Contraseña
+                    </>
+                    )}
+                </Button>
+              </div>
             </form>
           )}
         </div>
