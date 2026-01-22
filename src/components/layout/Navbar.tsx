@@ -4,8 +4,8 @@ import { useState, useEffect, useSyncExternalStore, useRef } from "react";
 import {
   Menu,
   X,
-  Sun,
-  Moon,
+  SunMedium,
+  MoonStar,
   Search,
   ShoppingBag,
   Share2,
@@ -88,7 +88,7 @@ export function Navbar() {
             {/* ---------------- LOGO ---------------- */}
             <Link
               href="/"
-              className="flex items-center gap-4 pr-4 group flex-shrink-0"
+              className="flex items-center gap-6 pr-6 group flex-shrink-0"
             >
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-bold text-xl transition-transform group-hover:scale-105">
                 H&J
@@ -139,7 +139,7 @@ export function Navbar() {
             </div>
 
             {/* ---------------- ACTIONS ---------------- */}
-            <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-2">
               {/* Mobile Search */}
               <Button
                 variant="ghost"
@@ -150,21 +150,27 @@ export function Navbar() {
                 <Search className="w-5 h-5" />
               </Button>
 
-              {/* Share Button (compact + animated text) */}
-              <button
-                onClick={() => setIsShareModalOpen(true)}
-                className="relative flex items-center justify-center w-10 h-10 rounded-full border
-                  border-primary/30 text-primary hover:bg-primary/10 transition-all
-                  share-pulse"
-                aria-label="Compartir"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
+              {/* Share */}
+              <div className="relative flex flex-col items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsShareModalOpen(true)}
+                >
+                  <Share2 className="w-5 h-5" />
+                </Button>
+                <span className="text-[10px] text-muted-foreground mt-[-2px]">
+                  Compartir
+                </span>
+              </div>
 
               {/* Theme */}
               <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                <Sun className="w-5 h-5 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 transition-all" />
-                <Moon className="absolute w-5 h-5 rotate-90 scale-0 dark:rotate-0 dark:scale-100 transition-all" />
+                {theme === "dark" ? (
+                  <SunMedium className="w-5 h-5" />
+                ) : (
+                  <MoonStar className="w-5 h-5" />
+                )}
               </Button>
 
               {/* Cart */}
@@ -198,51 +204,6 @@ export function Navbar() {
               </Button>
             </div>
           </nav>
-
-          {/* ---------------- MOBILE SEARCH ---------------- */}
-          <div
-            className={`md:hidden overflow-hidden transition-all ${
-              isSearchOpen ? "max-h-20 pb-4" : "max-h-0"
-            }`}
-          >
-            <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
-              <input
-                ref={searchInputRef}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar..."
-                className="w-full pl-10 pr-12 py-3 rounded-xl border bg-muted/50"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5
-                  bg-primary text-primary-foreground rounded-lg text-sm"
-              >
-                Buscar
-              </button>
-            </form>
-          </div>
-
-          {/* ---------------- MOBILE MENU ---------------- */}
-          <div
-            className={`lg:hidden overflow-hidden transition-all ${
-              isMobileMenuOpen ? "max-h-96 pb-4" : "max-h-0"
-            }`}
-          >
-            <div className="flex flex-col gap-2 pt-4 border-t border-border">
-              {visibleNavItems.map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
       </header>
 
