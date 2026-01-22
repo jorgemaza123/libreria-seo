@@ -71,7 +71,7 @@ export function ShareModal({ isOpen, onClose }: ShareModalProps) {
       icon: Mail,
       color: 'bg-gray-600 hover:bg-gray-700',
       action: () => {
-        const subject = 'Librería Central - Útiles escolares y servicios';
+        const subject = 'Librería CHROMA - Útiles escolares y servicios';
         const body = `Hola,\n\nTe comparto esta librería que tiene muy buenos precios en útiles escolares, impresiones, sublimación y más servicios.\n\n${currentUrl}`;
         window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
       },
@@ -96,7 +96,7 @@ export function ShareModal({ isOpen, onClose }: ShareModalProps) {
     // Crear link de descarga
     const link = document.createElement('a');
     link.href = qrUrl;
-    link.download = 'libreria-central-qr.png';
+    link.download = 'libreria-CHROMA-qr.png';
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
@@ -206,7 +206,7 @@ export function ShareModal({ isOpen, onClose }: ShareModalProps) {
                   onClick={async () => {
                     try {
                       await navigator.share({
-                        title: 'Librería Central',
+                        title: 'Librería CHROMA',
                         text: '¡Mira esta librería! Útiles escolares, impresiones y más.',
                         url: currentUrl,
                       });

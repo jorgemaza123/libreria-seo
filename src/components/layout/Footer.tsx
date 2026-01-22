@@ -38,7 +38,7 @@ export function Footer() {
                 LC
               </div>
               <span className="font-heading font-bold text-lg">
-                Librería H & J
+                Librería CHROMA
               </span>
             </div>
             <p className="text-sm text-secondary-foreground/75 leading-relaxed">
@@ -160,7 +160,7 @@ export function Footer() {
 
         {/* BOTTOM */}
         <div className="mt-6 pt-6 border-t border-secondary-foreground/10 text-center text-sm text-secondary-foreground/60">
-          © {new Date().getFullYear()} Librería H & J — Todos los derechos reservados
+          © {new Date().getFullYear()} Librería CHROMA — Todos los derechos reservados
         </div>
       </div>
     </footer>

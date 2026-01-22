@@ -144,7 +144,7 @@ export const defaultContent: SiteContent = {
   },
   footer: {
     description: 'Tu librería de confianza con los mejores productos escolares y de oficina.',
-    copyrightText: '© 2026 Librería Central. Todos los derechos reservados.',
+    copyrightText: '© 2026 Librería CHROMA. Todos los derechos reservados.',
     showSocialLinks: true,
     quickLinks: [
       { label: 'Inicio', url: '/' },

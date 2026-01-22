@@ -337,7 +337,7 @@ export const mockFAQs: FAQ[] = [
 export const mockContactInfo: ContactInfo = {
   phone: '+51 999 999 999',
   whatsapp: '51999999999',
-  email: 'contacto@papeleriacentral.pe',
+  email: 'contacto@libreriaCHROMA.com',
   address: {
     street: 'Av. Principal #123',
     city: 'Lima',
@@ -355,8 +355,8 @@ export const mockContactInfo: ContactInfo = {
     sunday: '10:00 AM - 2:00 PM',
   },
   socialMedia: {
-    facebook: 'https://facebook.com/papeleriacentral',
-    instagram: 'https://instagram.com/papeleriacentral',
+    facebook: 'https://facebook.com/papeleriaCHROMA',
+    instagram: 'https://instagram.com/papeleriaCHROMA',
   },
 };
 

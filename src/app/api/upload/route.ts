@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Cloudinary
     const result = await uploadImage(base64, {
-      folder: folder || 'libreria-central',
+      folder: folder || 'libreria-CHROMA',
       tags: tags ? tags.split(',') : undefined,
     })
 

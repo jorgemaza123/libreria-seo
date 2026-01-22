@@ -12,12 +12,12 @@ export interface SEOConfig {
 }
 
 export const seoConfig: SEOConfig = {
-  siteName: "Librería Central",
-  siteUrl: "https://libreria-central.com", // ACTUALIZAR CUANDO TENGAS EL DOMINIO FINAL
-  defaultTitle: "Librería Central - Útiles Escolares, Impresiones y Servicios TI",
+  siteName: "Librería CHROMA",
+  siteUrl: "https://libreriachroma.com",
+  defaultTitle: "Librería CHROMA - Útiles Escolares, Impresiones y Servicios TI",
   defaultDescription: "Tu librería de confianza en VMT. Útiles escolares, papelería, impresiones, copias, servicios de tecnología y más. Precios increíbles y atención personalizada.",
   defaultImage: "/og-image.jpg",
-  twitterHandle: "@libreriacentral",
+  twitterHandle: "@libreriaCHROMA",
   locale: "es_PE", // Ajustado para Perú
 };
 
@@ -69,8 +69,8 @@ export const generateLocalBusinessSchema = (config: {
   })),
   url: seoConfig.siteUrl,
   sameAs: [
-    "https://facebook.com/libreriacentral",
-    "https://instagram.com/libreriacentral",
+    "https://facebook.com/libreriaCHROMA",
+    "https://instagram.com/libreriaCHROMA",
   ],
 });
 

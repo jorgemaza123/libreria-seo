@@ -1,5 +1,5 @@
 -- =============================================
--- LIBRERÍA CENTRAL - CREAR USUARIO ADMINISTRADOR
+-- LIBRERÍA CHROMA - CREAR USUARIO ADMINISTRADOR
 -- =============================================
 --
 -- INSTRUCCIONES:

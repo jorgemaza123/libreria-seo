@@ -182,10 +182,16 @@ export function TestimonialsSection() {
         )}
 
         {/* CTA */}
+        {/* CTA */}
         <div className="text-center mt-10">
-          <Button size="lg" variant="outline" className="group">
+          <Button
+            size="lg"
+            variant="outline"
+            className="group hover:border-primary/50 hover:bg-primary/5"
+            onClick={() => window.open('https://g.page/r/CTEzRDOAaeWtEBM/review', '_blank')}
+          >
             <Star className="mr-2 h-4 w-4 group-hover:fill-yellow-400 group-hover:text-yellow-400 transition-colors" />
-            Déjanos tu reseña en Google
+            Califícanos en Google
           </Button>
         </div>
       </div>

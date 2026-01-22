@@ -11,14 +11,15 @@ import {
   Share2,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useSearch } from "@/contexts/SearchContext";
 import { mockNavItems } from "@/lib/mock-data";
 import { ShareModal } from "@/components/ui/ShareModal";
+import logoImg from "@/app/logo.png";
 
-/* ------------------ SSR SAFE CLIENT CHECK ------------------ */
 const useIsClient = () => {
   return useSyncExternalStore(
     () => () => {},
@@ -41,14 +42,12 @@ export function Navbar() {
 
   const mounted = useIsClient();
 
-  /* ------------------ SCROLL EFFECT ------------------ */
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /* ------------------ SEARCH FOCUS ------------------ */
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
@@ -75,7 +74,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* ================= HEADER ================= */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
@@ -87,11 +85,15 @@ export function Navbar() {
           <nav className="flex items-center justify-between h-16 md:h-20">
             {/* LOGO */}
             <Link href="/" className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                H&J
-              </div>
+              <Image 
+                src={logoImg} 
+                alt="Logo Chroma" 
+                width={40} 
+                height={40} 
+                className="w-10 h-10 rounded-lg object-cover"
+              />
               <span className="font-bold text-lg hidden sm:block">
-                Librería <span className="text-primary">H & J</span>
+                Librería <span className="text-primary">CHROMA</span>
               </span>
             </Link>
 
@@ -125,6 +127,15 @@ export function Navbar() {
 
             {/* ACTIONS */}
             <div className="flex items-center gap-2">
+              
+              {/* Texto visible antes de hacer click (Solo móvil) */}
+              <span 
+                className="text-sm font-medium text-muted-foreground md:hidden cursor-pointer"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                busca un producto ?
+              </span>
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -144,10 +155,10 @@ export function Navbar() {
 
               <Button variant="ghost" size="icon" onClick={toggleTheme}>
                 {mounted && (
-    theme === "dark"
-      ? <SunMedium className="w-5 h-5" />
-      : <MoonStar className="w-5 h-5" />
-  )}
+                  theme === "dark"
+                    ? <SunMedium className="w-5 h-5" />
+                    : <MoonStar className="w-5 h-5" />
+                )}
               </Button>
 
               <Button
@@ -177,19 +188,22 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* ================= MOBILE SEARCH ================= */}
+      {/* ================= MOBILE SEARCH MODAL ================= */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur p-4">
-          <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-3 w-5 h-5" />
-            <input
-              ref={searchInputRef}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar..."
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted"
-            />
-          </form>
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur p-4 flex flex-col pt-10">
+          <div className="flex items-center gap-3 w-full">
+            <form onSubmit={handleSearch} className="relative flex-1">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="busca tu producto"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              />
+            </form>
+          </div>
+
           <Button
             variant="ghost"
             className="mt-4 w-full"

@@ -161,9 +161,9 @@ INSERT INTO site_settings (key, value) VALUES
     "sunday": {"label": "Domingos", "hours": "10:00 AM - 2:00 PM"}
 }'::jsonb),
 ('social_media', '{
-    "facebook": "https://facebook.com/libreriacentral",
-    "instagram": "https://instagram.com/libreriacentral",
-    "tiktok": "https://tiktok.com/@libreriacentral"
+    "facebook": "https://facebook.com/libreriaCHROMA",
+    "instagram": "https://instagram.com/libreriaCHROMA",
+    "tiktok": "https://tiktok.com/@libreriaCHROMA"
 }'::jsonb)
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 

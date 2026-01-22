@@ -9,8 +9,8 @@ export const CONTACT = {
 } as const;
 
 export const BUSINESS_INFO = {
-  name: 'Librería H & J',
-  shortName: 'Librería H & J',
+  name: 'Librería CHROMA',
+  shortName: 'Librería CHROMA',
   description: 'Tu librería de confianza en VMT. Útiles escolares, papelería, impresiones, copias, servicios de tecnología y más.',
   address: {
     street: 'Av. D 204, Villa María del Triunfo 15816 ',

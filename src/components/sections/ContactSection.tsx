@@ -97,7 +97,7 @@ export function ContactSection() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Ubicación de Librería Central"
+                  title="Ubicación de Librería CHROMA"
                   className="grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
                 />
               </div>

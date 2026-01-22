@@ -1,5 +1,5 @@
 -- =============================================
--- LIBRERÍA CENTRAL - CATÁLOGOS Y RESEÑAS
+-- LIBRERÍA CHROMA - CATÁLOGOS Y RESEÑAS
 -- Script: 004_create_catalogs_reviews.sql
 -- Ejecutar en Supabase SQL Editor
 -- =============================================
