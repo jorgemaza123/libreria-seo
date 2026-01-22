@@ -1,16 +1,24 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useSyncExternalStore, useRef } from 'react';
-import { Menu, X, Sun, Moon, Search, ShoppingBag, Share2 } from 'lucide-react';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/CartContext';
-import { useSearch } from '@/contexts/SearchContext';
-import { mockNavItems } from '@/lib/mock-data';
-import { ShareModal } from '@/components/ui/ShareModal';
+import { useState, useEffect, useSyncExternalStore, useRef } from "react";
+import {
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Search,
+  ShoppingBag,
+  Share2,
+} from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
+import { useSearch } from "@/contexts/SearchContext";
+import { mockNavItems } from "@/lib/mock-data";
+import { ShareModal } from "@/components/ui/ShareModal";
 
-// Hook para detectar si estamos en el cliente (evita errores de hidratación)
+/* ------------------ SSR SAFE CLIENT CHECK ------------------ */
 const useIsClient = () => {
   return useSyncExternalStore(
     () => () => {},
@@ -24,24 +32,23 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { theme, setTheme } = useTheme();
   const { getItemCount, setIsCartOpen } = useCart();
   const { searchQuery, setSearchQuery } = useSearch();
 
-  // Usar hook para detectar cliente sin setState en useEffect
   const mounted = useIsClient();
 
+  /* ------------------ SCROLL EFFECT ------------------ */
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Focus en el input cuando se abre la búsqueda
+  /* ------------------ SEARCH FOCUS ------------------ */
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
@@ -53,36 +60,37 @@ export function Navbar() {
     .sort((a, b) => a.order - b.order);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      // Scroll a la sección de productos y aplicar filtro
-      const productsSection = document.getElementById('productos');
-      if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth' });
-      }
-      // También podríamos actualizar un contexto de búsqueda global
-      setIsSearchOpen(false);
+    if (!searchQuery.trim()) return;
+
+    const productsSection = document.getElementById("productos");
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: "smooth" });
     }
+    setIsSearchOpen(false);
   };
 
   return (
     <>
       <header
-        className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-background/95 backdrop-blur-md shadow-md'
-            : 'bg-background/80 backdrop-blur-sm'
+            ? "bg-background/95 backdrop-blur-md shadow-md"
+            : "bg-background/80 backdrop-blur-sm"
         }`}
       >
         <div className="container mx-auto px-4">
           <nav className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-bold text-xl transition-transform group-hover:scale-110">
+            {/* ---------------- LOGO ---------------- */}
+            <Link
+              href="/"
+              className="flex items-center gap-4 pr-4 group flex-shrink-0"
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-bold text-xl transition-transform group-hover:scale-105">
                 H&J
               </div>
               <span className="font-heading font-bold text-xl hidden sm:block">
@@ -90,88 +98,73 @@ export function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* ---------------- DESKTOP NAV ---------------- */}
             <div className="hidden lg:flex items-center gap-6">
               {visibleNavItems.map((item) => (
                 <Link
                   key={item.id}
                   href={item.href}
-                  className="text-foreground/80 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
+                  className="relative font-medium text-foreground/80 hover:text-primary transition-colors
+                    after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary
+                    after:transition-all hover:after:w-full"
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
 
-            {/* Search Bar - Desktop */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
-              <form onSubmit={handleSearch} className="w-full relative">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Buscar productos, servicios..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-full border border-border bg-muted/50 focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm placeholder:text-muted-foreground"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+            {/* ---------------- DESKTOP SEARCH ---------------- */}
+            <div className="hidden md:flex flex-1 max-w-md mx-4">
+              <form onSubmit={handleSearch} className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos o servicios..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-full border border-border bg-muted/50
+                    focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/20
+                    transition-all text-sm"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </form>
             </div>
 
-            {/* Right Actions */}
+            {/* ---------------- ACTIONS ---------------- */}
             <div className="flex items-center gap-1 md:gap-2">
-              {/* Mobile Search Toggle */}
+              {/* Mobile Search */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="md:hidden"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
               >
-                <Search className="h-5 w-5" />
+                <Search className="w-5 h-5" />
               </Button>
 
-              {/* Share Button - Desktop */}
-              <Button
-                variant="outline"
-                size="sm"
+              {/* Share Button (compact + animated text) */}
+              <button
                 onClick={() => setIsShareModalOpen(true)}
-                className="hidden sm:flex items-center gap-2 border-primary/30 hover:border-primary hover:bg-primary/10 text-primary"
+                className="relative flex items-center justify-center w-10 h-10 rounded-full border
+                  border-primary/30 text-primary hover:bg-primary/10 transition-all
+                  share-pulse"
+                aria-label="Compartir"
               >
-                <Share2 className="h-4 w-4" />
-                <span className="text-sm">Compartir</span>
-              </Button>
+                <Share2 className="w-5 h-5" />
+              </button>
 
-              {/* Share Button - Mobile (icon only) */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsShareModalOpen(true)}
-                className="sm:hidden"
-                title="Compartir la página"
-              >
-                <Share2 className="h-5 w-5" />
-              </Button>
-
-              {/* Theme Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="relative"
-              >
-                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Cambiar tema</span>
+              {/* Theme */}
+              <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                <Sun className="w-5 h-5 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 transition-all" />
+                <Moon className="absolute w-5 h-5 rotate-90 scale-0 dark:rotate-0 dark:scale-100 transition-all" />
               </Button>
 
               {/* Cart */}
@@ -181,15 +174,16 @@ export function Navbar() {
                 className="relative"
                 onClick={() => setIsCartOpen(true)}
               >
-                <ShoppingBag className="h-5 w-5" />
+                <ShoppingBag className="w-5 h-5" />
                 {mounted && getItemCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground
+                    text-xs rounded-full flex items-center justify-center animate-pulse">
                     {getItemCount()}
                   </span>
                 )}
               </Button>
 
-              {/* Mobile Menu Toggle */}
+              {/* Mobile Menu */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -197,43 +191,43 @@ export function Navbar() {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
+                  <X className="w-6 h-6" />
                 ) : (
-                  <Menu className="h-6 w-6" />
+                  <Menu className="w-6 h-6" />
                 )}
               </Button>
             </div>
           </nav>
 
-          {/* Mobile Search Bar */}
+          {/* ---------------- MOBILE SEARCH ---------------- */}
           <div
-            className={`md:hidden overflow-hidden transition-all duration-300 ${
-              isSearchOpen ? 'max-h-20 pb-4' : 'max-h-0'
+            className={`md:hidden overflow-hidden transition-all ${
+              isSearchOpen ? "max-h-20 pb-4" : "max-h-0"
             }`}
           >
             <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
               <input
                 ref={searchInputRef}
-                type="text"
-                placeholder="¿Qué estás buscando?"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 rounded-xl border border-border bg-muted/50 focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                placeholder="Buscar..."
+                className="w-full pl-10 pr-12 py-3 rounded-xl border bg-muted/50"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5
+                  bg-primary text-primary-foreground rounded-lg text-sm"
               >
                 Buscar
               </button>
             </form>
           </div>
 
-          {/* Mobile Menu */}
+          {/* ---------------- MOBILE MENU ---------------- */}
           <div
-            className={`lg:hidden overflow-hidden transition-all duration-300 ${
-              isMobileMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
+            className={`lg:hidden overflow-hidden transition-all ${
+              isMobileMenuOpen ? "max-h-96 pb-4" : "max-h-0"
             }`}
           >
             <div className="flex flex-col gap-2 pt-4 border-t border-border">
@@ -241,31 +235,17 @@ export function Navbar() {
                 <Link
                   key={item.id}
                   href={item.href}
-                  className="px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  className="px-4 py-3 rounded-lg hover:bg-muted transition-colors"
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="px-4 pt-2 flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1 border-primary/30 text-primary"
-                  onClick={() => {
-                    setIsShareModalOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Compartir la página
-                </Button>
-              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Share Modal */}
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}

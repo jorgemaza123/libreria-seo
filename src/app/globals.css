@@ -369,3 +369,36 @@ html {
 .dark ::selection {
   background-color: oklch(0.922 0 0 / 0.2);
 }
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
+}
+
+@keyframes sharePulse {
+  0%, 70%, 100% {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  75%, 90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.share-pulse::after {
+  content: "Compartir";
+  position: absolute;
+  left: 120%;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: currentColor;
+  animation: sharePulse 6s infinite;
+}

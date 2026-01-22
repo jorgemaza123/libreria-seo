@@ -1,21 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { X, ChevronLeft, ChevronRight, MessageCircle, ShoppingBag } from 'lucide-react';
-// IMPORTAMOS TODOS LOS ICONOS
-import * as LucideIcons from 'lucide-react';
-import { useWhatsApp } from '@/hooks/use-whatsapp';
-import { Button } from '@/components/ui/button';
-import { useSiteContent } from '@/contexts/SiteContentContext';
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircle,
+  ShoppingBag,
+} from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
-// Helper para renderizar iconos dinámicamente
-const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
+import { useWhatsApp } from "@/hooks/use-whatsapp";
+import { Button } from "@/components/ui/button";
+import { useSiteContent } from "@/contexts/SiteContentContext";
+
+/* ===============================
+   ICONO DINÁMICO
+================================ */
+const DynamicIcon = ({
+  name,
+  className,
+}: {
+  name: string;
+  className?: string;
+}) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const IconComponent = (LucideIcons as any)[name];
 
-  // Si el nombre es un emoji (no existe en Lucide), lo mostramos como texto
   if (!IconComponent) {
     return <span className={className}>{name}</span>;
   }
@@ -23,6 +36,9 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
   return <IconComponent className={className} />;
 };
 
+/* ===============================
+   TIPOS
+================================ */
 interface Category {
   id: string;
   name: string;
@@ -40,130 +56,112 @@ interface CategoryModalProps {
   onClose: () => void;
 }
 
+/* ===============================
+   MODAL
+================================ */
 function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { getWhatsAppUrl } = useWhatsApp();
   const router = useRouter();
-  
-  const images = category?.gallery || [];
 
-  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  const images = category.gallery || [];
 
-  const handleWhatsApp = () => {
-    window.open(
-      getWhatsAppUrl(`¡Hola! Me interesa ver los productos de ${category?.name}. ¿Qué opciones tienen disponibles?`),
-      '_blank'
+  const nextImage = () =>
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () =>
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + images.length) % images.length
     );
-  };
 
-  const handleViewProducts = () => {
-    onClose();
-    router.push(`/?category=${category.slug}#productos`);
-    setTimeout(() => {
-      const productsSection = document.getElementById('productos');
-      if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 150);
-  };
-
-  if (!isOpen || !category) return null;
+  if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative bg-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-300"
+        className="relative bg-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/80 flex items-center justify-center shadow-md"
         >
           <X className="w-5 h-5" />
         </button>
 
+        {/* GALERÍA */}
         {images.length > 0 ? (
           <div className="relative aspect-[3/2] bg-muted">
             <Image
               src={images[currentImageIndex]}
-              alt={`${category.name} - Imagen ${currentImageIndex + 1}`}
+              alt={category.name}
               fill
-              className="object-cover transition-opacity duration-300"
+              className="object-cover"
             />
+
             {images.length > 1 && (
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background/80 rounded-full flex items-center justify-center"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background/80 rounded-full flex items-center justify-center"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {images.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        idx === currentImageIndex ? 'w-6 bg-white' : 'bg-white/50 hover:bg-white/70'
-                      }`}
-                    />
-                  ))}
-                </div>
               </>
             )}
-            <div className="absolute top-4 left-4 bg-primary text-primary-foreground px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
-              {/* ICONO EN MODAL */}
+
+            <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-primary text-primary-foreground flex items-center gap-2 font-bold shadow-md">
               <DynamicIcon name={category.icon} className="w-5 h-5" />
-              <span>{category.name}</span>
+              {category.name}
             </div>
           </div>
         ) : (
-          <div className="relative aspect-[3/2] bg-muted flex items-center justify-center">
-             <div className="text-center p-4 text-muted-foreground">
-                 {/* ICONO EN PLACEHOLDER */}
-                 <DynamicIcon name={category.icon} className="w-16 h-16 mx-auto mb-2 opacity-50" />
-                 <p>Sin imágenes disponibles</p>
-             </div>
+          <div className="aspect-[3/2] bg-muted flex items-center justify-center">
+            <DynamicIcon
+              name={category.icon}
+              className="w-16 h-16 text-muted-foreground"
+            />
           </div>
         )}
 
+        {/* INFO */}
         <div className="p-6 space-y-4">
-          <div>
-            <h3 className="text-2xl font-heading font-bold text-foreground">
-              {category.name}
-            </h3>
-            {category.description && (
-              <p className="text-muted-foreground mt-2">
-                {category.description}
-              </p>
-            )}
-          </div>
+          <p className="text-muted-foreground">{category.description}</p>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
-              onClick={handleWhatsApp}
-              className="flex-1 bg-whatsapp hover:bg-whatsapp/90 text-white font-bold"
+              className="flex-1 bg-whatsapp text-white font-bold"
+              onClick={() =>
+                window.open(
+                  getWhatsAppUrl(
+                    `Hola, me interesa la categoría ${category.name}`
+                  ),
+                  "_blank"
+                )
+              }
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Consultar Disponibilidad
+              Consultar
             </Button>
+
             <Button
               variant="outline"
-              onClick={handleViewProducts}
               className="flex-1 font-bold"
+              onClick={() => {
+                onClose();
+                router.push(`/?category=${category.slug}#productos`);
+              }}
             >
               <ShoppingBag className="w-5 h-5 mr-2" />
-              Ver Productos
+              Ver productos
             </Button>
           </div>
         </div>
@@ -172,43 +170,73 @@ function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
   );
 }
 
+/* ===============================
+   SECCIÓN CATEGORÍAS
+================================ */
 export function CategoriesSection() {
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const { categories } = useSiteContent();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const activeCategories = (categories as any[]).filter((cat) => cat.isActive || cat.is_active).map(cat => ({
-      id: cat.id,
-      name: cat.name,
-      slug: cat.slug,
-      icon: cat.icon || 'HelpCircle', // Fallback si no hay icono
-      description: cat.description,
-      gallery: cat.gallery || [],
+  const activeCategories = (categories as any[])
+    .filter((c) => c.isActive || c.is_active)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      icon: c.icon || "HelpCircle",
+      description: c.description,
+      gallery: c.gallery || [],
       isActive: true,
-      order: cat.order
-  }));
+      order: c.order,
+    }));
 
   if (activeCategories.length === 0) return null;
 
   return (
     <>
-      <section className="py-8 bg-muted/50">
+      <section className="py-6 bg-muted/40">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            {activeCategories.map((category, index) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {activeCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category)}
-                className="group flex items-center gap-2 px-6 py-3 bg-card rounded-full shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 hover:scale-105 card-elevated animate-fade-up border border-border hover:border-primary/50"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="relative rounded-xl bg-card p-3 flex flex-col items-center text-center shadow-sm overflow-hidden"
               >
-                <span className="text-primary group-hover:scale-125 transition-transform duration-300">
-                  {/* ICONO EN LA BARRA */}
-                  <DynamicIcon name={category.icon} className="w-5 h-5" />
-                </span>
-                <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                  {category.name}
-                </span>
+                {/* BORDE RADIANTE */}
+                <div className="absolute inset-0 rounded-xl p-[1px] bg-gradient-to-br from-primary/40 via-fuchsia-400/30 to-cyan-400/40">
+                  <div className="w-full h-full rounded-xl bg-card" />
+                </div>
+
+                {/* CONTENIDO */}
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="relative">
+  {/* Glow animado */}
+  <div className="absolute inset-0 rounded-xl blur-md opacity-70 animate-pulse
+    bg-gradient-to-br from-primary via-fuchsia-400 to-cyan-400" />
+
+  {/* Anillo luminoso girando */}
+  <div className="absolute inset-[-6px] rounded-xl animate-spin-slow
+    bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+  {/* Icono */}
+  <div className="relative w-9 h-9 rounded-lg
+    bg-gradient-to-br from-primary to-violet-500
+    flex items-center justify-center shadow-lg">
+    <DynamicIcon
+      name={category.icon}
+      className="w-5 h-5 text-white drop-shadow-md"
+    />
+  </div>
+</div>
+
+                  <span className="text-sm font-semibold leading-tight">
+                    {category.name}
+                  </span>
+                </div>
               </button>
             ))}
           </div>

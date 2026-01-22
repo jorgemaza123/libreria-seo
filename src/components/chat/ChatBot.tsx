@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { X, Send, MessagesSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockFAQs } from '@/lib/mock-data';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
@@ -14,11 +14,9 @@ interface Message {
 }
 
 const quickOptions = [
-  { id: '1', label: '📦 Consultar productos', message: 'Hola, quiero consultar sobre productos disponibles' },
-  { id: '2', label: '🖨️ Cotizar servicios', message: 'Hola, me interesa cotizar sus servicios' },
-  { id: '3', label: '👕 Sublimación', message: 'Hola, quiero información sobre sublimación en polos y tazas' },
-  { id: '4', label: '💻 Soporte técnico', message: 'Hola, necesito soporte técnico para mi computadora' },
-  { id: '5', label: '📄 Trámites online', message: 'Hola, necesito ayuda con trámites de SUNAT/RENIEC' },
+  { id: '1', label: '📦 Productos', message: 'Hola, quiero consultar sobre productos disponibles' },
+  { id: '2', label: '🖨️ Servicios', message: 'Hola, me interesa cotizar sus servicios' },
+  { id: '3', label: '👕 Sublimación', message: 'Hola, quiero información sobre sublimación' },
 ];
 
 export function ChatBot() {
@@ -27,22 +25,22 @@ export function ChatBot() {
     {
       id: '1',
       type: 'bot',
-      content: '¡Hola! 👋 Bienvenido a nuestra tienda. ¿En qué podemos ayudarte hoy?\n\nSelecciona una opción o escríbenos directamente por WhatsApp para una atención más rápida.',
+      content:
+        '¡Hola! 👋 Bienvenido.\n\nPuedo orientarte aquí o derivarte a WhatsApp para una atención inmediata.',
       timestamp: new Date(),
     },
   ]);
+
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { getWhatsAppUrl } = useWhatsApp();
 
-  const activeFAQs = mockFAQs.filter((f) => f.isActive).sort((a, b) => a.order - b.order);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const activeFAQs = mockFAQs
+    .filter((f) => f.isActive)
+    .sort((a, b) => a.order - b.order);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
 
   const openWhatsApp = (message: string) => {
@@ -50,34 +48,24 @@ export function ChatBot() {
   };
 
   const handleQuickOption = (option: typeof quickOptions[0]) => {
-    // Add user message
     setMessages((prev) => [
       ...prev,
-      {
-        id: Date.now().toString(),
-        type: 'user',
-        content: option.label,
-        timestamp: new Date(),
-      },
+      { id: Date.now().toString(), type: 'user', content: option.label, timestamp: new Date() },
     ]);
 
-    // Add bot response directing to WhatsApp
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           type: 'bot',
-          content: '¡Perfecto! Para brindarte una atención personalizada y rápida, te invitamos a contactarnos por WhatsApp. Un asesor te atenderá de inmediato. 📱',
+          content:
+            'Perfecto 👍 Para ayudarte mejor, continuemos por WhatsApp con un asesor.',
           timestamp: new Date(),
         },
       ]);
-    }, 300);
-
-    // Open WhatsApp after a small delay
-    setTimeout(() => {
       openWhatsApp(option.message);
-    }, 1500);
+    }, 600);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,109 +73,89 @@ export function ChatBot() {
     if (!inputValue.trim()) return;
 
     const userMessage = inputValue.trim();
-
-    // Add user message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        type: 'user',
-        content: userMessage,
-        timestamp: new Date(),
-      },
-    ]);
     setInputValue('');
 
-    // Find matching FAQ
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now().toString(), type: 'user', content: userMessage, timestamp: new Date() },
+    ]);
+
     const matchingFAQ = activeFAQs.find((faq) =>
-      faq.question.toLowerCase().includes(userMessage.toLowerCase()) ||
-      userMessage.toLowerCase().includes(faq.question.toLowerCase().split(' ')[0])
+      userMessage.toLowerCase().includes(faq.question.toLowerCase())
     );
 
     setTimeout(() => {
-      if (matchingFAQ) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: (Date.now() + 1).toString(),
-            type: 'bot',
-            content: `${matchingFAQ.answer}\n\n¿Necesitas más información? ¡Contáctanos por WhatsApp! 📱`,
-            timestamp: new Date(),
-          },
-        ]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: (Date.now() + 1).toString(),
-            type: 'bot',
-            content: 'Gracias por tu mensaje. Para darte una respuesta más completa y personalizada, te invitamos a contactarnos directamente por WhatsApp. ¡Te responderemos al instante! 📱',
-            timestamp: new Date(),
-          },
-        ]);
-      }
-    }, 600);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          type: 'bot',
+          content: matchingFAQ
+            ? `${matchingFAQ.answer}\n\n¿Continuamos por WhatsApp?`
+            : 'Para una respuesta más precisa, conversemos directamente por WhatsApp 😊',
+          timestamp: new Date(),
+        },
+      ]);
+    }, 500);
   };
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 bg-whatsapp text-whatsapp-foreground rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center ${
+        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 rounded-full
+        bg-whatsapp text-white shadow-lg transition-all duration-300
+        flex items-center justify-center ${
           isOpen ? 'scale-0' : 'scale-100'
         }`}
         aria-label="Abrir chat"
       >
-        <MessageCircle className="w-6 h-6" />
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full animate-pulse" />
+        <MessagesSquare className="w-6 h-6" />
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full" />
       </button>
 
       {/* Chat Window */}
       <div
-        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-24 md:bottom-6 right-6 z-50 w-[340px] max-w-[90vw]
+        transition-all duration-300 origin-bottom-right ${
           isOpen
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+            ? 'opacity-100 scale-100 translate-y-0'
+            : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
         }`}
       >
-        <div className="bg-card rounded-2xl shadow-2xl overflow-hidden border border-border">
+        <div className="bg-card rounded-2xl shadow-2xl border border-border overflow-hidden">
           {/* Header */}
-          <div className="bg-whatsapp text-whatsapp-foreground p-4 flex items-center justify-between">
+          <div className="flex items-center justify-between px-4 py-3 bg-whatsapp text-white">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <MessageCircle className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+                <MessagesSquare className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold">Atención al Cliente</h3>
-                <p className="text-xs opacity-90">Respuesta rápida por WhatsApp</p>
+                <p className="font-semibold leading-tight">Atención inmediata</p>
+                <span className="text-xs opacity-90">Vía WhatsApp</span>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full hover:bg-white/20 transition"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="h-64 overflow-y-auto p-4 space-y-3 bg-muted/30">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.type === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
+          <div className="h-60 overflow-y-auto px-4 py-3 space-y-3 bg-muted/30">
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-line ${
-                    message.type === 'user'
+                  className={`max-w-[80%] text-sm px-3 py-2 rounded-xl leading-relaxed ${
+                    msg.type === 'user'
                       ? 'bg-primary text-primary-foreground rounded-br-md'
-                      : 'bg-card text-foreground rounded-bl-md shadow-sm'
+                      : 'bg-card border border-border'
                   }`}
                 >
-                  {message.content}
+                  {msg.content}
                 </div>
               </div>
             ))}
@@ -196,49 +164,36 @@ export function ChatBot() {
 
           {/* Quick Options */}
           <div className="px-4 py-3 border-t border-border bg-card">
-            <p className="text-xs text-muted-foreground mb-2">Opciones rápidas:</p>
             <div className="flex flex-wrap gap-2">
-              {quickOptions.slice(0, 3).map((option) => (
+              {quickOptions.map((opt) => (
                 <button
-                  key={option.id}
-                  onClick={() => handleQuickOption(option)}
-                  className="text-xs px-3 py-1.5 bg-muted hover:bg-whatsapp/10 hover:text-whatsapp rounded-full transition-colors border border-border"
+                  key={opt.id}
+                  onClick={() => handleQuickOption(opt)}
+                  className="text-xs px-3 py-1.5 rounded-full
+                  border border-border bg-muted text-foreground
+                  transition-colors hover:bg-whatsapp/10"
                 >
-                  {option.label}
+                  {opt.label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* WhatsApp CTA */}
-          <div className="px-4 py-3 border-t border-border bg-card">
-            <Button
-              className="w-full bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground"
-              onClick={() => openWhatsApp('Hola, tengo una consulta sobre sus productos y servicios')}
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Chatear por WhatsApp
-            </Button>
-          </div>
-
           {/* Input */}
-          <form
-            onSubmit={handleSubmit}
-            className="p-3 border-t border-border bg-muted/30"
-          >
+          <form onSubmit={handleSubmit} className="p-3 border-t border-border bg-muted/40">
             <div className="flex gap-2">
               <input
-                type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Escribe tu consulta..."
-                className="flex-1 h-9 px-3 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-whatsapp transition-all"
+                placeholder="Escribe tu mensaje..."
+                className="flex-1 h-9 px-3 rounded-full border border-input text-sm
+                focus:outline-none focus:ring-2 focus:ring-whatsapp"
               />
               <Button
                 type="submit"
                 size="icon"
-                className="rounded-full bg-whatsapp hover:bg-whatsapp/90 h-9 w-9 text-whatsapp-foreground"
                 disabled={!inputValue.trim()}
+                className="h-9 w-9 rounded-full bg-whatsapp text-white"
               >
                 <Send className="w-4 h-4" />
               </Button>
