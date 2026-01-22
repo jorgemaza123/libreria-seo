@@ -3,16 +3,14 @@
 import { useState, useMemo } from "react";
 import {
   Backpack,
-  FileText,
-  Gift,
-  Star,
-  MapPin,
-  Truck,
-  MessageCircle,
-  Phone,
   Code,
   Printer,
   Palette,
+  MapPin,
+  Truck,
+  Star,
+  MessageCircle,
+  Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWhatsApp } from "@/hooks/use-whatsapp";
@@ -115,15 +113,19 @@ export function HeroSection() {
 
   return (
     <section className="relative bg-background pt-4 lg:pt-16 lg:min-h-[85vh] flex lg:items-center overflow-hidden">
-
-      {/* ===== Ambient Light ===== */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -left-32 w-[420px] h-[420px] bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-32 w-[360px] h-[360px] bg-fuchsia-500/20 rounded-full blur-3xl" />
+      
+      {/* ===== Ambient Light (OPTIMIZADO CON GPU) ===== */}
+      {/* Usamos transform-translate-z-0 y will-change para aceleración de hardware */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div 
+          className="absolute -top-20 -left-20 w-[300px] h-[300px] lg:-top-32 lg:-left-32 lg:w-[420px] lg:h-[420px] bg-primary/20 rounded-full blur-3xl transform-gpu will-change-transform opacity-60 lg:opacity-100" 
+        />
+        <div 
+          className="absolute top-1/4 -right-20 w-[250px] h-[250px] lg:top-1/3 lg:-right-32 lg:w-[360px] lg:h-[360px] bg-fuchsia-500/20 rounded-full blur-3xl transform-gpu will-change-transform opacity-60 lg:opacity-100" 
+        />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-
         {/* ===== DESKTOP HEADER ===== */}
         <div className="hidden lg:flex justify-center mb-8 gap-6 text-sm font-medium">
           <span className="flex items-center gap-2">
@@ -137,7 +139,6 @@ export function HeroSection() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-
           {/* ===== LEFT DESKTOP ===== */}
           <div className="hidden lg:block space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 font-bold shadow-sm">
@@ -145,7 +146,8 @@ export function HeroSection() {
               Tu aliado escolar y de oficina
             </div>
 
-            <h1 className="text-5xl font-extrabold leading-tight">
+            {/* H1 Optimizado para lectura rápida */}
+            <h1 className="text-5xl font-extrabold leading-tight tracking-tight">
               {heroData.title}
             </h1>
 
@@ -154,7 +156,7 @@ export function HeroSection() {
             </p>
 
             <div className="flex gap-4">
-              <Button asChild size="lg" className="shadow-lg">
+              <Button asChild size="lg" className="shadow-lg hover:scale-105 transition-transform">
                 <a
                   href={getWhatsAppUrl("Hola! Quiero información")}
                   target="_blank"
@@ -168,7 +170,7 @@ export function HeroSection() {
                 variant="outline"
                 size="lg"
                 asChild
-                className="shadow-sm"
+                className="shadow-sm hover:bg-muted/50"
               >
                 <a href={getPhoneUrl()}>
                   <Phone className="mr-2" />
@@ -178,13 +180,12 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* ===== CARD ===== */}
-          <div className="relative bg-card/90 backdrop-blur rounded-3xl p-6 lg:p-10 shadow-2xl border border-border/50">
-
+          {/* ===== CARD INTERACTIVA ===== */}
+          <div className="relative bg-card/90 backdrop-blur-md rounded-3xl p-6 lg:p-10 shadow-2xl border border-border/50 transform-gpu">
             {/* MOBILE BADGE */}
             <div className="lg:hidden flex justify-between text-xs mb-4">
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
+              <span className="flex items-center gap-1 font-medium">
+                <MapPin className="w-3 h-3 text-primary" />
                 Estela Maris
               </span>
               <span className="text-muted-foreground">
@@ -192,13 +193,14 @@ export function HeroSection() {
               </span>
             </div>
 
-            {/* Tabs */}
+            {/* Tabs - Botones de Categoría */}
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               {heroData.categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300
+                  // Agregamos touch-manipulation para respuesta rápida en móviles
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 touch-manipulation
                     ${
                       activeCategory === cat.id
                         ? `bg-gradient-to-r ${cat.bgColor} text-white shadow-lg scale-105`
@@ -210,26 +212,26 @@ export function HeroSection() {
               ))}
             </div>
 
-            {/* Icon */}
+            {/* Icono Principal */}
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div
-                  className={`absolute inset-0 rounded-2xl blur-xl opacity-40 bg-gradient-to-r ${current.bgColor}`}
+                  className={`absolute inset-0 rounded-2xl blur-xl opacity-40 bg-gradient-to-r ${current.bgColor} transform-gpu`}
                 />
                 <div
                   className={`relative w-24 h-24 rounded-2xl bg-gradient-to-r ${current.bgColor}
-                  flex items-center justify-center shadow-xl`}
+                  flex items-center justify-center shadow-xl transform-gpu transition-colors duration-300`}
                 >
                   {current.icon}
                 </div>
               </div>
             </div>
 
-            <h3 className="text-xl font-extrabold text-center mb-3">
+            <h3 className="text-xl font-extrabold text-center mb-3 min-h-[3.5rem] flex items-center justify-center">
               {current.title}
             </h3>
 
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <div className="flex flex-wrap justify-center gap-2 mb-6 min-h-[2rem]">
               {current.features.map((f: string, i: number) => (
                 <span
                   key={i}
@@ -247,10 +249,10 @@ export function HeroSection() {
                   "_blank"
                 )
               }
-              className={`relative w-full h-14 text-lg font-bold bg-gradient-to-r ${current.bgColor} shadow-xl overflow-hidden`}
+              className={`relative w-full h-14 text-lg font-bold bg-gradient-to-r ${current.bgColor} shadow-xl overflow-hidden group`}
             >
-              <span className="absolute inset-0 bg-white/20 translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-700" />
-              <span className="relative z-10">
+              <span className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <span className="relative z-10 flex items-center gap-2">
                 {current.buttonEmoji} {current.buttonText}
               </span>
             </Button>
