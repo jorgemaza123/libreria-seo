@@ -68,14 +68,14 @@ export function Navbar() {
     if (!searchQuery.trim()) return;
 
     const productsSection = document.getElementById("productos");
-    if (productsSection) {
-      productsSection.scrollIntoView({ behavior: "smooth" });
-    }
+    productsSection?.scrollIntoView({ behavior: "smooth" });
     setIsSearchOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <>
+      {/* ================= HEADER ================= */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
@@ -85,127 +85,137 @@ export function Navbar() {
       >
         <div className="container mx-auto px-4">
           <nav className="flex items-center justify-between h-16 md:h-20">
-            {/* ---------------- LOGO ---------------- */}
-            <Link
-              href="/"
-              className="flex items-center gap-6 pr-6 group flex-shrink-0"
-            >
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-bold text-xl transition-transform group-hover:scale-105">
+            {/* LOGO */}
+            <Link href="/" className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">
                 H&J
               </div>
-              <span className="font-heading font-bold text-xl hidden sm:block">
+              <span className="font-bold text-lg hidden sm:block">
                 Librería <span className="text-primary">H & J</span>
               </span>
             </Link>
 
-            {/* ---------------- DESKTOP NAV ---------------- */}
+            {/* DESKTOP NAV */}
             <div className="hidden lg:flex items-center gap-6">
               {visibleNavItems.map((item) => (
                 <Link
                   key={item.id}
                   href={item.href}
-                  className="relative font-medium text-foreground/80 hover:text-primary transition-colors
-                    after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary
-                    after:transition-all hover:after:w-full"
+                  className="font-medium text-foreground/80 hover:text-primary transition"
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
 
-            {/* ---------------- DESKTOP SEARCH ---------------- */}
+            {/* DESKTOP SEARCH */}
             <div className="hidden md:flex flex-1 max-w-md mx-4">
               <form onSubmit={handleSearch} className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
+                  ref={searchInputRef}
                   type="text"
-                  placeholder="Buscar productos o servicios..."
+                  placeholder="Buscar productos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-full border border-border bg-muted/50
-                    focus:bg-background focus:border-primary focus:ring-2 focus:ring-primary/20
-                    transition-all text-sm"
+                  className="w-full pl-10 pr-4 py-2 rounded-full bg-muted/60 border focus:ring-2 focus:ring-primary/30"
                 />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
               </form>
             </div>
 
-            {/* ---------------- ACTIONS ---------------- */}
+            {/* ACTIONS */}
             <div className="flex items-center gap-2">
-              {/* Mobile Search */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="md:hidden"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                onClick={() => setIsSearchOpen(true)}
               >
-                <Search className="w-5 h-5" />
+                <Search />
               </Button>
 
-              {/* Share */}
-              <div className="relative flex flex-col items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsShareModalOpen(true)}
-                >
-                  <Share2 className="w-5 h-5" />
-                </Button>
-                <span className="text-[10px] text-muted-foreground mt-[-2px]">
-                  Compartir
-                </span>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsShareModalOpen(true)}
+              >
+                <Share2 />
+              </Button>
 
-              {/* Theme */}
               <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                {theme === "dark" ? (
-                  <SunMedium className="w-5 h-5" />
-                ) : (
-                  <MoonStar className="w-5 h-5" />
-                )}
+                {mounted && (
+    theme === "dark"
+      ? <SunMedium className="w-5 h-5" />
+      : <MoonStar className="w-5 h-5" />
+  )}
               </Button>
 
-              {/* Cart */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="relative"
                 onClick={() => setIsCartOpen(true)}
               >
-                <ShoppingBag className="w-5 h-5" />
+                <ShoppingBag />
                 {mounted && getItemCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground
-                    text-xs rounded-full flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-xs rounded-full flex items-center justify-center">
                     {getItemCount()}
                   </span>
                 )}
               </Button>
 
-              {/* Mobile Menu */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="lg:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                {isMobileMenuOpen ? <X /> : <Menu />}
               </Button>
             </div>
           </nav>
         </div>
       </header>
+
+      {/* ================= MOBILE SEARCH ================= */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur p-4">
+          <form onSubmit={handleSearch} className="relative">
+            <Search className="absolute left-3 top-3 w-5 h-5" />
+            <input
+              ref={searchInputRef}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar..."
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted"
+            />
+          </form>
+          <Button
+            variant="ghost"
+            className="mt-4 w-full"
+            onClick={() => setIsSearchOpen(false)}
+          >
+            Cerrar
+          </Button>
+        </div>
+      )}
+
+      {/* ================= MOBILE MENU ================= */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur p-6">
+          <div className="flex flex-col gap-4 text-lg font-medium">
+            {visibleNavItems.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <ShareModal
         isOpen={isShareModalOpen}
