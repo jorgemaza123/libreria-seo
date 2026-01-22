@@ -46,10 +46,14 @@ export default function Home() {
         
         {/* 1. HERO: Nombre y botones directos (WhatsApp/Llamar) */}
         <HeroSection />
+        {/* 5. PACKS ESCOLARES: Botones que abren Modal (Ahorra espacio) */}
+        <SchoolPacksSection />
 
-        {/* 2. SERVICIOS PRINCIPALES (Compacto): Monografías, Trabajos, etc. */}
-        {/* Usamos ServicesSection aquí para dar prioridad a los servicios */}
-        <ServicesSection />
+        {/* 6. CATEGORÍAS: Grid compacto de accesos directos */}
+        <CategoriesSection />
+
+
+        
 
         {/* 3. PRODUCTOS DESTACADOS: Grid 2x2 para búsqueda rápida */}
         <ProductsSection />
@@ -57,12 +61,9 @@ export default function Home() {
         {/* 4. CATÁLOGOS: Mensaje llamativo "Descarga nuestros catálogos" */}
         <CatalogsSection />
 
-        {/* 5. PACKS ESCOLARES: Botones que abren Modal (Ahorra espacio) */}
-        <SchoolPacksSection />
-
-        {/* 6. CATEGORÍAS: Grid compacto de accesos directos */}
-        <CategoriesSection />
-
+        {/* 2. SERVICIOS PRINCIPALES (Compacto): Monografías, Trabajos, etc. */}
+        {/* Usamos ServicesSection aquí para dar prioridad a los servicios */}
+        <ServicesSection />
         {/* 7. TESTIMONIOS */}
         <TestimonialsSection />
 

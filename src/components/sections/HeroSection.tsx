@@ -27,25 +27,25 @@ const CATEGORY_STYLES = {
     emoji: "🎒",
     bgColor: "from-orange-500 to-amber-500",
     buttonEmoji: "📷",
-    icon: <Backpack className="w-12 h-12 text-white" />,
+    icon: <Backpack className="w-12 h-12 text-white drop-shadow-md" />,
   },
   tecnologia: {
     emoji: "💻",
     bgColor: "from-cyan-500 to-blue-600",
     buttonEmoji: "🔧",
-    icon: <Code className="w-12 h-12 text-white" />,
+    icon: <Code className="w-12 h-12 text-white drop-shadow-md" />,
   },
   tramites: {
     emoji: "📄",
     bgColor: "from-emerald-500 to-green-600",
     buttonEmoji: "📄",
-    icon: <Printer className="w-12 h-12 text-white" />,
+    icon: <Printer className="w-12 h-12 text-white drop-shadow-md" />,
   },
   regalos: {
     emoji: "🎁",
     bgColor: "from-pink-500 to-rose-600",
     buttonEmoji: "🎨",
-    icon: <Palette className="w-12 h-12 text-white" />,
+    icon: <Palette className="w-12 h-12 text-white drop-shadow-md" />,
   },
 };
 
@@ -114,18 +114,15 @@ export function HeroSection() {
   )!;
 
   return (
-    <section
-      className="
-        relative
-        bg-background
-        pt-4
-        lg:pt-16
-        lg:min-h-[85vh]
-        flex
-        lg:items-center
-      "
-    >
-      <div className="container mx-auto px-4">
+    <section className="relative bg-background pt-4 lg:pt-16 lg:min-h-[85vh] flex lg:items-center overflow-hidden">
+
+      {/* ===== Ambient Light ===== */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-32 -left-32 w-[420px] h-[420px] bg-primary/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -right-32 w-[360px] h-[360px] bg-fuchsia-500/20 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
 
         {/* ===== DESKTOP HEADER ===== */}
         <div className="hidden lg:flex justify-center mb-8 gap-6 text-sm font-medium">
@@ -143,7 +140,7 @@ export function HeroSection() {
 
           {/* ===== LEFT DESKTOP ===== */}
           <div className="hidden lg:block space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 font-bold">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 font-bold shadow-sm">
               <Star className="w-4 h-4 fill-current" />
               Tu aliado escolar y de oficina
             </div>
@@ -157,11 +154,9 @@ export function HeroSection() {
             </p>
 
             <div className="flex gap-4">
-              <Button asChild size="lg">
+              <Button asChild size="lg" className="shadow-lg">
                 <a
-                  href={getWhatsAppUrl(
-                    "Hola! Quiero información"
-                  )}
+                  href={getWhatsAppUrl("Hola! Quiero información")}
                   target="_blank"
                 >
                   <MessageCircle className="mr-2" />
@@ -169,7 +164,12 @@ export function HeroSection() {
                 </a>
               </Button>
 
-              <Button variant="outline" size="lg" asChild>
+              <Button
+                variant="outline"
+                size="lg"
+                asChild
+                className="shadow-sm"
+              >
                 <a href={getPhoneUrl()}>
                   <Phone className="mr-2" />
                   Llamar
@@ -178,8 +178,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* ===== CARD (BOTH) ===== */}
-          <div className="relative bg-card/90 backdrop-blur rounded-3xl p-6 lg:p-10 shadow-xl">
+          {/* ===== CARD ===== */}
+          <div className="relative bg-card/90 backdrop-blur rounded-3xl p-6 lg:p-10 shadow-2xl border border-border/50">
 
             {/* MOBILE BADGE */}
             <div className="lg:hidden flex justify-between text-xs mb-4">
@@ -198,11 +198,12 @@ export function HeroSection() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition ${
-                    activeCategory === cat.id
-                      ? `bg-gradient-to-r ${cat.bgColor} text-white`
-                      : "bg-muted"
-                  }`}
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300
+                    ${
+                      activeCategory === cat.id
+                        ? `bg-gradient-to-r ${cat.bgColor} text-white shadow-lg scale-105`
+                        : "bg-muted hover:bg-muted/70"
+                    }`}
                 >
                   {cat.emoji} {cat.label}
                 </button>
@@ -210,11 +211,17 @@ export function HeroSection() {
             </div>
 
             {/* Icon */}
-            <div className="flex justify-center mb-4">
-              <div
-                className={`w-24 h-24 rounded-2xl flex items-center justify-center bg-gradient-to-r ${current.bgColor}`}
-              >
-                {current.icon}
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div
+                  className={`absolute inset-0 rounded-2xl blur-xl opacity-40 bg-gradient-to-r ${current.bgColor}`}
+                />
+                <div
+                  className={`relative w-24 h-24 rounded-2xl bg-gradient-to-r ${current.bgColor}
+                  flex items-center justify-center shadow-xl`}
+                >
+                  {current.icon}
+                </div>
               </div>
             </div>
 
@@ -226,7 +233,7 @@ export function HeroSection() {
               {current.features.map((f: string, i: number) => (
                 <span
                   key={i}
-                  className="px-3 py-1 text-xs rounded-full bg-muted font-semibold"
+                  className="px-3 py-1 text-xs rounded-full bg-muted/70 border border-border font-semibold shadow-sm"
                 >
                   ✓ {f}
                 </span>
@@ -240,9 +247,12 @@ export function HeroSection() {
                   "_blank"
                 )
               }
-              className={`w-full h-14 text-lg font-bold bg-gradient-to-r ${current.bgColor}`}
+              className={`relative w-full h-14 text-lg font-bold bg-gradient-to-r ${current.bgColor} shadow-xl overflow-hidden`}
             >
-              {current.buttonEmoji} {current.buttonText}
+              <span className="absolute inset-0 bg-white/20 translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-700" />
+              <span className="relative z-10">
+                {current.buttonEmoji} {current.buttonText}
+              </span>
             </Button>
           </div>
         </div>

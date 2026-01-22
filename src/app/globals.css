@@ -392,7 +392,6 @@ html {
     transform: translateX(0);
   }
 }
-
 .share-pulse::after {
   content: "Compartir";
   position: absolute;
@@ -401,4 +400,44 @@ html {
   font-size: 0.875rem;
   color: currentColor;
   animation: sharePulse 6s infinite;
+}
+
+@keyframes snake-glow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.snake-border {
+  position: relative;
+  border-radius: 0.75rem;
+}
+
+.snake-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(99, 102, 241, 0.45),
+    rgba(236, 72, 153, 0.45),
+    rgba(34, 211, 238, 0.45),
+    transparent 80%
+  );
+  background-size: 200% 200%;
+  animation: snake-glow 6s linear infinite;
+  pointer-events: none;
+
+  /* 👇 ESTO ES LA CLAVE */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
 }

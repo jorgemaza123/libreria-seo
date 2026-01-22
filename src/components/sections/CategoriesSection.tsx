@@ -9,6 +9,9 @@ import {
   ChevronRight,
   MessageCircle,
   ShoppingBag,
+  Eye,
+  Images,
+  ArrowDown,
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
@@ -28,11 +31,7 @@ const DynamicIcon = ({
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const IconComponent = (LucideIcons as any)[name];
-
-  if (!IconComponent) {
-    return <span className={className}>{name}</span>;
-  }
-
+  if (!IconComponent) return <span className={className}>{name}</span>;
   return <IconComponent className={className} />;
 };
 
@@ -50,28 +49,22 @@ interface Category {
   order: number;
 }
 
-interface CategoryModalProps {
-  category: Category;
-  isOpen: boolean;
-  onClose: () => void;
-}
-
 /* ===============================
    MODAL
 ================================ */
-function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
+function CategoryModal({
+  category,
+  isOpen,
+  onClose,
+}: {
+  category: Category;
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { getWhatsAppUrl } = useWhatsApp();
   const router = useRouter();
-
   const images = category.gallery || [];
-
-  const nextImage = () =>
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  const prevImage = () =>
-    setCurrentImageIndex(
-      (prev) => (prev - 1 + images.length) % images.length
-    );
 
   if (!isOpen) return null;
 
@@ -86,13 +79,12 @@ function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/80 flex items-center justify-center shadow-md"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background flex items-center justify-center shadow-md"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* GALERÍA */}
-        {images.length > 0 ? (
+        {images.length > 0 && (
           <div className="relative aspect-[3/2] bg-muted">
             <Image
               src={images[currentImageIndex]}
@@ -104,35 +96,28 @@ function CategoryModal({ category, isOpen, onClose }: CategoryModalProps) {
             {images.length > 1 && (
               <>
                 <button
-                  onClick={prevImage}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background/80 rounded-full flex items-center justify-center"
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      (prev) => (prev - 1 + images.length) % images.length
+                    )
+                  }
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background rounded-full flex items-center justify-center shadow"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft />
                 </button>
                 <button
-                  onClick={nextImage}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background/80 rounded-full flex items-center justify-center"
+                  onClick={() =>
+                    setCurrentImageIndex((prev) => (prev + 1) % images.length)
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-background rounded-full flex items-center justify-center shadow"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight />
                 </button>
               </>
             )}
-
-            <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-primary text-primary-foreground flex items-center gap-2 font-bold shadow-md">
-              <DynamicIcon name={category.icon} className="w-5 h-5" />
-              {category.name}
-            </div>
-          </div>
-        ) : (
-          <div className="aspect-[3/2] bg-muted flex items-center justify-center">
-            <DynamicIcon
-              name={category.icon}
-              className="w-16 h-16 text-muted-foreground"
-            />
           </div>
         )}
 
-        {/* INFO */}
         <div className="p-6 space-y-4">
           <p className="text-muted-foreground">{category.description}</p>
 
@@ -199,46 +184,70 @@ export function CategoriesSection() {
     <>
       <section className="py-6 bg-muted/40">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {activeCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category)}
-                className="relative rounded-xl bg-card p-3 flex flex-col items-center text-center shadow-sm overflow-hidden"
-              >
-                {/* BORDE RADIANTE */}
-                <div className="absolute inset-0 rounded-xl p-[1px] bg-gradient-to-br from-primary/40 via-fuchsia-400/30 to-cyan-400/40">
-                  <div className="w-full h-full rounded-xl bg-card" />
-                </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {activeCategories.map((category) => {
+              const isSublimado =
+                category.slug?.toLowerCase().includes("sublim");
 
-                {/* CONTENIDO */}
-                <div className="relative z-10 flex flex-col items-center gap-2">
-                  <div className="relative">
-  {/* Glow animado */}
-  <div className="absolute inset-0 rounded-xl blur-md opacity-70 animate-pulse
-    bg-gradient-to-br from-primary via-fuchsia-400 to-cyan-400" />
+              return (
+                <button
+  key={category.id}
+  onClick={() => setSelectedCategory(category)}
+  className="snake-border relative rounded-xl bg-card p-3
+    flex flex-col items-center text-center shadow-sm"
+  style={{
+    animationDelay: `${category.order * 0.4}s`,
+  }}
+>
 
-  {/* Anillo luminoso girando */}
-  <div className="absolute inset-[-6px] rounded-xl animate-spin-slow
-    bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                  {/* ICONO */}
+                  <div
+  className="relative w-11 h-11 rounded-xl
+  bg-gradient-to-br from-primary/15 to-primary/5
+  border border-primary/25
+  shadow-[0_4px_10px_rgba(0,0,0,0.08)]
+  flex items-center justify-center"
+>
+  {/* Capa inferior (volumen) */}
+  <div
+    className="absolute inset-0 rounded-xl
+    shadow-[inset_0_1px_2px_rgba(255,255,255,0.6)]"
+  />
 
   {/* Icono */}
-  <div className="relative w-9 h-9 rounded-lg
-    bg-gradient-to-br from-primary to-violet-500
-    flex items-center justify-center shadow-lg">
-    <DynamicIcon
-      name={category.icon}
-      className="w-5 h-5 text-white drop-shadow-md"
-    />
-  </div>
+  <DynamicIcon
+    name={category.icon}
+    className="relative w-5 h-5 text-primary"
+  />
 </div>
 
-                  <span className="text-sm font-semibold leading-tight">
+
+                  <span className="mt-2 text-sm font-semibold">
                     {category.name}
                   </span>
-                </div>
-              </button>
-            ))}
+
+                  {/* ACCIONES VISIBLES */}
+                  <div className="mt-2 flex flex-col gap-1 text-xs font-medium text-primary">
+                    <div className="flex items-center justify-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      Ver muestras
+                    </div>
+
+                    <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                      <Images className="w-4 h-4" />
+                      Abrir galería
+                    </div>
+
+                    {isSublimado && (
+                      <div className="flex items-center justify-center gap-1 text-primary">
+                        <ArrowDown className="w-4 h-4" />
+                        Catálogo abajo
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
