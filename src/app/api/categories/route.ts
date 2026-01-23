@@ -18,7 +18,21 @@ export async function GET() {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ categories: data || [] })
+    // MAPEO DE DATOS (Conservamos tu lógica is_active -> isActive)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const categories = (data || []).map((category: any) => ({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        icon: category.icon,
+        description: category.description,
+        image: category.image,
+        gallery: category.gallery || [], // <--- NUEVO: Leemos la galería
+        isActive: category.is_active,
+        order: category.order
+    }))
+
+    return NextResponse.json({ categories })
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
@@ -30,7 +44,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const body = await request.json()
 
-    // Buscamos el último orden
+    // Lógica original de ordenamiento
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: lastItem } = await (supabase as any)
         .from('categories')
@@ -39,7 +53,6 @@ export async function POST(request: NextRequest) {
         .limit(1)
         .single()
     
-    // Si no hay items, lastItem es null, así que usamos 0
     const newOrder = (lastItem?.order || 0) + 1
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,6 +64,7 @@ export async function POST(request: NextRequest) {
         icon: body.icon,
         description: body.description,
         image: body.image,
+        gallery: body.gallery || [], // <--- NUEVO: Guardamos galería
         is_active: body.isActive ?? true,
         order: newOrder
       })
@@ -75,17 +89,23 @@ export async function PUT(request: NextRequest) {
 
         if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
 
+        // Construcción dinámica del objeto update (Tu lógica original mejorada)
+        const updateData: any = {}
+        if (body.name !== undefined) updateData.name = body.name
+        if (body.slug !== undefined) updateData.slug = body.slug
+        if (body.icon !== undefined) updateData.icon = body.icon
+        if (body.description !== undefined) updateData.description = body.description
+        if (body.image !== undefined) updateData.image = body.image
+        if (body.gallery !== undefined) updateData.gallery = body.gallery // <--- NUEVO
+        
+        if (body.isActive !== undefined) {
+            updateData.is_active = body.isActive
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data, error } = await (supabase as any)
             .from('categories')
-            .update({
-                name: body.name,
-                slug: body.slug,
-                icon: body.icon,
-                description: body.description,
-                image: body.image,
-                is_active: body.isActive
-            })
+            .update(updateData)
             .eq('id', id)
             .select()
             .single()
@@ -98,7 +118,7 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// 4. DELETE (Borrar Categoría)
+// 4. DELETE (Exactamente igual al original)
 export async function DELETE(request: NextRequest) {
     try {
         const supabase = await createClient()

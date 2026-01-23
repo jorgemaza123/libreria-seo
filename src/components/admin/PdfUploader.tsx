@@ -44,7 +44,7 @@ export function PdfUploader({
       formData.append('folder', folder)
       
       // Usamos el mismo endpoint de subida
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/upload-pdf', {
         method: 'POST',
         body: formData,
       })

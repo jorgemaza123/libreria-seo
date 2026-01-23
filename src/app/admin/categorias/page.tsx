@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Save, X, GripVertical, Loader2 } from 'lucide-react'
-// Importamos el IconPicker
 import { IconPicker } from '@/components/admin/IconPicker'
-// Importamos TODOS los iconos para poder renderizarlos dinámicamente en la lista
 import * as LucideIcons from 'lucide-react' 
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { ImageUploader } from '@/components/admin/ImageUploader'
+// IMPORTANTE: Asegúrate de importar MultiImageUploader aquí
+import { ImageUploader, MultiImageUploader } from '@/components/admin/ImageUploader'
 import type { Category } from '@/lib/types'
 
-// Helper para renderizar iconos por nombre string
+// Helper para renderizar iconos
 const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon = (LucideIcons as any)[name]
@@ -19,22 +18,37 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
   return <Icon className={className} />
 }
 
+// Extendemos la interfaz localmente por si tu archivo types.ts no tiene gallery aún
+interface ExtendedCategory extends Category {
+  gallery?: string[];
+}
+
+interface CategoryFormData {
+  name: string
+  slug: string
+  icon: string
+  description: string
+  image: string
+  gallery: string[] // <--- NUEVO CAMPO
+}
+
 export default function CategoriasPage() {
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<ExtendedCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CategoryFormData>({
     name: '',
     slug: '',
-    icon: 'Backpack', // Valor por defecto válido
+    icon: 'Backpack',
     description: '',
     image: '',
+    gallery: [], // <--- Inicializamos vacío
   })
 
-  // 1. Cargar Categorías Reales
+  // 1. Cargar Categorías
   useEffect(() => {
     fetchCategories()
   }, [])
@@ -55,7 +69,7 @@ export default function CategoriasPage() {
   }
 
   // Preparar formulario para Editar
-  const handleEdit = (category: Category) => {
+  const handleEdit = (category: ExtendedCategory) => {
     setEditingId(category.id)
     setFormData({
       name: category.name,
@@ -63,6 +77,7 @@ export default function CategoriasPage() {
       icon: category.icon || 'HelpCircle',
       description: category.description || '',
       image: category.image || '',
+      gallery: category.gallery || [], // <--- Cargamos la galería existente
     })
     setIsAdding(false)
   }
@@ -80,7 +95,7 @@ export default function CategoriasPage() {
         if (res.ok) {
             toast.success('Categoría actualizada')
             setEditingId(null)
-            fetchCategories() // Recargar lista
+            fetchCategories()
         } else {
             toast.error('Error al actualizar')
         }
@@ -108,7 +123,7 @@ export default function CategoriasPage() {
         if (res.ok) {
             toast.success('Categoría creada')
             setIsAdding(false)
-            setFormData({ name: '', slug: '', icon: 'Backpack', description: '', image: '' })
+            setFormData({ name: '', slug: '', icon: 'Backpack', description: '', image: '', gallery: [] })
             fetchCategories()
         } else {
             toast.error('Error al crear')
@@ -120,10 +135,9 @@ export default function CategoriasPage() {
     }
   }
 
-  // Eliminar Categoría
+  // Eliminar (Igual al original)
   const handleDelete = async (id: string) => {
     if (!confirm('¿Estás seguro? Esto podría afectar a los productos de esta categoría.')) return
-
     try {
         const res = await fetch(`/api/categories?id=${id}`, { method: 'DELETE' })
         if (res.ok) {
@@ -137,9 +151,8 @@ export default function CategoriasPage() {
     }
   }
 
-  // Activar / Desactivar
+  // Activar / Desactivar (Igual al original)
   const toggleActive = async (category: Category) => {
-    // Actualización optimista (UI primero)
     const newStatus = !category.isActive
     setCategories(prev => prev.map(c => c.id === category.id ? { ...c, isActive: newStatus } : c))
 
@@ -147,17 +160,16 @@ export default function CategoriasPage() {
         await fetch(`/api/categories?id=${category.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...category, isActive: newStatus })
+            body: JSON.stringify({ isActive: newStatus }) 
         })
     } catch (error) {
         toast.error('Error al cambiar estado')
-        fetchCategories() // Revertir si falla
+        fetchCategories()
     }
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-heading font-bold">Categorías</h2>
@@ -165,13 +177,13 @@ export default function CategoriasPage() {
             Gestiona las categorías de productos y sus iconos
           </p>
         </div>
-        <Button onClick={() => { setIsAdding(true); setEditingId(null); setFormData({ name: '', slug: '', icon: 'Backpack', description: '', image: '' }) }} disabled={isAdding}>
+        <Button onClick={() => { setIsAdding(true); setEditingId(null); setFormData({ name: '', slug: '', icon: 'Backpack', description: '', image: '', gallery: [] }) }} disabled={isAdding}>
           <Plus className="w-4 h-4 mr-2" />
           Nueva Categoría
         </Button>
       </div>
 
-      {/* Add Form */}
+      {/* Formulario de Creación */}
       {isAdding && (
         <div className="bg-card rounded-xl p-6 border border-border space-y-4 shadow-lg">
           <h3 className="font-bold text-lg">Nueva Categoría</h3>
@@ -180,7 +192,6 @@ export default function CategoriasPage() {
                 <div>
                     <label className="block text-sm font-medium mb-2">Nombre *</label>
                     <input
-                        type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-4 py-2 rounded-lg border border-input bg-background"
@@ -189,7 +200,6 @@ export default function CategoriasPage() {
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-2">Icono</label>
-                    {/* USAMOS EL COMPONENTE NUEVO */}
                     <IconPicker 
                         value={formData.icon} 
                         onChange={(val) => setFormData({...formData, icon: val})} 
@@ -206,13 +216,27 @@ export default function CategoriasPage() {
                 </div>
             </div>
             
-            <div>
-                <label className="block text-sm font-medium mb-2">Imagen del Modal</label>
-                <ImageUploader 
-                    value={formData.image}
-                    onChange={(url) => setFormData({ ...formData, image: url || '' })}
-                    imageType="category"
-                />
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium mb-2">Imagen del Modal</label>
+                    <ImageUploader 
+                        value={formData.image}
+                        onChange={(url) => setFormData({ ...formData, image: url || '' })}
+                        imageType="category"
+                        aspectRatio="3:2"
+                    />
+                </div>
+                <div>
+                    {/* NUEVO: Soporte para Galería */}
+                    <label className="block text-sm font-medium mb-2">Galería de Imágenes</label>
+                    <MultiImageUploader
+                        value={formData.gallery}
+                        onChange={(urls) => setFormData({ ...formData, gallery: urls })}
+                        imageType="category"
+                        maxImages={10}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Sube varias fotos para mostrar en el modal.</p>
+                </div>
             </div>
           </div>
           <div className="flex gap-2 justify-end pt-4">
@@ -227,7 +251,7 @@ export default function CategoriasPage() {
         </div>
       )}
 
-      {/* Categories List */}
+      {/* Lista de Categorías */}
       <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
         <div className="grid grid-cols-12 gap-4 p-4 bg-muted/50 font-medium text-sm">
           <div className="col-span-1 text-center">Ord.</div>
@@ -246,30 +270,21 @@ export default function CategoriasPage() {
             categories.map((category) => (
             <div key={category.id} className="grid grid-cols-12 gap-4 p-4 border-t border-border items-center hover:bg-muted/20 transition-colors">
                 {editingId === category.id ? (
-                // --- MODO EDICIÓN ---
+                // --- MODO EDICIÓN (Mejorado para Galería) ---
                 <>
                     <div className="col-span-1 text-center"><GripVertical className="w-5 h-5 mx-auto text-muted-foreground" /></div>
                     <div className="col-span-1 flex justify-center">
                         <div className="w-10">
-                            {/* Icon Picker Compacto para edición en línea */}
-                            <IconPicker 
-                                value={formData.icon} 
-                                onChange={(val) => setFormData({...formData, icon: val})} 
-                            />
+                            <IconPicker value={formData.icon} onChange={(val) => setFormData({...formData, icon: val})} />
                         </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-3 space-y-2">
                         <input
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className="w-full px-2 py-1 rounded border border-input"
                         />
-                        <input 
-                            value={formData.image}
-                            onChange={(e) => setFormData({...formData, image: e.target.value})}
-                            placeholder="URL Imagen"
-                            className="w-full mt-1 text-xs px-2 py-1 rounded border border-input text-muted-foreground"
-                        />
+                        <div className="text-xs text-muted-foreground">Editando {formData.name}...</div>
                     </div>
                     <div className="col-span-3">
                         <input
@@ -278,10 +293,32 @@ export default function CategoriasPage() {
                             className="w-full px-2 py-1 rounded border border-input"
                         />
                     </div>
-                    <div className="col-span-2"></div>
-                    <div className="col-span-2 flex justify-end gap-2">
-                        <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}><X className="w-4 h-4" /></Button>
-                        <Button size="sm" onClick={() => handleSave(category.id)} disabled={isSaving}><Save className="w-4 h-4" /></Button>
+                    
+                    {/* Panel Expandido para editar imágenes cómodamente */}
+                    <div className="col-span-4 col-start-2 mt-4 bg-muted/50 p-4 rounded-lg border border-border">
+                        <h4 className="text-sm font-bold mb-3">Imágenes de la Categoría</h4>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium mb-1">Imagen Principal</label>
+                                <ImageUploader 
+                                    value={formData.image} 
+                                    onChange={(url) => setFormData({...formData, image: url || ''})} 
+                                    imageType="category"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium mb-1">Galería</label>
+                                <MultiImageUploader 
+                                    value={formData.gallery} 
+                                    onChange={(urls) => setFormData({...formData, gallery: urls})} 
+                                    imageType="category"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-2 mt-4 pt-2 border-t border-border/50">
+                            <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}><X className="w-4 h-4 mr-2" /> Cancelar</Button>
+                            <Button size="sm" onClick={() => handleSave(category.id)} disabled={isSaving}><Save className="w-4 h-4 mr-2" /> Guardar Cambios</Button>
+                        </div>
                     </div>
                 </>
                 ) : (
@@ -289,12 +326,17 @@ export default function CategoriasPage() {
                 <>
                     <div className="col-span-1 text-center text-xs text-muted-foreground">{category.order || '-'}</div>
                     <div className="col-span-1 text-center flex justify-center">
-                        {/* RENDERIZAMOS EL ICONO DINÁMICO */}
                         <DynamicIcon name={category.icon || 'HelpCircle'} className="w-5 h-5 text-primary" />
                     </div>
                     <div className="col-span-3 flex items-center gap-2">
                         {category.image && <img src={category.image} className="w-8 h-8 rounded object-cover border border-border" alt="" />}
                         <span className="font-medium">{category.name}</span>
+                        {/* Indicador de cuántas fotos hay en galería */}
+                        {category.gallery && category.gallery.length > 0 && (
+                            <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1 font-bold">
+                                +{category.gallery.length}
+                            </span>
+                        )}
                     </div>
                     <div className="col-span-3 text-sm text-muted-foreground truncate">
                         {category.description || '-'}
@@ -324,13 +366,6 @@ export default function CategoriasPage() {
             </div>
             ))
         )}
-      </div>
-
-      <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20 flex gap-3">
-        <div className="text-2xl">💡</div>
-        <p className="text-sm text-blue-600 dark:text-blue-400">
-          <strong>Tip:</strong> Ahora usas iconos profesionales. Se ven mejor y cargan más rápido que los emojis.
-        </p>
       </div>
     </div>
   )

@@ -22,8 +22,8 @@ const fallbackPacks = [
     tagIcon: Leaf,
     tagColor: "from-green-400 to-emerald-500",
     glow: "shadow-green-500/40",
-    price: 89,
-    priceDisplay: "S/ 89",
+    price: 150,
+    priceDisplay: "El menor precio de cada producto",
     image:
       "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400",
     features: ["Cuadernos", "Lápices", "Regla", "Borrador"],
@@ -36,11 +36,11 @@ const fallbackPacks = [
     tagIcon: Star,
     tagColor: "from-orange-400 to-pink-500",
     glow: "shadow-orange-500/50",
-    price: 149,
-    priceDisplay: "S/ 149",
+    price: 200,
+    priceDisplay: "Marcas reconocidas y calidad",
     image:
       "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=400",
-    features: ["Faber Castell", "Plumones", "Estuche"],
+    features: ["Artesco", "College", "Navarrete"],
     highlighted: true,
   },
   {
@@ -51,10 +51,10 @@ const fallbackPacks = [
     tagColor: "from-purple-500 to-fuchsia-600",
     glow: "shadow-fuchsia-500/50",
     price: 249,
-    priceDisplay: "S/ 249",
+    priceDisplay: "Si buscas lo mejor en calidad, este pack es ideal para ti",
     image:
       "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400",
-    features: ["Prismacolor", "Mochila", "Lonchera"],
+    features: ["Prismacolor", "Minerva", "Standford", "Envios a domicilio", "Regalos personalizados"],
     highlighted: false,
   },
 ];
