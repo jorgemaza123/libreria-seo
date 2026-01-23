@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Download, FileText, Calendar, Eye, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner'; 
 
 interface Catalog {
   id: string;
@@ -20,6 +21,8 @@ interface Catalog {
 export function CatalogsSection() {
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
   const [loading, setLoading] = useState(true);
+  // Estado para saber qué catálogo se está descargando actualmente
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchCatalogs() {
@@ -40,11 +43,51 @@ export function CatalogsSection() {
     fetchCatalogs();
   }, []);
 
-  const handleDownload = useCallback((catalog: Catalog) => {
-    if (catalog.fileUrl) {
+  const handleDownload = useCallback(async (catalog: Catalog) => {
+    if (!catalog.fileUrl) {
+      toast.error('El archivo no está disponible.');
+      return;
+    }
+
+    try {
+      setDownloadingId(catalog.id);
+      
+      // 1. Descargamos el archivo a la memoria (Blob)
+      const response = await fetch(catalog.fileUrl);
+      if (!response.ok) throw new Error("Error al obtener el archivo");
+      
+      const blob = await response.blob();
+      
+      // 2. Creamos una URL temporal
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // 3. Limpiamos el nombre para que sea un archivo válido
+      const safeTitle = catalog.title
+        .replace(/[^a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s-]/g, '') // Solo letras y números
+        .trim()
+        .replace(/\s+/g, '-'); // Espacios por guiones
+        
+      link.setAttribute('download', `${safeTitle || 'catalogo'}.pdf`);
+      
+      // 4. Forzamos la descarga
+      document.body.appendChild(link);
+      link.click();
+      
+      // 5. Limpieza
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`Descargando ${catalog.title}...`);
+
+    } catch (error) {
+      console.error("Error descarga:", error);
+      toast.error("No se pudo renombrar el archivo. Abriendo pestaña directa...");
+      // Fallback: Si falla, abrir en nueva pestaña con el nombre original
       window.open(catalog.fileUrl, '_blank');
-    } else {
-      alert('El archivo no está disponible.');
+    } finally {
+      setDownloadingId(null);
     }
   }, []);
 
@@ -160,16 +203,20 @@ export function CatalogsSection() {
                   <Button
                     onClick={() => handleDownload(catalog)}
                     className="flex-1 font-bold shadow-sm"
-                    disabled={!catalog.fileUrl}
+                    disabled={!catalog.fileUrl || downloadingId === catalog.id}
                   >
-                    <Download className="w-4 h-4 mr-2" aria-hidden />
-                    Descargar
+                    {downloadingId === catalog.id ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                        <Download className="w-4 h-4 mr-2" aria-hidden />
+                    )}
+                    {downloadingId === catalog.id ? 'Bajando...' : 'Descargar'}
                   </Button>
 
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDownload(catalog)}
+                    onClick={() => window.open(catalog.fileUrl, '_blank')}
                     aria-label={`Vista previa del catálogo ${catalog.title}`}
                     className="hover:text-primary"
                     disabled={!catalog.fileUrl}
