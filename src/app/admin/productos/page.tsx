@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Search, Pencil, Trash2, Package, Image as ImageIcon } from 'lucide-react'
+import { Plus, Search, Pencil, Trash2, Package, Image as ImageIcon, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -184,16 +184,22 @@ export default function ProductsPage() {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary" asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary" asChild title="Ver producto">
+                          <Link href={`/producto/${product.slug}`} target="_blank">
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary" asChild title="Editar">
                           <Link href={`/admin/productos/${product.id}`}>
                             <Pencil className="w-4 h-4" />
                           </Link>
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                           onClick={() => handleDelete(product.id)}
+                          title="Eliminar"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

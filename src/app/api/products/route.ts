@@ -144,8 +144,14 @@ export async function PUT(request: NextRequest) {
         .select()
         .single()
   
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  
+      if (error) {
+        // Manejo de duplicados (mismo que en POST)
+        if (error.code === '23505') {
+          return NextResponse.json({ error: 'Ya existe otro producto con ese slug.' }, { status: 409 })
+        }
+        return NextResponse.json({ error: error.message }, { status: 500 })
+      }
+
       return NextResponse.json({ product: data })
     } catch (error) {
       return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

@@ -3,6 +3,19 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+// Configuración del segmento de ruta para permitir payloads grandes
+export const maxDuration = 60 // segundos
+
+// Helper para parsear JSON con mejor manejo de errores
+async function parseJsonBody(request: NextRequest) {
+  try {
+    const text = await request.text()
+    return JSON.parse(text)
+  } catch (error) {
+    throw new Error('Invalid JSON body')
+  }
+}
+
 // 1. GET (Leer Categorías)
 export async function GET() {
   try {
@@ -42,7 +55,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const body = await request.json()
+
+    let body
+    try {
+      body = await parseJsonBody(request)
+    } catch {
+      return NextResponse.json({ error: 'Error al procesar los datos. El contenido puede ser demasiado grande.' }, { status: 400 })
+    }
 
     // Lógica original de ordenamiento
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,11 +102,17 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await request.json()
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
         if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+
+        let body
+        try {
+          body = await parseJsonBody(request)
+        } catch {
+          return NextResponse.json({ error: 'Error al procesar los datos. El contenido puede ser demasiado grande.' }, { status: 400 })
+        }
 
         // Construcción dinámica del objeto update (Tu lógica original mejorada)
         const updateData: any = {}

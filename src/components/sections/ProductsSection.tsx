@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ShoppingCart, Heart, Eye, Star, Search, Filter, ChevronDown, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
+import { toast } from 'sonner';
 import { useSearch } from '@/contexts/SearchContext';
 import { useSiteContent } from '@/contexts/SiteContentContext';
 import type { Product } from '@/lib/types';
@@ -13,9 +14,23 @@ import type { Product } from '@/lib/types';
 // Placeholder para productos sin imagen
 const PLACEHOLDER_IMAGE = '/placeholder-product.svg';
 
+// Helper para localStorage de favoritos
+const FAVORITES_KEY = 'libreria-favorites';
+function getFavorites(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem(FAVORITES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
 function ProductCard({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const [imageError, setImageError] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount && product.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
@@ -23,6 +38,34 @@ function ProductCard({ product }: { product: Product }) {
 
   // Verificar si hay imagen válida
   const hasValidImage = product.image && product.image.trim() !== '' && !imageError;
+
+  // Cargar estado de favoritos desde localStorage
+  useEffect(() => {
+    const favorites = getFavorites();
+    setIsFavorite(favorites.includes(product.id));
+  }, [product.id]);
+
+  // Toggle favorito
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const favorites = getFavorites();
+
+    if (isFavorite) {
+      const updated = favorites.filter(id => id !== product.id);
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
+      setIsFavorite(false);
+      toast.success('Eliminado de favoritos');
+    } else {
+      const updated = [...favorites, product.id];
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
+      setIsFavorite(true);
+      toast.success('Agregado a favoritos', {
+        description: product.name,
+      });
+    }
+  };
 
   return (
     <article className="group bg-card rounded-xl overflow-hidden shadow-sm card-elevated hover:shadow-lg transition-shadow h-full flex flex-col">
@@ -60,14 +103,29 @@ function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Quick Actions */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-          <button className="w-8 h-8 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-md">
-            <Heart className="w-4 h-4" />
+        {/* Quick Actions - Alto contraste para cualquier fondo */}
+        <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          {/* Botón Favoritos */}
+          <button
+            onClick={handleToggleFavorite}
+            aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
+              isFavorite
+                ? 'bg-red-500 text-white hover:bg-red-600'
+                : 'bg-slate-900/80 text-white hover:bg-slate-900'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
-          <button className="w-8 h-8 bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-md">
+
+          {/* Botón Ver Producto */}
+          <Link
+            href={`/producto/${product.slug}`}
+            aria-label="Ver producto"
+            className="w-9 h-9 bg-slate-900/80 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-900 transition-all duration-200"
+          >
             <Eye className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
 
         {/* Add to Cart Overlay */}

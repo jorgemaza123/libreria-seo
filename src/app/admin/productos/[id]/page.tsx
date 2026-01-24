@@ -170,6 +170,11 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
     }))
   }
 
+  // Verificar si es un UUID válido (producto real de Supabase)
+  const isValidUUID = (str: string) => {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -186,15 +191,16 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
     setIsSaving(true)
 
     try {
-      // Check if it's a numeric ID (mock data) - create new instead of update
-      const numericId = parseInt(id)
-      const isFromMockData = !isNaN(numericId) && numericId < 100
+      // Siempre usar PUT para actualizar, nunca POST
+      // Si el ID no es un UUID válido, significa que es de mock data y no existe en Supabase
+      if (!isValidUUID(id)) {
+        toast.error('Este producto es de demostración. Crea uno nuevo desde "Nuevo Producto".')
+        setIsSaving(false)
+        return
+      }
 
-      const method = isFromMockData ? 'POST' : 'PUT'
-      const url = isFromMockData ? '/api/products' : `/api/products?id=${id}`
-
-      const response = await fetch(url, {
-        method,
+      const response = await fetch(`/api/products?id=${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
@@ -212,7 +218,7 @@ export default function EditarProductoPage({ params }: { params: Promise<{ id: s
       })
 
       if (response.ok) {
-        toast.success(isFromMockData ? 'Producto creado correctamente' : 'Producto actualizado correctamente')
+        toast.success('Producto actualizado correctamente')
         router.push('/admin/productos')
       } else {
         const error = await response.json()

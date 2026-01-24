@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -24,6 +25,15 @@ const nextConfig = {
         hostname: 'via.placeholder.com',
       }
     ],
+  },
+  // Aumentar el límite del body para Server Actions y API Routes
+  serverActions: {
+    bodySizeLimit: '10mb',
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
   },
 };
 
