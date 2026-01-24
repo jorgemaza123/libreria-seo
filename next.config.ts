@@ -19,17 +19,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'plus.unsplash.com',
       },
-      // Agregamos este nuevo para la imagen de prueba
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
       }
     ],
   },
-  // Aumentar el límite del body para Server Actions y API Routes
-  serverActions: {
-    bodySizeLimit: '10mb',
-  },
+  // La configuración debe ir DENTRO de experimental
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
