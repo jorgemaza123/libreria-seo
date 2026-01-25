@@ -35,7 +35,7 @@ export function FloatingCart() {
   if (itemCount === 0) return null;
 
   return (
-    <div className="fixed bottom-20 right-4 z-40 md:bottom-6">
+    <div className="fixed bottom-[88px] right-4 z-40 lg:bottom-6">
       {/* Expanded Cart Preview */}
       {isExpanded && (
         <div className="mb-3 w-80 bg-card rounded-xl shadow-2xl border border-border overflow-hidden animate-in slide-in-from-bottom-4 duration-200">

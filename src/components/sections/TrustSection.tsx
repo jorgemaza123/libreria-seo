@@ -1,24 +1,24 @@
 "use client"
 
 import { useMemo } from 'react';
-import { Store, Truck, CreditCard, Shield, Clock, MapPin } from 'lucide-react';
-import { useSiteContent } from '@/contexts/SiteContentContext'; // <--- CONECTADO
+import { Store, Truck, CreditCard, Shield, Clock, MapPin, Award } from 'lucide-react';
+import { useSiteContent } from '@/contexts/SiteContentContext';
 
-// 1. Diccionario de Iconos
-// Esto permite que la Base de Datos guarde el nombre "Store" y React sepa qué pintar
+// Diccionario de Iconos
 const ICON_MAP: Record<string, any> = {
   Store,
   Truck,
   CreditCard,
   Shield,
   Clock,
-  MapPin
+  MapPin,
+  Award,
 };
 
-// 2. Datos por Defecto (Tu diseño original)
+// Datos por Defecto
 const DEFAULT_TRUST = [
   {
-    iconName: 'Store', // Guardamos el nombre como string
+    iconName: 'Store',
     title: 'Años',
     subtitle: 'en el barrio',
     highlight: true,
@@ -36,7 +36,7 @@ const DEFAULT_TRUST = [
     title: 'Yape y Plin',
     subtitle: 'aceptados',
     highlight: false,
-    hasLogos: true, // Lógica especial para mostrar logos
+    hasLogos: true,
   },
   {
     iconName: 'Shield',
@@ -64,13 +64,10 @@ const DEFAULT_TRUST = [
 export function TrustSection() {
   const { effectiveContent } = useSiteContent();
 
-  // 3. Fusión de Datos
   const trustItems = useMemo(() => {
-    // Intentamos leer 'trust' de la base de datos
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dbTrust = (effectiveContent as any)?.trust;
 
-    // Si hay datos en la DB, los usamos. Si no, usamos el default.
     if (dbTrust && Array.isArray(dbTrust) && dbTrust.length > 0) {
       return dbTrust;
     }
@@ -78,46 +75,69 @@ export function TrustSection() {
   }, [effectiveContent]);
 
   return (
-    <section className="py-6 bg-secondary text-secondary-foreground overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+    <section
+      className="py-8 md:py-10 bg-secondary text-secondary-foreground overflow-hidden"
+      aria-label="Razones para confiar en nosotros"
+    >
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Header opcional para móvil */}
+        <div className="text-center mb-6 lg:hidden">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-semibold">
+            <Award className="w-4 h-4" />
+            ¿Por qué elegirnos?
+          </div>
+        </div>
+
+        <div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5"
+          role="list"
+        >
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {trustItems.map((item: any, index: number) => {
-            // Buscamos el componente del ícono en nuestro mapa
-            // Si viene de DB como string "Store", lo convierte al icono real.
-            // Si no encuentra el icono, usa Store por defecto.
             const IconComponent = ICON_MAP[item.iconName] || ICON_MAP['Store'];
-            
+
             return (
               <div
                 key={index}
+                role="listitem"
                 className={`
-                  flex flex-col items-center text-center p-4 rounded-xl transition-all
-                  ${item.highlight 
-                    ? 'bg-primary/20 border border-primary/30' 
-                    : 'hover:bg-secondary-foreground/5'
+                  flex flex-col items-center text-center
+                  p-4 sm:p-5 rounded-2xl transition-all
+                  ${item.highlight
+                    ? 'bg-primary/20 border-2 border-primary/30'
+                    : 'hover:bg-secondary-foreground/5 border-2 border-transparent'
                   }
                 `}
               >
-                <div className={`
-                  w-14 h-14 rounded-xl flex items-center justify-center mb-3
-                  ${item.highlight 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-secondary-foreground/10 text-secondary-foreground'
-                  }
-                `}>
-                  <IconComponent className="w-7 h-7" />
+                {/* Icono */}
+                <div
+                  className={`
+                    w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-3
+                    ${item.highlight
+                      ? 'bg-primary text-primary-foreground shadow-lg'
+                      : 'bg-secondary-foreground/10 text-secondary-foreground'
+                    }
+                  `}
+                  aria-hidden="true"
+                >
+                  <IconComponent className="w-7 h-7 sm:w-8 sm:h-8" />
                 </div>
-                <p className="font-bold text-lg leading-tight">{item.title}</p>
-                <p className="text-secondary-foreground/70 text-sm">{item.subtitle}</p>
-                
-                {/* Yape/Plin logos */}
+
+                {/* Textos - Tamaños mejorados */}
+                <p className="font-bold text-base sm:text-lg leading-tight">
+                  {item.title}
+                </p>
+                <p className="text-secondary-foreground/80 text-sm sm:text-base mt-0.5">
+                  {item.subtitle}
+                </p>
+
+                {/* Yape/Plin logos - Más grandes y legibles */}
                 {item.hasLogos && (
-                  <div className="flex gap-2 mt-2">
-                    <div className="w-10 h-6 bg-purple-600 rounded flex items-center justify-center text-white text-[8px] font-bold shadow-sm">
+                  <div className="flex gap-2 mt-3">
+                    <div className="px-3 py-1.5 bg-purple-600 rounded-lg flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
                       YAPE
                     </div>
-                    <div className="w-10 h-6 bg-teal-500 rounded flex items-center justify-center text-white text-[8px] font-bold shadow-sm">
+                    <div className="px-3 py-1.5 bg-teal-500 rounded-lg flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
                       PLIN
                     </div>
                   </div>

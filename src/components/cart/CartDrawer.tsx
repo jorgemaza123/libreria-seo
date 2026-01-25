@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 
@@ -19,120 +19,151 @@ export function CartDrawer() {
 
   if (!isCartOpen) return null;
 
+  const handleClose = () => setIsCartOpen(false);
+
   return (
     <>
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
-        onClick={() => setIsCartOpen(false)}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        onClick={handleClose}
+        aria-hidden="true"
       />
 
-      {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-md bg-card border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-primary" />
-            <h2 className="font-heading font-bold text-lg">
-              Mi Cotización ({getItemCount()})
-            </h2>
+      <div
+        className="fixed inset-y-0 right-0 w-full max-w-md bg-card border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Carrito de compras"
+      >
+        <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="font-heading font-bold text-lg">Mi Cotización</h2>
+              <p className="text-sm text-muted-foreground">
+                {getItemCount()} {getItemCount() === 1 ? 'producto' : 'productos'}
+              </p>
+            </div>
           </div>
           <button
-            onClick={() => setIsCartOpen(false)}
-            className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+            onClick={handleClose}
+            className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+            aria-label="Cerrar carrito"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Items */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <ShoppingBag className="w-16 h-16 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Tu lista está vacía</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Agrega productos para cotizar
+            <div className="flex flex-col items-center justify-center h-full text-center p-8">
+              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+                <ShoppingBag className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Tu lista está vacía</h3>
+              <p className="text-muted-foreground mb-6 max-w-[250px]">
+                Agrega productos para solicitar una cotización por WhatsApp
               </p>
+              <Button
+                size="lg"
+                onClick={handleClose}
+                className="gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Explorar productos
+              </Button>
             </div>
           ) : (
-            items.map((item) => {
-              const price = item.product.salePrice || item.product.price;
-              return (
-                <div
-                  key={item.product.id}
-                  className="flex gap-3 p-3 bg-muted/30 rounded-xl"
-                >
-                  <img
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm line-clamp-2">
-                      {item.product.name}
-                    </h4>
-                    <p className="text-primary font-bold mt-1">
-                      S/ {price.toFixed(2)}
-                    </p>
+            <div className="p-4 space-y-3">
+              {items.map((item) => {
+                const price = item.product.salePrice || item.product.price;
+                return (
+                  <div
+                    key={item.product.id}
+                    className="flex gap-3 p-3 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors"
+                  >
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm line-clamp-2 leading-tight">
+                        {item.product.name}
+                      </h4>
+                      <p className="text-primary font-bold text-lg mt-1">
+                        S/ {price.toFixed(2)}
+                      </p>
 
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        onClick={() =>
-                          updateQuantity(item.product.id, item.quantity - 1)
-                        }
-                        className="w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-8 text-center text-sm font-medium">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          updateQuantity(item.product.id, item.quantity + 1)
-                        }
-                        className="w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => removeFromCart(item.product.id)}
-                        className="ml-auto w-7 h-7 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          aria-label="Reducir cantidad"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="w-8 text-center font-semibold tabular-nums">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          aria-label="Aumentar cantidad"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="ml-auto w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors"
+                          aria-label={`Eliminar ${item.product.name} del carrito`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
-          <div className="p-4 border-t border-border space-y-4">
-            {/* Total */}
-            <div className="flex justify-between items-center text-lg font-bold">
-              <span>Total Estimado:</span>
-              <span className="text-primary">S/ {getTotal().toFixed(2)}</span>
+          <div className="p-4 border-t border-border bg-card space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Total Estimado:</span>
+              <span className="text-2xl font-bold text-primary">
+                S/ {getTotal().toFixed(2)}
+              </span>
             </div>
 
-            {/* Actions */}
-            <Button
-              size="lg"
-              className="w-full bg-whatsapp hover:bg-whatsapp/90 text-whatsapp-foreground border-none"
-              onClick={sendToWhatsApp}
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Enviar Cotización por WhatsApp
-            </Button>
+            <div className="space-y-2">
+              <Button
+                size="lg"
+                className="w-full h-14 text-base font-bold bg-[#25D366] hover:bg-[#20BA5C] text-white border-none rounded-xl"
+                onClick={sendToWhatsApp}
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Enviar Cotización por WhatsApp
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full h-12 text-base font-medium rounded-xl"
+                onClick={handleClose}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Seguir Comprando
+              </Button>
+            </div>
 
             <button
               onClick={clearCart}
-              className="w-full text-sm text-muted-foreground hover:text-destructive transition-colors"
+              className="w-full text-sm text-muted-foreground hover:text-destructive transition-colors py-2"
             >
               Vaciar lista
             </button>

@@ -227,11 +227,9 @@ export function ProductsSection() {
     };
   }, [getCategoryFromUrl]);
 
-  // Productos destacados - máximo 5
+  // Productos destacados - mostrar todos
   const featuredProducts = useMemo(() => {
-    return products
-      .filter((p) => p.isActive && p.isFeatured)
-      .slice(0, 5);
+    return products.filter((p) => p.isActive && p.isFeatured);
   }, [products]);
 
   const filteredProducts = useMemo(() => {
@@ -277,12 +275,12 @@ export function ProductsSection() {
               </p>
             </div>
 
-            {/* Contenedor flex que solo muestra una línea */}
-            <div className="flex gap-3 sm:gap-4 md:gap-6 overflow-hidden">
+            {/* Grid responsive para productos destacados */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
               {featuredProducts.map((product, index) => (
                 <div
                   key={product.id}
-                  className="animate-fade-up flex-shrink-0 w-[calc(50%-6px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-12px)] lg:w-[calc(20%-13px)]"
+                  className="animate-fade-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <ProductCard product={product} />

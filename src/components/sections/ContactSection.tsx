@@ -1,94 +1,190 @@
 "use client"
 
-import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockSiteContent } from '@/lib/mock-data';
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
-import { toast } from 'sonner';
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission - will integrate with backend
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    toast.success('¡Mensaje enviado!', {
-      description: 'Nos pondremos en contacto contigo pronto.',
-    });
-
-    setFormData({ name: '', email: '', phone: '', message: '' });
-    setIsSubmitting(false);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
   return (
-    <section id="contacto" className="relative py-16 md:py-24 overflow-hidden">
+    <section
+      id="contacto"
+      className="relative py-12 md:py-20 lg:py-24 overflow-hidden bg-muted/30"
+      aria-labelledby="contact-title"
+    >
       {/* Background Decorative Elements */}
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute top-1/4 left-0 w-72 h-72 lg:w-96 lg:h-96 bg-primary/5 rounded-full blur-3xl -z-10" aria-hidden="true" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 lg:w-96 lg:h-96 bg-blue-500/5 rounded-full blur-3xl -z-10" aria-hidden="true" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium animate-fade-down">
-            👋 Estamos Aquí Para Ti
+        <header className="text-center mb-10 lg:mb-16 space-y-3">
+          <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold">
+            Estamos Aquí Para Ti
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold animate-fade-up">
-            {mockSiteContent.contactTitle}
+          <h2
+            id="contact-title"
+            className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading font-bold"
+          >
+            ¿Necesitas Ayuda?
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            {mockSiteContent.contactSubtitle}
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+            Contáctanos por el medio que prefieras. Respondemos rápido.
           </p>
-        </div>
+        </header>
 
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
-          
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-start">
 
-          {/* Contact Info & Map (Ocupa 5 columnas en PC) */}
-          <div className="lg:col-span-5 space-y-6 animate-fade-left" style={{ animationDelay: '0.2s' }}>
-            
-            {/* Quick Contact Card */}
-            
+          {/* ===== COLUMNA IZQUIERDA: Contacto Rápido ===== */}
+          <div className="space-y-6">
 
-            {/* Map Card */}
-            <div className="bg-card/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg border border-border/50 hover:shadow-xl transition-all duration-300 group">
-              <div className="p-4 bg-muted/30 border-b border-border/50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-bold">Ubicación en Tiempo Real</span>
+            {/* Tarjeta Principal de Contacto */}
+            <div className="bg-card rounded-2xl lg:rounded-3xl p-6 sm:p-8 shadow-lg border border-border/50">
+              <h3 className="text-xl sm:text-2xl font-bold mb-6 text-center lg:text-left">
+                Contáctanos Ahora
+              </h3>
+
+              {/* Botones de Contacto - Grandes y Accesibles */}
+              <div className="space-y-4">
+                {/* WhatsApp - Botón Principal */}
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full min-h-[60px] text-lg font-bold bg-green-600 hover:bg-green-700 shadow-lg"
+                >
+                  <a
+                    href={getWhatsAppUrl("Hola! Quiero información")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Enviar mensaje por WhatsApp"
+                  >
+                    <MessageCircle className="w-6 h-6 mr-3" />
+                    Escríbenos por WhatsApp
+                  </a>
+                </Button>
+
+                {/* Llamar */}
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full min-h-[56px] text-lg font-bold"
+                >
+                  <a
+                    href={getPhoneUrl()}
+                    aria-label={`Llamar al ${CONTACT.phone}`}
+                  >
+                    <Phone className="w-5 h-5 mr-3" />
+                    Llamar: {CONTACT.phone}
+                  </a>
+                </Button>
+
+                {/* Email */}
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="lg"
+                  className="w-full min-h-[52px] text-base"
+                >
+                  <a
+                    href={getEmailUrl()}
+                    aria-label={`Enviar correo a ${CONTACT.email}`}
+                  >
+                    <Mail className="w-5 h-5 mr-3" />
+                    {CONTACT.email}
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Horarios de Atención */}
+            <div className="bg-card rounded-2xl p-6 shadow-md border border-border/50">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-primary" />
                 </div>
+                <h3 className="text-lg font-bold">Horario de Atención</h3>
+              </div>
+
+              <div className="space-y-3">
+                {/* Lunes a Viernes */}
+                <div className="flex justify-between items-center py-2 border-b border-border/50">
+                  <span className="font-medium">Lunes a Viernes</span>
+                  <span className="text-primary font-bold">{BUSINESS_HOURS.weekdays}</span>
+                </div>
+                {/* Sábados */}
+                <div className="flex justify-between items-center py-2 border-b border-border/50">
+                  <span className="font-medium">Sábados</span>
+                  <span className="text-primary font-bold">{BUSINESS_HOURS.saturday}</span>
+                </div>
+                {/* Domingos */}
+                <div className="flex justify-between items-center py-2">
+                  <span className="font-medium">Domingos</span>
+                  <span className="text-muted-foreground font-medium">{BUSINESS_HOURS.sunday}</span>
+                </div>
+              </div>
+
+              {/* Indicador de estado */}
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-sm font-medium text-green-600">
+                    Abierto ahora - Te respondemos al instante
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ===== COLUMNA DERECHA: Mapa y Dirección ===== */}
+          <div className="space-y-6">
+
+            {/* Dirección */}
+            <div className="bg-card rounded-2xl p-6 shadow-md border border-border/50">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold mb-1">Nuestra Ubicación</h3>
+                  <p className="text-muted-foreground mb-3">
+                    {BUSINESS_INFO.address.street}<br />
+                    {BUSINESS_INFO.address.district}, {BUSINESS_INFO.address.city}
+                  </p>
+                  <p className="text-sm text-primary font-medium">
+                    📍 Frente al Colegio Estela Maris
+                  </p>
+                </div>
+              </div>
+
+              {/* Botón Cómo Llegar */}
+              <Button
+                asChild
+                variant="outline"
+                className="w-full mt-4 min-h-[48px] font-bold"
+              >
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                  aria-label="Abrir navegación GPS a nuestra ubicación"
                 >
-                  Abrir GPS <ArrowRight className="w-3 h-3" />
+                  <Navigation className="w-5 h-5 mr-2" />
+                  Cómo Llegar (GPS)
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </a>
+              </Button>
+            </div>
+
+            {/* Mapa */}
+            <div className="bg-card rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg border border-border/50">
+              <div className="p-4 bg-muted/50 border-b border-border/50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-bold">Ubicación en el Mapa</span>
+                </div>
               </div>
-              
-              <div className="relative w-full h-[250px] bg-muted">
+
+              <div className="relative w-full h-[280px] sm:h-[320px] lg:h-[350px] bg-muted">
                 <iframe
                   src={`https://maps.google.com/maps?q=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}&z=16&output=embed`}
                   width="100%"
@@ -97,13 +193,37 @@ export function ContactSection() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Ubicación de Librería CHROMA"
-                  className="grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
+                  title="Mapa de ubicación de Librería CHROMA"
+                  className="grayscale-[10%] hover:grayscale-0 transition-all duration-500"
                 />
               </div>
             </div>
-
           </div>
+        </div>
+
+        {/* ===== BANNER INFERIOR - CTA Final ===== */}
+        <div className="mt-10 lg:mt-16 bg-gradient-to-r from-primary to-primary/80 rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 text-center text-primary-foreground shadow-xl">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
+            ¿Tienes una lista escolar?
+          </h3>
+          <p className="text-base sm:text-lg opacity-90 mb-6 max-w-2xl mx-auto">
+            Envíanos una foto de tu lista por WhatsApp y te la cotizamos gratis en minutos.
+          </p>
+          <Button
+            asChild
+            size="lg"
+            variant="secondary"
+            className="min-h-[56px] px-8 text-lg font-bold shadow-lg hover:scale-105 transition-transform"
+          >
+            <a
+              href={getWhatsAppUrl("Hola! Quiero enviar mi lista escolar para cotizar")}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Enviar Lista por WhatsApp
+            </a>
+          </Button>
         </div>
       </div>
     </section>

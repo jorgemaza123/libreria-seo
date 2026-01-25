@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Heart, Share2, Check, Copy } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Heart, Share2, Check, Link2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ProductActionsProps {
@@ -16,14 +15,13 @@ const FAVORITES_KEY = 'libreria-favorites'
 export function ProductActions({ productId, productName, productSlug }: ProductActionsProps) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isSharing, setIsSharing] = useState(false)
+  const [justCopied, setJustCopied] = useState(false)
 
-  // Cargar estado de favoritos desde localStorage al montar
   useEffect(() => {
     const favorites = getFavorites()
     setIsFavorite(favorites.includes(productId))
   }, [productId])
 
-  // Helpers para localStorage
   function getFavorites(): string[] {
     if (typeof window === 'undefined') return []
     try {
@@ -43,18 +41,15 @@ export function ProductActions({ productId, productName, productSlug }: ProductA
     }
   }
 
-  // Toggle favorito
   const handleToggleFavorite = () => {
     const favorites = getFavorites()
 
     if (isFavorite) {
-      // Quitar de favoritos
       const updated = favorites.filter(id => id !== productId)
       saveFavorites(updated)
       setIsFavorite(false)
       toast.success('Eliminado de favoritos')
     } else {
-      // Agregar a favoritos
       const updated = [...favorites, productId]
       saveFavorites(updated)
       setIsFavorite(true)
@@ -64,34 +59,35 @@ export function ProductActions({ productId, productName, productSlug }: ProductA
     }
   }
 
-  // Compartir producto
   const handleShare = async () => {
     setIsSharing(true)
 
     const shareData = {
       title: productName,
       text: `Mira este producto: ${productName}`,
-      url: typeof window !== 'undefined' ? window.location.href : `${process.env.NEXT_PUBLIC_SITE_URL || ''}/producto/${productSlug}`,
+      url: typeof window !== 'undefined'
+        ? window.location.href
+        : `${process.env.NEXT_PUBLIC_SITE_URL || ''}/producto/${productSlug}`,
     }
 
     try {
-      // Intentar usar Web Share API (funciona en móviles y algunos navegadores)
       if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
         await navigator.share(shareData)
         toast.success('Compartido exitosamente')
       } else {
-        // Fallback: copiar URL al portapapeles
         await navigator.clipboard.writeText(shareData.url)
+        setJustCopied(true)
+        setTimeout(() => setJustCopied(false), 2000)
         toast.success('Enlace copiado al portapapeles', {
           description: 'Pégalo donde quieras compartirlo',
         })
       }
     } catch (error) {
-      // Si el usuario cancela el share, no mostrar error
       if (error instanceof Error && error.name !== 'AbortError') {
-        // Fallback final: intentar copiar al portapapeles
         try {
           await navigator.clipboard.writeText(shareData.url)
+          setJustCopied(true)
+          setTimeout(() => setJustCopied(false), 2000)
           toast.success('Enlace copiado al portapapeles')
         } catch {
           toast.error('No se pudo compartir')
@@ -103,32 +99,66 @@ export function ProductActions({ productId, productName, productSlug }: ProductA
   }
 
   return (
-    <div className="flex gap-4 pt-4 border-t border-border">
-      <Button
-        variant="ghost"
-        size="lg"
+    <div
+      className="flex items-center gap-2 sm:gap-3"
+      role="group"
+      aria-label="Acciones del producto"
+    >
+      <button
         onClick={handleToggleFavorite}
-        className={isFavorite ? 'text-red-500 hover:text-red-600' : ''}
+        className={`
+          inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+          text-sm font-medium transition-all duration-200
+          border focus:outline-none focus:ring-2 focus:ring-offset-2
+          ${isFavorite
+            ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/50 focus:ring-red-500'
+            : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-primary'
+          }
+        `}
+        aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+        aria-pressed={isFavorite}
       >
         <Heart
-          className={`w-5 h-5 mr-2 ${isFavorite ? 'fill-current' : ''}`}
+          className={`w-5 h-5 transition-transform ${isFavorite ? 'fill-current scale-110' : ''}`}
+          aria-hidden="true"
         />
-        {isFavorite ? 'En Favoritos' : 'Agregar a Favoritos'}
-      </Button>
+        <span className="hidden sm:inline">
+          {isFavorite ? 'Favorito' : 'Favoritos'}
+        </span>
+      </button>
 
-      <Button
-        variant="ghost"
-        size="lg"
+      <button
         onClick={handleShare}
         disabled={isSharing}
+        className={`
+          inline-flex items-center gap-2 px-4 py-2.5 rounded-xl
+          text-sm font-medium transition-all duration-200
+          border focus:outline-none focus:ring-2 focus:ring-offset-2
+          ${justCopied
+            ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800 text-green-600 dark:text-green-400'
+            : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-primary'
+          }
+          disabled:opacity-50 disabled:cursor-wait
+        `}
+        aria-label={justCopied ? 'Enlace copiado' : 'Compartir producto'}
       >
-        {isSharing ? (
-          <Copy className="w-5 h-5 mr-2 animate-pulse" />
+        {justCopied ? (
+          <>
+            <Check className="w-5 h-5" aria-hidden="true" />
+            <span className="hidden sm:inline">Copiado</span>
+          </>
+        ) : isSharing ? (
+          <>
+            <Link2 className="w-5 h-5 animate-pulse" aria-hidden="true" />
+            <span className="hidden sm:inline">Copiando...</span>
+          </>
         ) : (
-          <Share2 className="w-5 h-5 mr-2" />
+          <>
+            <Share2 className="w-5 h-5" aria-hidden="true" />
+            <span className="hidden sm:inline">Compartir</span>
+          </>
         )}
-        Compartir
-      </Button>
+      </button>
     </div>
   )
 }
