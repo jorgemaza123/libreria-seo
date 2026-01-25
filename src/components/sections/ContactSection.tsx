@@ -109,17 +109,17 @@ export function ContactSection() {
                 {/* Lunes a Viernes */}
                 <div className="flex justify-between items-center py-2 border-b border-border/50">
                   <span className="font-medium">Lunes a Viernes</span>
-                  <span className="text-primary font-bold">{BUSINESS_HOURS.weekdays}</span>
+                  <span className="text-primary font-bold">{BUSINESS_HOURS.weekdays.hours}</span>
                 </div>
                 {/* Sábados */}
                 <div className="flex justify-between items-center py-2 border-b border-border/50">
                   <span className="font-medium">Sábados</span>
-                  <span className="text-primary font-bold">{BUSINESS_HOURS.saturday}</span>
+                  <span className="text-primary font-bold">{BUSINESS_HOURS.saturday.hours}</span>
                 </div>
                 {/* Domingos */}
                 <div className="flex justify-between items-center py-2">
                   <span className="font-medium">Domingos</span>
-                  <span className="text-muted-foreground font-medium">{BUSINESS_HOURS.sunday}</span>
+                  <span className="text-muted-foreground font-medium">{BUSINESS_HOURS.sunday.hours}</span>
                 </div>
               </div>
 
