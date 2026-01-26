@@ -14,6 +14,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { useWhatsApp } from '@/hooks/use-whatsapp'
+import { useChatContext } from '@/contexts/ChatContext'
 
 type MessageType = 'bot' | 'user' | 'typing' | 'action'
 
@@ -84,7 +85,7 @@ const RESPONSE_MESSAGES = [
 ]
 
 export function ChatBot() {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, toggleChat, closeChat } = useChatContext()
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -214,10 +215,7 @@ export function ChatBot() {
     [openWhatsApp]
   )
 
-  const toggleChat = useCallback(() => {
-    setIsOpen((prev) => !prev)
-  }, [])
-
+  
   return (
     <>
       <button
@@ -250,26 +248,26 @@ export function ChatBot() {
 
       <div
         className={`
-          fixed z-50 flex-col
+          fixed z-[60] flex-col
           bg-white dark:bg-zinc-900
-          rounded-3xl
           shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
-          border border-zinc-200 dark:border-zinc-800
           overflow-hidden
-          transition-all duration-300 ease-out origin-bottom-right
+          transition-all duration-300 ease-out
           ${isOpen
-            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto lg:flex'
-            : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto flex'
+            : 'opacity-0 scale-95 translate-y-4 pointer-events-none hidden'
           }
-          hidden
-          bottom-6 right-6
-          w-[400px] h-[520px]
+          inset-0 rounded-none
+          lg:inset-auto lg:bottom-6 lg:right-6
+          lg:w-[400px] lg:h-[520px]
+          lg:rounded-3xl lg:border lg:border-zinc-200 lg:dark:border-zinc-800
+          lg:origin-bottom-right
         `}
         role="dialog"
         aria-modal="true"
         aria-label="Asistente de ventas"
       >
-        <header className="flex items-center justify-between px-4 py-3 md:px-5 md:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white flex-shrink-0">
+        <header className="flex items-center justify-between px-4 py-3 md:px-5 md:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white flex-shrink-0 safe-area-pt">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -359,7 +357,7 @@ export function ChatBot() {
                 <button
                   key={option.id}
                   onClick={() => handleQuickOption(option)}
-                  className="flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                  className="flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700 active:scale-[0.98] active:bg-green-100 dark:active:bg-green-900/40 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-manipulation"
                   aria-label={`${option.label}: ${option.description}`}
                 >
                   <span className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
@@ -382,7 +380,7 @@ export function ChatBot() {
 
         <form
           onSubmit={handleSubmit}
-          className="px-4 py-3 md:px-5 md:py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0"
+          className="px-4 py-3 md:px-5 md:py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0 safe-area-pb"
         >
           <div className="flex items-center gap-2 md:gap-3">
             <input
@@ -398,7 +396,7 @@ export function ChatBot() {
             <button
               type="submit"
               disabled={!inputValue.trim() || isTyping}
-              className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-manipulation"
               aria-label="Enviar mensaje"
             >
               <Send className="w-5 h-5 md:w-6 md:h-6" />

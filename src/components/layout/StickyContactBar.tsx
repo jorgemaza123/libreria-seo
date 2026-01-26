@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { Phone, ArrowUp } from 'lucide-react';
+import { Phone, ArrowUp, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
+import { useChatContext } from '@/contexts/ChatContext';
 
 // Icono de WhatsApp moderno SVG
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -23,6 +24,7 @@ export function StickyContactBar() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
   const { getWhatsAppUrl, getPhoneUrl } = useWhatsApp();
+  const { openChat, isOpen: isChatOpen } = useChatContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,16 +48,16 @@ export function StickyContactBar() {
 
   return (
     <>
-      {/* Mobile Sticky Bar */}
+      {/* Mobile Sticky Bar - se oculta cuando el chat está abierto */}
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-card/95 backdrop-blur-md border-t border-border shadow-lg transition-transform duration-300 ${
-          isVisible ? 'translate-y-0' : 'translate-y-full'
+          isVisible && !isChatOpen ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
         <div className="flex gap-2 p-3 safe-area-pb">
           <Button
             variant="outline"
-            className="flex-1 h-12"
+            className="flex-1 h-12 active:scale-[0.98] active:bg-muted transition-all touch-manipulation"
             asChild
           >
             <a href={getPhoneUrl()}>
@@ -64,17 +66,11 @@ export function StickyContactBar() {
             </a>
           </Button>
           <Button
-            className="flex-1 h-12 bg-[#25D366] hover:bg-[#20BA5C] text-white border-none font-bold"
-            asChild
+            className="flex-1 h-12 bg-[#25D366] hover:bg-[#20BA5C] active:bg-[#1da851] active:scale-[0.98] text-white border-none font-bold transition-all touch-manipulation"
+            onClick={openChat}
           >
-            <a
-              href={getWhatsAppUrl('Hola, vi su página web y me interesa obtener información')}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <WhatsAppIcon className="w-5 h-5 mr-2" />
-              WhatsApp
-            </a>
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Chat
           </Button>
         </div>
       </div>
@@ -99,7 +95,7 @@ export function StickyContactBar() {
           href={getWhatsAppUrl('Hola, vi su página web y me interesa obtener información')}
           target="_blank"
           rel="noopener noreferrer"
-          className={`group relative flex items-center justify-center w-16 h-16 bg-[#25D366] hover:bg-[#20BA5C] rounded-full shadow-2xl transition-all duration-300 hover:scale-110 ${
+          className={`group relative flex items-center justify-center w-16 h-16 bg-[#25D366] hover:bg-[#20BA5C] active:bg-[#1da851] active:scale-100 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 ${
             isPulsing ? 'animate-pulse-ring' : ''
           }`}
         >
@@ -111,12 +107,12 @@ export function StickyContactBar() {
         </a>
       </div>
 
-      {/* Scroll to Top */}
+      {/* Scroll to Top - se oculta en móvil cuando el chat está abierto */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-[88px] lg:bottom-8 left-4 lg:left-auto lg:right-28 z-40 w-11 h-11 lg:w-12 lg:h-12 bg-card shadow-lg rounded-full flex items-center justify-center border border-border hover:bg-muted hover:scale-110 transition-all duration-300 ${
-          showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
-        }`}
+        className={`fixed bottom-[88px] lg:bottom-8 left-4 lg:left-auto lg:right-28 z-40 w-11 h-11 lg:w-12 lg:h-12 bg-card shadow-lg rounded-full flex items-center justify-center border border-border hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-300 touch-manipulation ${
+          !showScrollTop || isChatOpen ? 'max-lg:opacity-0 max-lg:translate-y-4 max-lg:pointer-events-none' : ''
+        } ${showScrollTop ? 'lg:opacity-100 lg:translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
         aria-label="Volver arriba"
       >
         <ArrowUp className="w-5 h-5 text-muted-foreground" />

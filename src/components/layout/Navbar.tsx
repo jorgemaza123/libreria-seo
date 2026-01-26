@@ -100,7 +100,7 @@ export function Navbar() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex-1 max-w-[200px] md:hidden flex items-center gap-2 px-3 py-2 bg-muted/60 hover:bg-muted rounded-full border border-transparent hover:border-primary/20 transition-all"
+              className="flex-1 max-w-[200px] md:hidden flex items-center gap-2 px-3 py-2.5 bg-muted/60 hover:bg-muted active:bg-muted/80 active:scale-[0.98] rounded-full border border-transparent hover:border-primary/20 transition-all touch-manipulation"
               aria-label="Abrir buscador"
             >
               <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -194,7 +194,7 @@ export function Navbar() {
 
       {isSearchOpen && (
         <div
-          className="fixed inset-0 z-50 bg-background/98 backdrop-blur-md"
+          className="fixed inset-0 z-[55] bg-background/98 backdrop-blur-md safe-area-inset"
           role="dialog"
           aria-modal="true"
           aria-label="Buscador de productos"
@@ -214,7 +214,7 @@ export function Navbar() {
               </form>
               <button
                 onClick={() => setIsSearchOpen(false)}
-                className="w-12 h-12 rounded-xl bg-muted hover:bg-muted-foreground/10 flex items-center justify-center transition-colors"
+                className="w-12 h-12 rounded-xl bg-muted hover:bg-muted-foreground/10 active:scale-95 flex items-center justify-center transition-all touch-manipulation"
                 aria-label="Cerrar buscador"
               >
                 <X className="w-6 h-6" />
@@ -239,7 +239,7 @@ export function Navbar() {
                       productsSection?.scrollIntoView({ behavior: "smooth" });
                       setIsSearchOpen(false);
                     }}
-                    className="block w-full text-left px-4 py-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
+                    className="block w-full text-left px-4 py-3 rounded-xl bg-muted/50 hover:bg-muted active:bg-muted/80 active:scale-[0.99] transition-all touch-manipulation"
                   >
                     <span className="flex items-center gap-3">
                       <Search className="w-4 h-4 text-muted-foreground" />
@@ -250,10 +250,10 @@ export function Navbar() {
               </div>
             </div>
 
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border safe-area-pb">
               <Button
                 size="lg"
-                className="w-full h-14 text-lg font-semibold rounded-xl"
+                className="w-full h-14 text-lg font-semibold rounded-xl active:scale-[0.98] transition-all touch-manipulation"
                 onClick={handleSearch}
                 disabled={!searchQuery.trim()}
               >
@@ -267,7 +267,7 @@ export function Navbar() {
 
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/98 backdrop-blur-md"
+          className="fixed inset-0 z-[55] bg-background/98 backdrop-blur-md safe-area-inset"
           role="dialog"
           aria-modal="true"
           aria-label="Menú de navegación"
@@ -279,18 +279,18 @@ export function Navbar() {
                   key={item.id}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-4 text-lg font-medium rounded-xl hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 px-4 py-4 text-lg font-medium rounded-xl hover:bg-muted active:bg-muted/80 active:scale-[0.99] transition-all touch-manipulation"
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
 
-            <div className="mt-auto pt-6 border-t border-border space-y-3">
+            <div className="mt-auto pt-6 border-t border-border space-y-3 safe-area-pb">
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full justify-start gap-3"
+                className="w-full justify-start gap-3 active:scale-[0.98] transition-all touch-manipulation"
                 onClick={() => {
                   toggleTheme();
                   setIsMobileMenuOpen(false);
@@ -319,7 +319,7 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full justify-start gap-3"
+                className="w-full justify-start gap-3 active:scale-[0.98] transition-all touch-manipulation"
                 onClick={() => {
                   setIsShareModalOpen(true);
                   setIsMobileMenuOpen(false);

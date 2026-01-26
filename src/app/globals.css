@@ -193,9 +193,64 @@
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
 
-  /* Safe area for mobile */
+  /* ===== SAFE AREAS FOR MOBILE (Notch, Dynamic Island, Home Indicator) ===== */
   .safe-area-pb {
     padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+  }
+  .safe-area-pt {
+    padding-top: max(env(safe-area-inset-top), 0rem);
+  }
+  .safe-area-px {
+    padding-left: max(env(safe-area-inset-left), 0rem);
+    padding-right: max(env(safe-area-inset-right), 0rem);
+  }
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* ===== Z-INDEX HIERARCHY (Mobile First Design System) ===== */
+  /*
+   * Level 1 (z-10-30): Elevated content, cards, dropdowns
+   * Level 2 (z-40): Scroll-to-top, FABs
+   * Level 3 (z-50): Sticky bars, floating buttons
+   * Level 4 (z-[55]): Modals, Drawers, Mobile menus
+   * Level 5 (z-[60]): ChatBot fullscreen
+   * Level 6 (z-[70]): Toasts, Critical notifications
+   */
+
+  /* ===== TOUCH TARGET MINIMUM (Fat Finger Rule: 44px) ===== */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .touch-target-lg {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* ===== ACTIVE STATES FOR TOUCH FEEDBACK ===== */
+  .touch-feedback {
+    @apply transition-transform duration-100 active:scale-95;
+  }
+  .touch-feedback-bg {
+    @apply transition-all duration-100 active:scale-95 active:bg-muted;
+  }
+
+  /* ===== PREVENT OVERSCROLL WHEN MODALS ARE OPEN ===== */
+  .body-lock {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* iOS specific: prevent rubber-band scrolling on modals */
+  .modal-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 

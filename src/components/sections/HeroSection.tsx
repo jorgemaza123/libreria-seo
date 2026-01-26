@@ -178,7 +178,7 @@ export function HeroSection() {
               <Button
                 asChild
                 size="lg"
-                className="shadow-lg hover:scale-105 transition-transform text-base"
+                className="shadow-lg hover:scale-105 active:scale-100 transition-all text-base"
               >
                 <a
                   href={getWhatsAppUrl("Hola! Quiero información")}
@@ -194,7 +194,7 @@ export function HeroSection() {
                 variant="outline"
                 size="lg"
                 asChild
-                className="shadow-sm hover:bg-muted/50 text-base"
+                className="shadow-sm hover:bg-muted/50 active:bg-muted active:scale-[0.98] transition-all text-base"
               >
                 <a href={getPhoneUrl()}>
                   <Phone className="mr-2 w-5 h-5" />
@@ -227,10 +227,11 @@ export function HeroSection() {
                       transition-all duration-300
                       touch-manipulation select-none
                       focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                      active:scale-95
                       ${
                         activeCategory === cat.id
                           ? `bg-gradient-to-r ${cat.bgColor} text-white shadow-lg scale-105`
-                          : "bg-muted hover:bg-muted/80 text-foreground"
+                          : "bg-muted hover:bg-muted/80 active:bg-muted/60 text-foreground"
                       }
                     `}
                   >
@@ -298,6 +299,7 @@ export function HeroSection() {
                   bg-gradient-to-r ${current.bgColor}
                   shadow-xl overflow-hidden group
                   focus:outline-none focus:ring-4 focus:ring-white/50
+                  active:scale-[0.98] transition-all touch-manipulation
                 `}
               >
                 {/* Efecto hover */}
@@ -326,7 +328,7 @@ export function HeroSection() {
           <Button
             asChild
             size="lg"
-            className="flex-1 min-h-[52px] text-base font-bold shadow-lg"
+            className="flex-1 min-h-[52px] text-base font-bold shadow-lg active:scale-[0.98] transition-all touch-manipulation"
           >
             <a
               href={getWhatsAppUrl("Hola! Quiero información")}
@@ -342,7 +344,7 @@ export function HeroSection() {
             variant="outline"
             size="lg"
             asChild
-            className="min-h-[52px] px-6 text-base font-bold shadow-sm"
+            className="min-h-[52px] px-6 text-base font-bold shadow-sm active:scale-[0.98] active:bg-muted transition-all touch-manipulation"
           >
             <a href={getPhoneUrl()}>
               <Phone className="w-5 h-5" />

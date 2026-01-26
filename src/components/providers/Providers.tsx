@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { CartProvider } from "@/contexts/CartContext"
+import { ChatProvider } from "@/contexts/ChatContext"
 import { SeasonalThemeProvider } from "@/contexts/SeasonalThemeContext"
 import { SiteContentProvider } from "@/contexts/SiteContentContext"
 import { SearchProvider } from "@/contexts/SearchContext"
@@ -32,18 +33,22 @@ export function Providers({ children }: ProvidersProps) {
           <SiteContentProvider>
             <CartProvider>
               <SearchProvider>
-                <PreviewBar />
-                <ContentPreviewBar />
-                {children}
-                <SonnerToaster
-                  position="bottom-right"
-                  richColors
-                  toastOptions={{
-                    style: {
-                      marginBottom: '1rem',
-                    },
-                  }}
-                />
+                <ChatProvider>
+                  <PreviewBar />
+                  <ContentPreviewBar />
+                  {children}
+                  <SonnerToaster
+                    position="top-center"
+                    richColors
+                    className="!z-[70]"
+                    toastOptions={{
+                      style: {
+                        marginTop: 'max(env(safe-area-inset-top), 1rem)',
+                      },
+                      className: 'touch-manipulation',
+                    }}
+                  />
+                </ChatProvider>
               </SearchProvider>
             </CartProvider>
           </SiteContentProvider>

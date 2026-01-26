@@ -24,13 +24,13 @@ export function CartDrawer() {
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
         onClick={handleClose}
         aria-hidden="true"
       />
 
       <div
-        className="fixed inset-y-0 right-0 w-full max-w-md bg-card border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300"
+        className="fixed inset-y-0 right-0 w-full max-w-md bg-card border-l border-border shadow-2xl z-[55] flex flex-col animate-in slide-in-from-right duration-300 safe-area-pt"
         role="dialog"
         aria-modal="true"
         aria-label="Carrito de compras"
@@ -49,7 +49,7 @@ export function CartDrawer() {
           </div>
           <button
             onClick={handleClose}
-            className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+            className="w-11 h-11 rounded-full hover:bg-muted active:bg-muted/80 active:scale-95 flex items-center justify-center transition-all touch-manipulation"
             aria-label="Cerrar carrito"
           >
             <X className="w-5 h-5" />
@@ -97,30 +97,30 @@ export function CartDrawer() {
                         S/ {price.toFixed(2)}
                       </p>
 
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-1.5 mt-2">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary active:scale-95 transition-all touch-manipulation"
                           aria-label="Reducir cantidad"
                         >
-                          <Minus className="w-3.5 h-3.5" />
+                          <Minus className="w-4 h-4" />
                         </button>
-                        <span className="w-8 text-center font-semibold tabular-nums">
+                        <span className="w-10 text-center font-bold text-lg tabular-nums">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary active:scale-95 transition-all touch-manipulation"
                           aria-label="Aumentar cantidad"
                         >
-                          <Plus className="w-3.5 h-3.5" />
+                          <Plus className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
-                          className="ml-auto w-8 h-8 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors"
+                          className="ml-auto w-10 h-10 rounded-full hover:bg-destructive/10 hover:text-destructive active:scale-95 flex items-center justify-center transition-all touch-manipulation"
                           aria-label={`Eliminar ${item.product.name} del carrito`}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                     </div>
@@ -132,7 +132,7 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <div className="p-4 border-t border-border bg-card space-y-4">
+          <div className="p-4 border-t border-border bg-card space-y-4 safe-area-pb">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Total Estimado:</span>
               <span className="text-2xl font-bold text-primary">
@@ -143,7 +143,7 @@ export function CartDrawer() {
             <div className="space-y-2">
               <Button
                 size="lg"
-                className="w-full h-14 text-base font-bold bg-[#25D366] hover:bg-[#20BA5C] text-white border-none rounded-xl"
+                className="w-full h-14 text-base font-bold bg-[#25D366] hover:bg-[#20BA5C] active:bg-[#1da851] active:scale-[0.98] text-white border-none rounded-xl transition-all touch-manipulation"
                 onClick={sendToWhatsApp}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
@@ -153,7 +153,7 @@ export function CartDrawer() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full h-12 text-base font-medium rounded-xl"
+                className="w-full h-12 text-base font-medium rounded-xl active:scale-[0.98] active:bg-muted transition-all touch-manipulation"
                 onClick={handleClose}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
