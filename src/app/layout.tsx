@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Quicksand } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { seoConfig, generateLocalBusinessSchema, generateFAQSchema } from "@/lib/seo";
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS } from "@/lib/constants";
 import { mockFAQs } from "@/lib/mock-data";
@@ -32,9 +33,33 @@ export const metadata: Metadata = {
     "papelería",
     "impresiones",
     "copias",
+    "trámites virtuales",
+    "RENIEC",
+    "C4",
+    "DNI",
+    "SUNAT",
+    "RUC",
+    "Clave Sol",
+    "antecedentes policiales",
+    "antecedentes penales",
+    "antecedentes judiciales",
+    "citas médicas",
+    "Pagalo.pe",
+    "sublimación",
+    "tazas personalizadas",
+    "polos personalizados",
+    "merchandising",
     "soporte técnico",
-    "SJL",
-    "San Juan de Lurigancho",
+    "reparación de PC",
+    "reparación de laptops",
+    "formateo",
+    "instalación de programas",
+    "desarrollo de sistemas ERP",
+    "páginas web",
+    "facturación electrónica",
+    "desarrollo de software",
+    "Villa María del Triunfo",
+    "VMT",
     "Lima",
     "Perú",
   ],
@@ -129,7 +154,9 @@ export default function RootLayout({
       </head>
       <body className={`${quicksand.variable} ${nunito.variable} font-body antialiased`}>
         <Providers>
-          {children}
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
         </Providers>
       </body>
     </html>

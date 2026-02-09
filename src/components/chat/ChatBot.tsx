@@ -9,7 +9,8 @@ import {
   Sparkles,
   ShoppingBag,
   Printer,
-  HelpCircle,
+  Monitor,
+  Code2,
   Clock,
   ChevronRight,
 } from 'lucide-react'
@@ -45,7 +46,7 @@ const QUICK_OPTIONS: QuickOption[] = [
     label: 'Ver Productos',
     shortLabel: 'Productos',
     whatsappMessage: 'Hola, quiero consultar sobre productos disponibles y precios.',
-    description: 'Catálogo y precios',
+    description: 'Catálogo y útiles',
   },
   {
     id: 'servicios',
@@ -53,23 +54,31 @@ const QUICK_OPTIONS: QuickOption[] = [
     label: 'Servicios de Impresión',
     shortLabel: 'Impresión',
     whatsappMessage: 'Hola, me interesa cotizar servicios de impresión y copias.',
-    description: 'Copias, impresiones, planos',
+    description: 'Copias y documentos',
   },
   {
     id: 'sublimacion',
     icon: <Sparkles className="w-5 h-5" />,
     label: 'Sublimación',
     shortLabel: 'Sublimación',
-    whatsappMessage: 'Hola, quiero información sobre sublimación personalizada.',
-    description: 'Personalización textil',
+    whatsappMessage: 'Hola, quiero información sobre sublimación personalizada (tazas, polos, merchandising).',
+    description: 'Regalos personalizados',
   },
   {
-    id: 'ayuda',
-    icon: <HelpCircle className="w-5 h-5" />,
-    label: 'Otra Consulta',
-    shortLabel: 'Ayuda',
-    whatsappMessage: 'Hola, tengo una consulta.',
-    description: 'Hablar con un asesor',
+    id: 'soporte',
+    icon: <Monitor className="w-5 h-5" />,
+    label: 'Soporte Técnico',
+    shortLabel: 'Soporte',
+    whatsappMessage: 'Hola, necesito soporte técnico para mi PC/laptop (formateo, reparación, instalación de programas).',
+    description: 'Reparación de PC/Laptops',
+  },
+  {
+    id: 'sistemas',
+    icon: <Code2 className="w-5 h-5" />,
+    label: 'Sistemas y Web',
+    shortLabel: 'Sistemas',
+    whatsappMessage: 'Hola, me interesa información sobre desarrollo de sistemas ERP, páginas web o facturación electrónica.',
+    description: 'Desarrollo de Software/ERP',
   },
 ]
 
@@ -353,11 +362,13 @@ export function ChatBot() {
               Selecciona una opción rápida:
             </p>
             <div className="grid grid-cols-2 gap-2">
-              {QUICK_OPTIONS.map((option) => (
+              {QUICK_OPTIONS.map((option, index) => (
                 <button
                   key={option.id}
                   onClick={() => handleQuickOption(option)}
-                  className="flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700 active:scale-[0.98] active:bg-green-100 dark:active:bg-green-900/40 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-manipulation"
+                  className={`flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700 active:scale-[0.98] active:bg-green-100 dark:active:bg-green-900/40 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-manipulation ${
+                    QUICK_OPTIONS.length % 2 !== 0 && index === QUICK_OPTIONS.length - 1 ? 'col-span-2' : ''
+                  }`}
                   aria-label={`${option.label}: ${option.description}`}
                 >
                   <span className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">

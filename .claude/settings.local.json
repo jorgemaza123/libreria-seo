@@ -7,7 +7,8 @@
       "Bash(dir /s \"C:\\\\Users\\\\jorge\\\\Desktop\\\\libreria-seo\")",
       "Bash(npm install:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(npx next build:*)"
     ]
   }
 }

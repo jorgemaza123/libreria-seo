@@ -12,6 +12,7 @@ import { Toaster as SonnerToaster } from "sonner"
 import { getQueryClient } from "@/lib/query-client"
 import { PreviewBar } from "@/components/PreviewBar"
 import { ContentPreviewBar } from "@/components/ContentPreviewBar"
+import { CartDrawer } from "@/components/cart/CartDrawer"
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -37,6 +38,7 @@ export function Providers({ children }: ProvidersProps) {
                   <PreviewBar />
                   <ContentPreviewBar />
                   {children}
+                  <CartDrawer />
                   <SonnerToaster
                     position="top-center"
                     richColors

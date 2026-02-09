@@ -13,7 +13,6 @@ import { TestimonialsSection } from '@/components/sections/TestimonialsSection';
 import { CategoriesSection } from '@/components/sections/CategoriesSection';
 import { CatalogsSection } from '@/components/sections/CatalogsSection';
 import { ChatBot } from '@/components/chat/ChatBot';
-import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCart } from '@/components/cart/FloatingCart';
 import { seoConfig } from '@/lib/seo';
 
@@ -75,7 +74,6 @@ export default function Home() {
 
       {/* Interactive Elements */}
       <ChatBot />
-      <CartDrawer />
       <FloatingCart />
       <StickyContactBar />
     </div>

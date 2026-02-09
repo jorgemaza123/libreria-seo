@@ -14,7 +14,7 @@ interface AddToCartButtonProps {
 export function AddToCartButton({ product, isSticky = false }: AddToCartButtonProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
-  const { addToCart } = useCart();
+  const { addToCart, setIsCartOpen } = useCart();
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
@@ -26,6 +26,7 @@ export function AddToCartButton({ product, isSticky = false }: AddToCartButtonPr
     }
 
     setIsAdded(true);
+    setIsCartOpen(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
 

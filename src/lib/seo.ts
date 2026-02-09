@@ -14,8 +14,8 @@ export interface SEOConfig {
 export const seoConfig: SEOConfig = {
   siteName: "Librería CHROMA",
   siteUrl: "https://libreriachroma.com",
-  defaultTitle: "Librería CHROMA - Útiles Escolares, Impresiones y Servicios TI",
-  defaultDescription: "Tu librería de confianza en VMT. Útiles escolares, papelería, impresiones, copias, servicios de tecnología y más. Precios increíbles y atención personalizada.",
+  defaultTitle: "Librería Chroma | Útiles, Trámites, Soporte Técnico y Sistemas en Lima",
+  defaultDescription: "Tu centro de servicios en Villa María del Triunfo, Lima. Útiles escolares, papelería, impresiones, trámites virtuales (RENIEC, SUNAT, antecedentes), sublimación personalizada, soporte técnico de PC/laptops, desarrollo de sistemas ERP, páginas web y facturación electrónica. Atención personalizada en VMT.",
   defaultImage: "/og-image.jpg",
   twitterHandle: "@libreriaCHROMA",
   locale: "es_PE", // Ajustado para Perú

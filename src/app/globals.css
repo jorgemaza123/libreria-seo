@@ -406,9 +406,28 @@
   transform: translateY(0);
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+/* Lenis Smooth Scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Fallback: native smooth scroll when Lenis is not active (reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /* Focus styles for accessibility */
