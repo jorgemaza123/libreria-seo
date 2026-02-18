@@ -239,6 +239,24 @@
     @apply transition-all duration-100 active:scale-95 active:bg-muted;
   }
 
+  /* ===== GLASS MORPHISM ===== */
+  .glass {
+    @apply bg-background/70 backdrop-blur-xl border border-border/30;
+  }
+  .glass-strong {
+    @apply bg-background/80 backdrop-blur-2xl border border-border/50;
+  }
+
+  /* ===== SAFE AREA BOTTOM FOR STICKY CTAs ===== */
+  .safe-area-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+  }
+
+  /* ===== UPGRADED CARD STYLES ===== */
+  .card-premium {
+    @apply rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-border/50 backdrop-blur-sm;
+  }
+
   /* ===== PREVENT OVERSCROLL WHEN MODALS ARE OPEN ===== */
   .body-lock {
     overflow: hidden;

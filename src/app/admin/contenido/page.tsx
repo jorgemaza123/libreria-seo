@@ -294,6 +294,168 @@ export default function ContenidoPage() {
               />
               <Label htmlFor="hero-search">Mostrar barra de búsqueda</Label>
             </div>
+
+            {/* Hero Priority Mode */}
+            <div className="mt-6 p-4 rounded-lg border border-primary/20 bg-primary/5 space-y-4">
+              <div>
+                <Label className="text-base font-bold">Modo de Campaña</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Controla qué hero se muestra en la portada (/) y qué evento de conversión se activa.
+                  Cambia según la temporada — sin tocar código.
+                </p>
+              </div>
+
+              <Select
+                value={localContent.hero.priorityMode || 'services'}
+                onValueChange={(value) => handleChange('hero', 'priorityMode', value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccionar modo" />
+                </SelectTrigger>
+                <SelectContent>
+
+                  {/* ── Modos activos (hero construido) ── */}
+                  <SelectItem value="school">
+                    🎒 Campaña Escolar — Regreso a clases
+                  </SelectItem>
+                  <SelectItem value="sublimation">
+                    🎨 Sublimación y Personalización
+                  </SelectItem>
+                  <SelectItem value="services">
+                    🏪 Multi-servicios (modo por defecto)
+                  </SelectItem>
+
+                  {/* ── Modos futuros (disponibles, sin hero aún) ── */}
+                  <SelectItem value="tramites" disabled>
+                    📄 Trámites y Documentos (próximamente)
+                  </SelectItem>
+                  <SelectItem value="navidad" disabled>
+                    🎄 Campaña Navidad (próximamente)
+                  </SelectItem>
+                  <SelectItem value="regalos" disabled>
+                    🎁 Temporada Regalos (próximamente)
+                  </SelectItem>
+                  <SelectItem value="black-friday" disabled>
+                    🔖 Black Friday (próximamente)
+                  </SelectItem>
+
+                </SelectContent>
+              </Select>
+
+              {/* Status badge — shows what the active mode does */}
+              {localContent.hero.priorityMode === 'school' && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-xs text-green-700 dark:text-green-400">
+                  <span className="text-base leading-none">✅</span>
+                  <span>
+                    Hero escolar activo · Countdown de campaña visible · Evento <strong>SchoolListLead</strong> en Meta Pixel
+                  </span>
+                </div>
+              )}
+              {localContent.hero.priorityMode === 'sublimation' && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs text-purple-700 dark:text-purple-400">
+                  <span className="text-base leading-none">✅</span>
+                  <span>
+                    Hero de sublimación activo · Evento <strong>SublimationLead</strong> en Meta Pixel
+                  </span>
+                </div>
+              )}
+              {localContent.hero.priorityMode === 'services' && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 dark:text-blue-400">
+                  <span className="text-base leading-none">ℹ️</span>
+                  <span>
+                    Hero general (modo por defecto) · Evento <strong>MultiServiceLead</strong> en Meta Pixel
+                  </span>
+                </div>
+              )}
+              {(['tramites', 'navidad', 'regalos', 'black-friday'] as const).includes(
+                localContent.hero.priorityMode as never
+              ) && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
+                  <span className="text-base leading-none">⚠️</span>
+                  <span>
+                    Este modo aún no tiene hero construido. La portada mostrará el hero por defecto hasta que se cree el componente.
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* School Landing CMS Fields */}
+            <div className="mt-6 p-4 rounded-lg border border-border bg-muted/30 space-y-4">
+              <Label className="text-base font-bold">Contenido de Landing Escolar (/listas-escolares)</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Título Hero Landing</Label>
+                  <Input
+                    value={localContent.hero.schoolLanding?.heroTitle || ''}
+                    onChange={(e) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroTitle: e.target.value })
+                    }}
+                    placeholder="Envía tu lista escolar..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Subtítulo Landing</Label>
+                  <Input
+                    value={localContent.hero.schoolLanding?.heroSubtitle || ''}
+                    onChange={(e) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroSubtitle: e.target.value })
+                    }}
+                    placeholder="Ahorra tiempo y dinero..."
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>CTA Primario</Label>
+                  <Input
+                    value={localContent.hero.schoolLanding?.heroPrimaryCTA || ''}
+                    onChange={(e) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroPrimaryCTA: e.target.value })
+                    }}
+                    placeholder="Enviar mi lista por WhatsApp"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>CTA Secundario</Label>
+                  <Input
+                    value={localContent.hero.schoolLanding?.heroSecondaryCTA || ''}
+                    onChange={(e) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroSecondaryCTA: e.target.value })
+                    }}
+                    placeholder="Ver opciones Económico / Medio / Premium"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Badge (ej: Envío Gratis desde S/200)</Label>
+                  <Input
+                    value={localContent.hero.schoolLanding?.heroBadge || ''}
+                    onChange={(e) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroBadge: e.target.value })
+                    }}
+                    placeholder="Envío Gratis desde S/200"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Imagen Hero Landing</Label>
+                  <ImageUploader
+                    value={localContent.hero.schoolLanding?.heroImage}
+                    onChange={(url) => {
+                      const sl = localContent.hero.schoolLanding || { heroTitle: '', heroSubtitle: '', heroPrimaryCTA: '', heroSecondaryCTA: '', heroImage: '', heroBadge: '' }
+                      handleChange('hero', 'schoolLanding', { ...sl, heroImage: url || '' })
+                    }}
+                    imageType="hero"
+                    aspectRatio="16:9"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </CollapsibleSection>
 

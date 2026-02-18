@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nunito, Quicksand } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
 import { seoConfig, generateLocalBusinessSchema, generateFAQSchema } from "@/lib/seo";
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS } from "@/lib/constants";
 import { mockFAQs } from "@/lib/mock-data";
@@ -158,6 +159,7 @@ export default function RootLayout({
             {children}
           </SmoothScrollProvider>
         </Providers>
+        <AnalyticsScripts />
       </body>
     </html>
   );

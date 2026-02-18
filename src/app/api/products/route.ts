@@ -15,6 +15,9 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id')
     const featured = searchParams.get('featured') === 'true'
     const categoryId = searchParams.get('categoryId')
+    const search = searchParams.get('search')
+    const page = searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined
+    const pageSize = searchParams.get('pageSize') ? parseInt(searchParams.get('pageSize')!) : undefined
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined
 
@@ -55,8 +58,14 @@ export async function GET(request: NextRequest) {
 
     if (featured) query = query.eq('is_featured', true)
     if (categoryId) query = query.eq('category_id', categoryId)
-    if (limit) query = query.limit(limit)
-    if (offset && limit) query = query.range(offset, offset + limit - 1)
+    if (search) query = query.or(`name.ilike.%${search}%,sku.ilike.%${search}%`)
+    if (page && pageSize) {
+      const from = (page - 1) * pageSize
+      query = query.range(from, from + pageSize - 1)
+    } else if (limit) {
+      query = query.limit(limit)
+      if (offset) query = query.range(offset, offset + limit - 1)
+    }
 
     const { data, error } = await query
 

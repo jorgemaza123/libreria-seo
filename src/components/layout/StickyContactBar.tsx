@@ -23,6 +23,8 @@ export function StickyContactBar() {
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isPulsing, setIsPulsing] = useState(true);
+  // Deep scroll: true when user has read ≥80% of the page
+  const [isDeepScroll, setIsDeepScroll] = useState(false);
   const { getWhatsAppUrl, getPhoneUrl } = useWhatsApp();
   const { openChat, isOpen: isChatOpen } = useChatContext();
 
@@ -30,9 +32,14 @@ export function StickyContactBar() {
     const handleScroll = () => {
       setIsVisible(window.scrollY > 400);
       setShowScrollTop(window.scrollY > 1000);
+      // Detect deep scroll — single listener, no overhead
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable > 0) {
+        setIsDeepScroll(window.scrollY / scrollable >= 0.8);
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -70,7 +77,7 @@ export function StickyContactBar() {
             onClick={openChat}
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            Chat
+            {isDeepScroll ? 'Envíanos tu consulta' : 'Chat'}
           </Button>
         </div>
       </div>
@@ -81,11 +88,11 @@ export function StickyContactBar() {
           isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-90 pointer-events-none'
         }`}
       >
-        {/* Tooltip */}
+        {/* Tooltip — texto cambia al 80% scroll */}
         <div className="absolute bottom-full right-0 mb-3 whitespace-nowrap">
           <div className="bg-card text-foreground px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-bounce-subtle border border-border">
-            ¿Necesitas ayuda?
-            <span className="ml-1">👋</span>
+            {isDeepScroll ? 'Ya casi — ¿te ayudamos ahora?' : '¿Necesitas ayuda?'}
+            <span className="ml-1">{isDeepScroll ? '💬' : '👋'}</span>
           </div>
           <div className="absolute -bottom-1 right-6 w-2 h-2 bg-card border-r border-b border-border transform rotate-45" />
         </div>

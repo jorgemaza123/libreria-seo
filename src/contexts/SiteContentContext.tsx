@@ -5,6 +5,26 @@ import { toast } from 'sonner'
 import type { Product, Category, Service, Promotion } from '@/lib/types'
 
 // --- 1. TUS INTERFACES ORIGINALES (INTACTAS) ---
+// Current active modes + future campaign slots
+// To add a new campaign: add to type → create Hero → add to HERO_COMPONENTS in HomeClientWrapper
+export type HeroPriorityMode =
+  | 'school'
+  | 'sublimation'
+  | 'services'
+  | 'tramites'
+  | 'navidad'
+  | 'regalos'
+  | 'black-friday'
+
+export interface SchoolLandingContent {
+  heroTitle: string
+  heroSubtitle: string
+  heroPrimaryCTA: string
+  heroSecondaryCTA: string
+  heroImage: string
+  heroBadge: string
+}
+
 export interface HeroContent {
   title: string
   subtitle: string
@@ -14,6 +34,8 @@ export interface HeroContent {
   secondaryCtaLink?: string
   backgroundImage?: string
   showSearch: boolean
+  priorityMode?: HeroPriorityMode
+  schoolLanding?: SchoolLandingContent
 }
 
 export interface BannerContent {
@@ -109,6 +131,15 @@ export const defaultContent: SiteContent = {
     secondaryCtaText: 'Contáctanos',
     secondaryCtaLink: '/contacto',
     showSearch: true,
+    priorityMode: 'school' as HeroPriorityMode,
+    schoolLanding: {
+      heroTitle: 'Envía tu lista escolar y nosotros la armamos por ti',
+      heroSubtitle: 'Ahorra tiempo y dinero. Recibe todo listo en tu casa o recógelo en tienda.',
+      heroPrimaryCTA: 'Enviar mi lista por WhatsApp',
+      heroSecondaryCTA: 'Ver opciones Económico / Medio / Premium',
+      heroImage: '',
+      heroBadge: 'Envío Gratis desde S/200',
+    },
   },
   topBanner: {
     text: 'Envío gratis en compras mayores a S/50',
