@@ -242,7 +242,7 @@ function PackCard({ pack, index = 0 }: { pack: PackDef; index?: number }) {
           box-shadow 0.3s ease
         `,
       }}
-      className="relative flex flex-col h-full rounded-3xl overflow-hidden bg-card"
+      className="relative flex flex-col h-full rounded-3xl overflow-hidden"
     >
       {/* Ambient glow */}
       <div
@@ -309,7 +309,7 @@ function PackCard({ pack, index = 0 }: { pack: PackDef; index?: number }) {
       </div>
 
       {/* ── BODY ── */}
-      <div className="flex flex-col flex-1 p-5 gap-3.5 relative z-10">
+      <div className="flex flex-col flex-1 p-5 gap-3.5 relative z-10 bg-card">
         <ul className="space-y-2.5 flex-1">
           {pack.features.map((f, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm text-foreground leading-snug">
@@ -525,7 +525,7 @@ function MobileSlider() {
       </div>
 
       {/* ── Right fade + nav arrow ── */}
-      <div className="absolute right-0 top-[172px] bottom-[80px] w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-[172px] bottom-[80px] w-12 bg-gradient-to-l from-background/60 to-transparent z-10 pointer-events-none" />
 
       {showArrow && (
         <button
