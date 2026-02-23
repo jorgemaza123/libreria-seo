@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { mockProducts } from '@/lib/mock-data'
 import { createClient } from '@/lib/supabase/server'
+import { requireAdminAuth } from '@/lib/supabase/api-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,8 +78,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// 2. POST (Crear Producto)
+// 2. POST (Crear Producto) — requiere autenticación de admin
 export async function POST(request: NextRequest) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     if (!isSupabaseConfigured()) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
 
@@ -119,8 +123,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 3. PUT (Editar Producto)
+// 3. PUT (Editar Producto) — requiere autenticación de admin
 export async function PUT(request: NextRequest) {
+    const auth = await requireAdminAuth()
+    if ('error' in auth) return auth.error
+
     try {
       if (!isSupabaseConfigured()) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
   
@@ -167,8 +174,11 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-// 4. DELETE (Borrar Producto)
+// 4. DELETE (Borrar Producto) — requiere autenticación de admin
 export async function DELETE(request: NextRequest) {
+    const auth = await requireAdminAuth()
+    if ('error' in auth) return auth.error
+
     try {
       if (!isSupabaseConfigured()) return NextResponse.json({ error: 'Supabase no configurado' }, { status: 503 })
   

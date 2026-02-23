@@ -270,8 +270,28 @@ function setStoredPreviewContent(state: PreviewContentState | null) {
 }
 
 // --- 4. PROVIDER PRINCIPAL ---
-export function SiteContentProvider({ children }: { children: ReactNode }) {
-  const [content, setContent] = useState<SiteContent>(defaultContent)
+interface SiteContentProviderProps {
+  children: ReactNode
+  // Contenido pre-cargado desde el servidor (mejora LCP eliminando el flash de defaultContent)
+  initialContent?: unknown
+}
+
+export function SiteContentProvider({ children, initialContent }: SiteContentProviderProps) {
+  const [content, setContent] = useState<SiteContent>(() => {
+    if (initialContent && typeof initialContent === 'object') {
+      const ic = initialContent as Record<string, unknown>
+      return {
+        ...defaultContent,
+        ...(ic as Partial<SiteContent>),
+        hero:     { ...defaultContent.hero,     ...((ic.hero     as object) || {}) },
+        contact:  { ...defaultContent.contact,  ...((ic.contact  as object) || {}) },
+        footer:   { ...defaultContent.footer,   ...((ic.footer   as object) || {}) },
+        sections: { ...defaultContent.sections, ...((ic.sections as object) || {}) },
+        buttons:  { ...defaultContent.buttons,  ...((ic.buttons  as object) || {}) },
+      } as SiteContent
+    }
+    return defaultContent
+  })
   const [isLoading, setIsLoading] = useState(true)
   const [previewContentState, setPreviewContentState] = useState<PreviewContentState>({
     isActive: false,

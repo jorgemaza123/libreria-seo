@@ -5,19 +5,17 @@ import { seoConfig } from '@/lib/seo';
 export const metadata: Metadata = {
   title: seoConfig.defaultTitle,
   description: seoConfig.defaultDescription,
+  // Canonical explícito: evita que /?category=* sea indexado como página separada
+  alternates: {
+    canonical: seoConfig.siteUrl,
+  },
   openGraph: {
     title: seoConfig.defaultTitle,
     description: seoConfig.defaultDescription,
-    images: [
-      {
-        url: seoConfig.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: seoConfig.siteName,
-      },
-    ],
     locale: seoConfig.locale,
     type: 'website',
+    url: seoConfig.siteUrl,
+    // og:image auto-generado por src/app/opengraph-image.tsx
   },
 };
 

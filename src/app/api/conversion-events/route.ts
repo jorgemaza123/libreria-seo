@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { requireAdminAuth } from '@/lib/supabase/api-auth'
+import { conversionEventSchema, validateBody } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
-// POST: Track a conversion event
+// POST: Track a conversion event — público (llamado desde el frontend del cliente)
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
     const body = await request.json()
-    const { event_type, metadata } = body
 
-    if (!event_type) {
-      return NextResponse.json({ error: 'event_type is required' }, { status: 400 })
+    // Validación con Zod para garantizar integridad del input
+    const validation = validateBody(conversionEventSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
     }
+
+    const { event_type, metadata } = validation.data
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)
@@ -34,8 +39,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET: Retrieve conversion events (for admin analytics)
+// GET: Retrieve conversion events (solo admin) — datos de analytics privados
 export async function GET(request: NextRequest) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const supabase = await createClient()
     const { searchParams } = new URL(request.url)

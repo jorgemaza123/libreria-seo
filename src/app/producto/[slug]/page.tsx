@@ -8,11 +8,12 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { ChatBot } from '@/components/chat/ChatBot';
 import { mockProducts } from '@/lib/mock-data';
-import { seoConfig, generateProductSchema } from '@/lib/seo';
+import { seoConfig, generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { AddToCartButton } from './add-to-cart-button';
 import { createClient } from '@/lib/supabase/server';
 
-export const dynamic = 'force-dynamic';
+// ISR: revalida cada hora para mostrar precios/stock actualizados sin sacrificar performance
+export const revalidate = 3600;
 
 async function getProduct(slug: string) {
   try {
@@ -133,11 +134,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     inStock: (product.stock ?? 0) > 0,
   });
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Inicio', url: seoConfig.siteUrl },
+    { name: product.category, url: `${seoConfig.siteUrl}/?category=${product.categorySlug}` },
+    { name: product.name, url: `${seoConfig.siteUrl}/producto/${product.slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="min-h-screen bg-background">
@@ -247,25 +258,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   </h1>
                 </header>
 
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div
-                    className="flex items-center gap-0.5"
-                    role="img"
-                    aria-label="Calificación: 4 de 5 estrellas"
-                  >
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-5 h-5 md:w-6 md:h-6 ${
-                          i < 4
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-muted-foreground/40'
-                        }`}
-                        aria-hidden="true"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-muted-foreground text-base md:text-lg">(24 reseñas)</span>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                    <Check className="w-3.5 h-3.5" />
+                    Producto verificado
+                  </span>
+                  {product.isFeatured && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-sm font-semibold">
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                      Destacado
+                    </span>
+                  )}
                 </div>
 
                 <div className="bg-muted/50 rounded-2xl p-4 md:p-6 space-y-2">

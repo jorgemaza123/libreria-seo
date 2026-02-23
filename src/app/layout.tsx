@@ -6,6 +6,7 @@ import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
 import { seoConfig, generateLocalBusinessSchema, generateFAQSchema } from "@/lib/seo";
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS } from "@/lib/constants";
 import { mockFAQs } from "@/lib/mock-data";
+import { getSiteContent } from "@/lib/supabase/queries/site-settings";
 import "./globals.css";
 
 // Configuración de fuentes optimizada
@@ -29,36 +30,23 @@ export const metadata: Metadata = {
   },
   description: seoConfig.defaultDescription,
   keywords: [
-    "librería",
-    "útiles escolares",
-    "papelería",
-    "impresiones",
-    "copias",
-    "trámites virtuales",
+    "librería Villa María del Triunfo",
+    "útiles escolares VMT",
+    "papelería Lima",
+    "impresiones Villa María del Triunfo",
+    "trámites RENIEC SUNAT Lima",
+    "sublimación personalizada VMT",
+    "soporte técnico PC laptops Lima",
+    "desarrollo web Lima Perú",
+    "librería Estela Maris",
+    "útiles escolares baratos Lima",
     "RENIEC",
-    "C4",
-    "DNI",
     "SUNAT",
     "RUC",
     "Clave Sol",
     "antecedentes policiales",
-    "antecedentes penales",
-    "antecedentes judiciales",
-    "citas médicas",
-    "Pagalo.pe",
-    "sublimación",
     "tazas personalizadas",
     "polos personalizados",
-    "merchandising",
-    "soporte técnico",
-    "reparación de PC",
-    "reparación de laptops",
-    "formateo",
-    "instalación de programas",
-    "desarrollo de sistemas ERP",
-    "páginas web",
-    "facturación electrónica",
-    "desarrollo de software",
     "Villa María del Triunfo",
     "VMT",
     "Lima",
@@ -73,21 +61,14 @@ export const metadata: Metadata = {
     siteName: seoConfig.siteName,
     title: seoConfig.defaultTitle,
     description: seoConfig.defaultDescription,
-    images: [
-      {
-        url: seoConfig.defaultImage,
-        width: 1200,
-        height: 630,
-        alt: seoConfig.siteName,
-      },
-    ],
+    // og:image auto-generado por src/app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
     title: seoConfig.defaultTitle,
     description: seoConfig.defaultDescription,
-    images: [seoConfig.defaultImage],
     creator: seoConfig.twitterHandle,
+    // twitter:image auto-generado por src/app/opengraph-image.tsx
   },
   robots: {
     index: true,
@@ -136,11 +117,20 @@ const faqSchema = generateFAQSchema(
   }))
 );
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch server-side para que el primer render tenga el contenido correcto del CMS
+  // evitando el flash de contenido por defecto en el Hero (mejora LCP)
+  let initialSiteContent: unknown = null
+  try {
+    initialSiteContent = await getSiteContent()
+  } catch {
+    // Si Supabase no está disponible, el provider usa defaultContent como fallback
+  }
+
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -154,7 +144,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${quicksand.variable} ${nunito.variable} font-body antialiased`}>
-        <Providers>
+        <Providers initialSiteContent={initialSiteContent}>
           <SmoothScrollProvider>
             {children}
           </SmoothScrollProvider>

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
+import { requireAdminAuth } from '@/lib/supabase/api-auth'
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -60,6 +64,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const { searchParams } = new URL(request.url)
     const publicId = searchParams.get('publicId')

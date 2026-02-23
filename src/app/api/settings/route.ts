@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { requireAdminAuth } from '@/lib/supabase/api-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,8 +31,11 @@ export async function GET() {
   }
 }
 
-// POST: Guardar una configuración específica
+// POST: Guardar una configuración específica — requiere autenticación de admin
 export async function POST(request: NextRequest) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const supabase = await createClient()
     const body = await request.json()

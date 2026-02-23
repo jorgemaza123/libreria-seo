@@ -16,9 +16,10 @@ import { CartDrawer } from "@/components/cart/CartDrawer"
 
 interface ProvidersProps {
   children: React.ReactNode
+  initialSiteContent?: unknown
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children, initialSiteContent }: ProvidersProps) {
   const queryClient = getQueryClient()
 
   return (
@@ -31,7 +32,7 @@ export function Providers({ children }: ProvidersProps) {
         disableTransitionOnChange
       >
         <SeasonalThemeProvider>
-          <SiteContentProvider>
+          <SiteContentProvider initialContent={initialSiteContent}>
             <CartProvider>
               <SearchProvider>
                 <ChatProvider>

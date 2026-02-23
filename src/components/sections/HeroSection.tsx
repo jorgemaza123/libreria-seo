@@ -163,12 +163,11 @@ export function HeroSection() {
               Tu aliado escolar y de oficina
             </div>
 
-            <h1
-              id="hero-title-desktop"
-              className="text-5xl font-extrabold leading-tight tracking-tight"
-            >
+            {/* Texto del título en desktop — styled como heading, pero el H1 semántico
+                está en el bloque móvil (siempre en DOM). Evita H1 duplicado para SEO. */}
+            <p className="text-5xl font-extrabold leading-tight tracking-tight">
               {heroData.title}
-            </h1>
+            </p>
 
             <p className="text-xl max-w-xl text-muted-foreground">
               {heroData.subtitle}

@@ -2,24 +2,28 @@ import { Metadata } from 'next'
 import { SchoolListLanding } from './SchoolListLanding'
 
 export const metadata: Metadata = {
-  title: 'Listas Escolares | Librería CHROMA - Envía tu lista y recibe todo listo',
+  title: 'Listas Escolares en Villa María del Triunfo | Librería CHROMA',
   description:
-    'Envía tu lista escolar por WhatsApp y nosotros la armamos por ti. Opciones Económico, Medio y Premium. Envío gratis desde S/200. Librería CHROMA, Villa María del Triunfo.',
+    'Envía tu lista escolar por WhatsApp y la armamos en el día. Packs Económico, Medio y Premium con delivery en VMT. Frente al Colegio Estela Maris, Villa María del Triunfo.',
+  alternates: {
+    canonical: 'https://www.libreriachroma.com/listas-escolares',
+  },
   openGraph: {
-    title: 'Listas Escolares | Librería CHROMA',
+    title: 'Listas Escolares en Villa María del Triunfo | Librería CHROMA',
     description:
-      'Envía tu lista escolar por WhatsApp. Ahorra tiempo y dinero con nuestras opciones Económico, Medio y Premium.',
+      'Envía tu lista escolar por WhatsApp. Packs Económico, Medio y Premium. Delivery gratis desde S/200 en VMT.',
     type: 'website',
     locale: 'es_PE',
+    url: 'https://www.libreriachroma.com/listas-escolares',
   },
   keywords: [
-    'lista escolar',
-    'útiles escolares',
-    'regreso a clases',
-    'lima',
-    'villa maria del triunfo',
-    'librería',
-    'pack escolar',
+    'lista escolar Villa María del Triunfo',
+    'útiles escolares VMT',
+    'pack escolar Lima',
+    'regreso a clases Villa María del Triunfo',
+    'librería VMT',
+    'listas escolares WhatsApp',
+    'útiles escolares baratos Lima',
     'forrado de cuadernos',
   ],
 }

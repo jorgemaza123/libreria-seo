@@ -4,7 +4,61 @@ import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, Navigation } fro
 import { Button } from '@/components/ui/button';
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
 
+/**
+ * Calcula si la librería está abierta ahora mismo según el horario de atención.
+ * Usa la hora local del navegador (usuarios son locales en Lima, UTC-5).
+ */
+function getOpenStatus(): { isOpen: boolean; label: string } {
+  const now = new Date()
+  const day = now.getDay() // 0=Dom, 1=Lun...6=Sáb
+  const minutes = now.getHours() * 60 + now.getMinutes()
+
+  const toMinutes = (hhmm: string) => {
+    const [h, m] = hhmm.split(':').map(Number)
+    return h * 60 + m
+  }
+
+  if (day >= 1 && day <= 5) {
+    // Lunes a Viernes
+    const opens = toMinutes(BUSINESS_HOURS.weekdays.opens)
+    const closes = toMinutes(BUSINESS_HOURS.weekdays.closes)
+    if (minutes >= opens && minutes < closes) {
+      return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+    }
+    if (minutes < opens) {
+      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.weekdays.opens.replace('0', '')} AM` }
+    }
+    return { isOpen: false, label: 'Cerrado · Abrimos mañana a las 7:00 AM' }
+  }
+
+  if (day === 6) {
+    // Sábado
+    const opens = toMinutes(BUSINESS_HOURS.saturday.opens)
+    const closes = toMinutes(BUSINESS_HOURS.saturday.closes)
+    if (minutes >= opens && minutes < closes) {
+      return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+    }
+    if (minutes < opens) {
+      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.saturday.opens.replace('0', '')} AM` }
+    }
+    return { isOpen: false, label: 'Cerrado · Abrimos el domingo a las 10:00 AM' }
+  }
+
+  // Domingo (day === 0)
+  const opens = toMinutes(BUSINESS_HOURS.sunday.opens)
+  const closes = toMinutes(BUSINESS_HOURS.sunday.closes)
+  if (minutes >= opens && minutes < closes) {
+    return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+  }
+  if (minutes < opens) {
+    return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.sunday.opens.replace('0', '')} AM` }
+  }
+  return { isOpen: false, label: 'Cerrado · Abrimos el lunes a las 7:00 AM' }
+}
+
 export function ContactSection() {
+  const openStatus = getOpenStatus()
+
   return (
     <section
       id="contacto"
@@ -123,12 +177,12 @@ export function ContactSection() {
                 </div>
               </div>
 
-              {/* Indicador de estado */}
+              {/* Indicador de estado dinámico según horario real */}
               <div className="mt-4 pt-4 border-t border-border/50">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium text-green-600">
-                    Abierto ahora - Te respondemos al instante
+                  <div className={`w-3 h-3 rounded-full ${openStatus.isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                  <span className={`text-sm font-medium ${openStatus.isOpen ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                    {openStatus.label}
                   </span>
                 </div>
               </div>

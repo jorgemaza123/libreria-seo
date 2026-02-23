@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { requireAdminAuth } from '@/lib/supabase/api-auth'
 
-// 3. PUT (Editar)
+// 3. PUT (Editar) — requiere autenticación de admin
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -37,11 +41,14 @@ export async function PUT(
   }
 }
 
-// 4. DELETE (Borrar)
+// 4. DELETE (Borrar) — requiere autenticación de admin
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await requireAdminAuth()
+  if ('error' in auth) return auth.error
+
   try {
     const { id } = await params
     const supabase = await createClient()

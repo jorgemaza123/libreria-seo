@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createReviewSchema, validateBody } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,24 +37,32 @@ export async function GET() {
   }
 }
 
-// 2. POST (Crear Nueva)
+// 2. POST (Crear Nueva) — público, pero validado y siempre inactivo hasta aprobación admin
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
     const body = await request.json()
 
+    // Validación con Zod antes de tocar la base de datos
+    const validation = validateBody(createReviewSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 })
+    }
+
+    const { name, role, avatar, rating, comment, date, service } = validation.data
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('reviews')
       .insert({
-        name: body.name,
-        role: body.role,
-        avatar: body.avatar,
-        rating: body.rating,
-        comment: body.comment,
-        date: body.date,
-        service: body.service,
-        is_active: true
+        name,
+        role,
+        avatar,
+        rating,
+        comment,
+        date,
+        service,
+        is_active: false, // Requiere aprobación del admin antes de publicarse
       })
       .select()
       .single()
