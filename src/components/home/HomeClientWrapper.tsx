@@ -12,18 +12,20 @@ import { InteractiveWidgets } from '@/components/layout/InteractiveWidgets'
 import { CountdownBar } from '@/components/landing/CountdownBar'
 
 // Campaign Heroes — uno por modo de campaña
-import { SchoolHero }             from '@/components/landing/SchoolHero'
-import { SublimationHero }        from '@/components/landing/SublimationHero'
+import { SchoolHero } from '@/components/landing/SchoolHero'
+import { SublimationHero } from '@/components/landing/SublimationHero'
 import { ServicesConversionHero } from '@/components/landing/ServicesConversionHero'
 
 // Home sections — siempre presentes debajo del hero
-import { SchoolPacksSection }   from '@/components/sections/SchoolPacksSection'
-import { CategoriesSection }    from '@/components/sections/CategoriesSection'
-import { ProductsSection }      from '@/components/sections/ProductsSection'
-import { CatalogsSection }      from '@/components/sections/CatalogsSection'
-import { ServicesSection }      from '@/components/sections/ServicesSection'
-import { TestimonialsSection }  from '@/components/sections/TestimonialsSection'
-import { TrustSection }         from '@/components/sections/TrustSection'
+import { SchoolPacksSection } from '@/components/sections/SchoolPacksSection'
+import { CategoriesSection } from '@/components/sections/CategoriesSection'
+import { ProductsSection } from '@/components/sections/ProductsSection'
+import { CatalogsSection } from '@/components/sections/CatalogsSection'
+import { ServicesSection } from '@/components/sections/ServicesSection'
+import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
+import { TrustSection } from '@/components/sections/TrustSection'
+
+import { CustomPrintingSection } from '@/components/sections/CustomPrintingSection'
 
 // ============================================
 // CAMPAIGN CONFIG — motor central de campañas
@@ -154,6 +156,7 @@ export function HomeClientWrapper() {
         <ProductsSection />
         <CatalogsSection />
         <ServicesSection />
+        <CustomPrintingSection />
         <TestimonialsSection />
         <TrustSection />
       </main>
