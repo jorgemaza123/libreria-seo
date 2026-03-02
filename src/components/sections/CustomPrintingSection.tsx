@@ -3,6 +3,7 @@
 import { Shirt, CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export function CustomPrintingSection() {
   const externalUrl = "https://www.chromaestampados.com/";
@@ -16,27 +17,31 @@ export function CustomPrintingSection() {
   ];
 
   return (
-    <section 
-      id="estampados-personalizados" 
+    <section
+      id="estampados-personalizados"
       className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/30 overflow-hidden"
     >
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex flex-col lg:flex-row items-center gap-12">
-          
+
           {/* Visual Element */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             className="flex-1 relative"
           >
             <div className="relative z-10 bg-card border-2 border-primary/20 rounded-3xl p-2 shadow-2xl overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
               <div className="aspect-square bg-muted rounded-2xl flex items-center justify-center relative overflow-hidden">
-                <Shirt className="w-32 h-32 text-primary/40" />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/5">
-                  <span className="text-4xl font-black text-white/20 select-none rotate-12">CHROMA</span>
-                </div>
+                <Image
+                  src="/panelestampados.avif"
+                  alt="Servicio de estampados personalizados en Lima"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
               </div>
             </div>
             {/* Decorative blobs */}
@@ -45,7 +50,7 @@ export function CustomPrintingSection() {
           </motion.div>
 
           {/* Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -60,25 +65,25 @@ export function CustomPrintingSection() {
               </h2>
               <div className="text-base sm:text-lg text-muted-foreground leading-relaxed space-y-4">
                 <p>
-                  En Librería Chroma, elevamos tu creatividad a través de nuestro exclusivo 
-                  {" "}<a 
-                    href={externalUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  En Librería Chroma, elevamos tu creatividad a través de nuestro exclusivo
+                  {" "}<a
+                    href={externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-primary font-semibold hover:underline decoration-primary/30 underline-offset-4 inline-flex items-center gap-1 transition-all"
                   >
                     servicio de estampados personalizados
                     <ExternalLink className="w-3 h-3" />
-                  </a>. 
-                  Entendemos que cada prenda es un lienzo y cada diseño cuenta una historia única. 
-                  Por eso, nos especializamos en transformar tus ideas en productos tangibles 
+                  </a>.
+                  Entendemos que cada prenda es un lienzo y cada diseño cuenta una historia única.
+                  Por eso, nos especializamos en transformar tus ideas en productos tangibles
                   de alta calidad que destacan en cualquier lugar.
                 </p>
                 <p>
-                  Ya sea que busques uniformes corporativos, regalos originales o simplemente 
-                  expresar tu estilo personal, utilizamos las mejores técnicas de impresión 
-                  para garantizar que tus diseños luzcan vibrantes y resistan el paso del tiempo. 
-                  Desde polos de algodón premium hasta accesorios especializados, nuestra meta 
+                  Ya sea que busques uniformes corporativos, regalos originales o simplemente
+                  expresar tu estilo personal, utilizamos las mejores técnicas de impresión
+                  para garantizar que tus diseños luzcan vibrantes y resistan el paso del tiempo.
+                  Desde polos de algodón premium hasta accesorios especializados, nuestra meta
                   es ofrecerte una experiencia de personalización sin límites en el corazón de Lima.
                 </p>
               </div>
@@ -96,8 +101,8 @@ export function CustomPrintingSection() {
             </ul>
 
             <div className="pt-4">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="h-14 px-8 text-lg font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group"
                 asChild
               >
