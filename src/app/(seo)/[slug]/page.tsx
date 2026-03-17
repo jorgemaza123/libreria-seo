@@ -1,6 +1,6 @@
-import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 import {
   ArrowRight,
   CheckCircle2,
@@ -10,23 +10,38 @@ import {
   ShoppingBag,
   Store,
   Zap,
-} from 'lucide-react'
-import { seoPagesConfig } from '@/data/seo/seoPagesConfig'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
-import { Button } from '@/components/ui/button'
+} from "lucide-react";
+import { seoPagesConfig } from "@/data/seo/seoPagesConfig";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
 
-const DEFAULT_WHATSAPP = '51963725458'
+const DEFAULT_WHATSAPP = "51963725458";
 
 interface PageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
+}
+
+function getTopicLabel(label: string) {
+  return label.replace(/[!?¡¿]/g, "").trim();
+}
+
+function getRelatedPages(currentSlug: string, categoryHint: "utiles" | "servicios" | "arte") {
+  return Object.values(seoPagesConfig)
+    .filter((page) => page.slug !== currentSlug)
+    .sort((a, b) => {
+      const aScore = a.categoryHint === categoryHint ? 0 : 1;
+      const bScore = b.categoryHint === categoryHint ? 0 : 1;
+      return aScore - bScore || a.h1Title.localeCompare(b.h1Title);
+    })
+    .slice(0, 4);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolvedParams = await params
-  const config = seoPagesConfig[resolvedParams.slug]
+  const resolvedParams = await params;
+  const config = seoPagesConfig[resolvedParams.slug];
 
-  if (!config) return {}
+  if (!config) return {};
 
   return {
     title: config.metaTitle,
@@ -35,37 +50,46 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `https://www.libreriachroma.com/${config.slug}`,
     },
     openGraph: {
-      title: config.metaTitle,
+      title: `${config.metaTitle} | Libreria CHROMA`,
       description: config.metaDescription,
-      locale: 'es_PE',
-      type: 'website',
+      locale: "es_PE",
+      type: "website",
       url: `https://www.libreriachroma.com/${config.slug}`,
     },
-  }
+  };
 }
 
 export async function generateStaticParams() {
-  return Object.keys(seoPagesConfig).map((slug) => ({ slug }))
+  return Object.keys(seoPagesConfig).map((slug) => ({ slug }));
 }
 
 export default async function SeoLandingPage({ params }: PageProps) {
-  const resolvedParams = await params
-  const pageData = seoPagesConfig[resolvedParams.slug]
+  const resolvedParams = await params;
+  const pageData = seoPagesConfig[resolvedParams.slug];
 
   if (!pageData) {
-    notFound()
+    notFound();
   }
 
-  const phoneToUse = DEFAULT_WHATSAPP
-  const rawMessage = pageData.whatsappMessage || 'Hola, necesito informacion.'
-  const wppUrl = `https://wa.me/${phoneToUse}?text=${encodeURIComponent(rawMessage)}`
-  const browseHref = pageData.categoryHint === 'servicios' ? '/#servicios' : '/#productos'
+  const phoneToUse = DEFAULT_WHATSAPP;
+  const rawMessage = pageData.whatsappMessage || "Hola, necesito informacion.";
+  const wppUrl = `https://wa.me/${phoneToUse}?text=${encodeURIComponent(rawMessage)}`;
+  const browseHref = pageData.categoryHint === "servicios" ? "/#servicios" : "/#productos";
+  const topicLabel = getTopicLabel(pageData.h1Title);
+  const benefitsHeading = `Como te ayudamos con ${topicLabel.toLowerCase()}`;
+  const ctaHeading = `Cotiza ${topicLabel.toLowerCase()} hoy`;
+  const ctaDescription =
+    pageData.categoryHint === "servicios"
+      ? "Escribenos por WhatsApp y te guiamos paso a paso para saber que pedir, cuanto cuesta y como resolverlo rapido."
+      : "Mandanos tu consulta por WhatsApp y te ayudamos a saber que comprar, cuanto cuesta y como recogerlo sin vueltas.";
+  const relatedPages = getRelatedPages(pageData.slug, pageData.categoryHint);
+
   const CategoryIcon =
-    pageData.categoryHint === 'servicios'
+    pageData.categoryHint === "servicios"
       ? Printer
-      : pageData.categoryHint === 'arte'
-      ? Palette
-      : ShoppingBag
+      : pageData.categoryHint === "arte"
+        ? Palette
+        : ShoppingBag;
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -73,7 +97,7 @@ export default async function SeoLandingPage({ params }: PageProps) {
 
       <main className="flex-1">
         <section className="relative overflow-hidden border-b border-white/5 bg-background py-16 sm:py-20 lg:py-24">
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-primary/8 blur-[120px]" />
             <div className="absolute -bottom-20 -right-20 h-[420px] w-[420px] rounded-full bg-sky-500/8 blur-[120px]" />
           </div>
@@ -139,11 +163,9 @@ export default async function SeoLandingPage({ params }: PageProps) {
         <section className="bg-background py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="mx-auto mb-10 max-w-3xl text-center">
-              <h2 className="mb-3 text-2xl font-heading font-bold text-white sm:text-3xl">
-                Lo que resolvemos contigo
-              </h2>
+              <h2 className="mb-3 text-2xl font-heading font-bold text-white sm:text-3xl">{benefitsHeading}</h2>
               <p className="text-muted-foreground">
-                Cada punto responde a una duda o necesidad frecuente de nuestros clientes.
+                Estos puntos responden a dudas reales que suelen aparecer antes de comprar o cotizar.
               </p>
             </div>
 
@@ -166,14 +188,47 @@ export default async function SeoLandingPage({ params }: PageProps) {
           </div>
         </section>
 
+        <section className="border-t border-white/5 bg-background py-14 sm:py-16">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="mx-auto mb-8 max-w-3xl text-center">
+              <h2 className="mb-3 text-2xl font-heading font-bold text-white sm:text-3xl">
+                Otras paginas que tambien pueden ayudarte
+              </h2>
+              <p className="text-muted-foreground">
+                Estos enlaces refuerzan temas relacionados y ayudan a resolver pedidos parecidos sin empezar de cero.
+              </p>
+            </div>
+
+            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {relatedPages.map((page) => (
+                <Link
+                  key={page.slug}
+                  href={`/${page.slug}`}
+                  className="surface-card group flex h-full flex-col p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-xl"
+                >
+                  <span className="mb-3 inline-flex w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300">
+                    {page.categoryHint}
+                  </span>
+                  <h3 className="mb-2 text-lg font-heading font-bold leading-tight text-white transition-colors group-hover:text-primary">
+                    {page.h1Title}
+                  </h3>
+                  <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{page.metaDescription}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                    Abrir pagina
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="border-t border-white/5 bg-background py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="surface-panel mx-auto max-w-3xl p-8 text-center sm:p-10">
-              <h2 className="mb-3 text-2xl font-heading font-bold text-white sm:text-3xl">
-                ¿Quieres resolverlo hoy?
-              </h2>
+              <h2 className="mb-3 text-2xl font-heading font-bold text-white sm:text-3xl">{ctaHeading}</h2>
               <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Escríbenos por WhatsApp y te orientamos paso a paso para que sepas qué pedir, cuánto cuesta y cómo recogerlo.
+                {ctaDescription}
               </p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button size="lg" className="min-h-[56px] rounded-2xl px-8 text-lg font-bold shadow-lg" asChild>
@@ -182,7 +237,12 @@ export default async function SeoLandingPage({ params }: PageProps) {
                     Hablar por WhatsApp
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" className="min-h-[56px] rounded-2xl px-8 text-lg font-semibold" asChild>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="min-h-[56px] rounded-2xl px-8 text-lg font-semibold"
+                  asChild
+                >
                   <Link href="/">
                     Volver al inicio
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -196,5 +256,5 @@ export default async function SeoLandingPage({ params }: PageProps) {
 
       <Footer />
     </div>
-  )
+  );
 }

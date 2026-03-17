@@ -10,169 +10,260 @@ export interface SeoPageData {
 }
 
 export const seoPagesConfig: Record<string, SeoPageData> = {
-  // GRUPO A: Padres - Soluciones Fáciles
   "listas-escolares-completas-sin-salir-de-casa": {
     slug: "listas-escolares-completas-sin-salir-de-casa",
-    h1Title: "Listas Escolares: Tu Tranquilidad, Nuestra Prioridad",
-    subtitle: "Libérate del estrés nocturno. Mándanos una foto de la lista por WhatsApp y nosotros armamos, forramos y te lo enviamos el mismo día.",
-    painPoints: ["Evita colas interminables de horas", "Servicio integral: Útiles + Forrado profesional", "Delivery premium garantizado en Lima"],
-    whatsappMessage: "Hola, quiero delegar mi lista escolar completa. Aquí está la foto:",
-    metaTitle: "Comprar Lista Escolar Completa Domicilio | Librería Chroma",
-    metaDescription: "Consigue toda la lista escolar sin salir de casa. Envíanos la foto por WhatsApp y nosotros armamos todo. Resultados garantizados.",
+    h1Title: "Listas escolares completas sin salir de casa",
+    subtitle:
+      "Mandanos una foto de la lista por WhatsApp y te ayudamos a resolver utiles, forrado y entrega sin perder tiempo.",
+    painPoints: [
+      "Evita colas y compras de ultima hora",
+      "Podemos ayudarte con utiles y forrado",
+      "Recojo rapido o delivery local en VMT",
+    ],
+    whatsappMessage: "Hola, quiero resolver mi lista escolar completa. Aqui esta la foto:",
+    metaTitle: "Lista escolar completa a domicilio",
+    metaDescription:
+      "Resuelve tu lista escolar sin salir de casa. Envia la foto por WhatsApp y te ayudamos con utiles, forrado y entrega rapida.",
     categoryHint: "utiles",
   },
   "donde-dejar-la-lista-escolar-para-cotizar": {
     slug: "donde-dejar-la-lista-escolar-para-cotizar",
-    h1Title: "¿Dónde dejar tu Lista Escolar para Cotizar?",
-    subtitle: "No busques más. Toma una foto con tu celular y envíala a nuestro WhatsApp. Cotizamos gratis en 5 minutos.",
-    painPoints: ["Cotización 100% gratuita", "Respuesta inmediata por especialistas", "Precios transparentes, tú decides"],
-    whatsappMessage: "Hola, me gustaría cotizar esta lista escolar por favor:",
-    metaTitle: "Dónde cotizar lista escolar por WhatsApp rápido",
-    metaDescription: "Envía una foto de tu lista escolar por WhatsApp y recibe una cotización gratuita en 5 minutos. Librería Chroma.",
+    h1Title: "Donde dejar tu lista escolar para cotizar",
+    subtitle:
+      "Toma una foto con tu celular y enviala por WhatsApp. Te respondemos con una cotizacion clara y sin vueltas.",
+    painPoints: [
+      "Cotizacion gratis por WhatsApp",
+      "Respuesta clara para padres y alumnos",
+      "Opciones segun tu presupuesto",
+    ],
+    whatsappMessage: "Hola, quiero cotizar esta lista escolar por favor:",
+    metaTitle: "Cotiza tu lista escolar por WhatsApp",
+    metaDescription:
+      "Envia una foto de tu lista escolar y recibe una cotizacion rapida por WhatsApp. Te ayudamos a resolverla paso a paso.",
     categoryHint: "utiles",
   },
   "utiles-escolares-economicos-y-de-marca": {
     slug: "utiles-escolares-economicos-y-de-marca",
-    h1Title: "Útiles Escolares Económicos y de Marca",
-    subtitle: "Encuentra el balance perfecto: ahorro máximo para tu bolsillo o las mejores marcas premium que piden en el colegio.",
-    painPoints: ["Paquetes Económicos desde S/150", "Marcas Premium: Artesco, Minerva, Standford", "Garantía de calidad Chroma"],
-    whatsappMessage: "Hola, quiero cotizar útiles escolares económicos para mis hijos.",
-    metaTitle: "Útiles Escolares Baratos y de Marca en Lima",
-    metaDescription: "Encuentra útiles escolares económicos y grandes marcas en Librería Chroma. Pide tu presupuesto rápido vía WhatsApp.",
+    h1Title: "Utiles escolares economicos y de marca",
+    subtitle:
+      "Encuentra utiles accesibles o marcas reconocidas segun lo que te pida el colegio y tu presupuesto.",
+    painPoints: [
+      "Opciones economicas para ahorrar",
+      "Marcas conocidas para pedidos exigentes",
+      "Asesoria para elegir lo necesario",
+    ],
+    whatsappMessage: "Hola, quiero cotizar utiles escolares economicos y de marca.",
+    metaTitle: "Utiles escolares baratos y de marca",
+    metaDescription:
+      "Cotiza utiles escolares economicos o de marca por WhatsApp. Te ayudamos a comparar opciones y resolver tu compra rapido.",
     categoryHint: "utiles",
   },
   "forrado-de-cuadernos-y-etiquetas-personalizadas": {
     slug: "forrado-de-cuadernos-y-etiquetas-personalizadas",
-    h1Title: "Forrado de Cuadernos: Libérate del estrés nocturno",
-    subtitle: "¿Sin tiempo para forrar? Nosotros nos encargamos. Cuadernos forrados impecables con resultados garantizados por expertos.",
-    painPoints: ["Forrado profesional sin burbujas", "Etiquetas resistentes personalizadas", "Recupera tiempo de calidad con tu familia"],
-    whatsappMessage: "Hola, necesito el servicio de forrado de cuadernos y etiquetas por favor.",
-    metaTitle: "Servicio de Forrado de Cuadernos y Etiquetas | Librería Chroma",
-    metaDescription: "Servicio profesional de forrado de cuadernos escolares. Ahorra tiempo y libera tu noche, te lo entregamos listo.",
+    h1Title: "Forrado de cuadernos y etiquetas personalizadas",
+    subtitle:
+      "Si no tienes tiempo para forrar, nosotros lo hacemos por ti y te entregamos tus cuadernos listos para el colegio.",
+    painPoints: [
+      "Forrado prolijo y sin burbujas",
+      "Etiquetas resistentes y legibles",
+      "Ahorra tiempo en temporada escolar",
+    ],
+    whatsappMessage: "Hola, necesito forrado de cuadernos y etiquetas personalizadas.",
+    metaTitle: "Forrado de cuadernos y etiquetas",
+    metaDescription:
+      "Te ayudamos con forrado de cuadernos y etiquetas personalizadas. Ahorra tiempo y recibe todo listo para usar.",
     categoryHint: "servicios",
   },
   "emergencias-escolares-ultimos-utiles": {
     slug: "emergencias-escolares-ultimos-utiles",
-    h1Title: "Emergencias Escolares: Últimos Útiles",
-    subtitle: "¿Te olvidaste comprar algo y el colegio empieza mañana? Tranquilo, tenemos stock y atención rápida.",
-    painPoints: ["Atención rápida por WhatsApp", "Stock disponible de útiles comunes", "Recojo inmediato garantizado"],
-    whatsappMessage: "¡Hola! Es una emergencia, necesito comprar unos últimos útiles que me faltan:",
-    metaTitle: "Útiles escolares de última hora | Emergencias Escolares",
-    metaDescription: "¿Olvidaste algo de la lista escolar? Escríbenos, resolvemos tu emergencia escolar con retiro inmediato o delivery rápido.",
+    h1Title: "Emergencias escolares y ultimos utiles",
+    subtitle:
+      "Si te falto algo para manana, escribenos ahora y te confirmamos rapido si tenemos stock disponible.",
+    painPoints: [
+      "Respuesta rapida por WhatsApp",
+      "Stock de utiles comunes y urgentes",
+      "Recojo rapido para salir del apuro",
+    ],
+    whatsappMessage: "Hola, me faltan utiles urgentes y quiero confirmar stock.",
+    metaTitle: "Utiles de ultima hora para el colegio",
+    metaDescription:
+      "Si te falto algo de la lista escolar, te ayudamos a resolverlo rapido por WhatsApp con recojo o entrega local.",
     categoryHint: "utiles",
   },
   "utiles-para-ninos-de-inicial-kinder": {
     slug: "utiles-para-ninos-de-inicial-kinder",
-    h1Title: "Listas y Útiles para Inicial y Kinder",
-    subtitle: "Todo el material preescolar que tu pequeño necesita: crayones jumbo, plastilinas, mandiles y rompecabezas educativos.",
-    painPoints: ["Materiales 100% no tóxicos", "Marcas recomendadas por maestras", "Asesoramiento en productos especializados"],
-    whatsappMessage: "Hola, necesito cotizar una lista escolar de inicial/kinder:",
-    metaTitle: "Útiles Mágicos para Inicial y Kinder | Librería Escolar",
-    metaDescription: "Consigue la lista completa para nido o kinder. Crayones, plastilina, temperas no tóxicas. Cotiza fácilmente por WhatsApp.",
+    h1Title: "Listas y utiles para inicial y kinder",
+    subtitle:
+      "Encuentra crayones, plastilina, mandiles y materiales escolares para inicial con atencion clara para padres.",
+    painPoints: [
+      "Materiales adecuados para inicial",
+      "Opciones recomendadas por maestras",
+      "Compra guiada para evitar errores",
+    ],
+    whatsappMessage: "Hola, necesito cotizar utiles para inicial o kinder.",
+    metaTitle: "Utiles para inicial y kinder",
+    metaDescription:
+      "Cotiza utiles para inicial y kinder por WhatsApp. Te ayudamos con materiales escolares adecuados y entrega rapida.",
     categoryHint: "arte",
   },
-
-  // GRUPO B: Alumnos desde Casa
   "materiales-para-maquetas-y-trabajos": {
     slug: "materiales-para-maquetas-y-trabajos",
-    h1Title: "Materiales para Maquetas y Trabajos Escolares",
-    subtitle: "Tecnopor, cartón corrugado, palitos de chupete, silicona. Todo lo que necesitas para sacarte un 20 en tu proyecto.",
-    painPoints: ["Surtido gigante de manualidades", "Cortes y planchas a la medida", "Pregúntanos por stock vía WhatsApp"],
-    whatsappMessage: "Hola, estoy haciendo una maqueta y necesito averiguar si tienen estos materiales:",
-    metaTitle: "Materiales para Maquetas y Trabajos | Librería Chroma",
-    metaDescription: "Encuentra tecnopor, cartón, silicona y todos los insumos para tus maquetas y manualidades. Consulta disponibilidad aquí.",
+    h1Title: "Materiales para maquetas y trabajos escolares",
+    subtitle:
+      "Tenemos tecnopor, carton, silicona, palitos y otros insumos para maquetas, exposiciones y trabajos del colegio.",
+    painPoints: [
+      "Materiales para maquetas y manualidades",
+      "Consulta stock antes de venir",
+      "Ayuda rapida para resolver el pedido",
+    ],
+    whatsappMessage: "Hola, necesito materiales para maquetas y trabajos escolares.",
+    metaTitle: "Materiales para maquetas y trabajos",
+    metaDescription:
+      "Encuentra tecnopor, carton, silicona y materiales para maquetas. Consulta stock por WhatsApp y resuelve tu trabajo rapido.",
     categoryHint: "arte",
   },
   "impresion-de-trabajos-y-pdf-por-whatsapp": {
     slug: "impresion-de-trabajos-y-pdf-por-whatsapp",
-    h1Title: "Impresión de Trabajos y PDF por WhatsApp",
-    subtitle: "Manda tu archivo, imprímelo desde casa y ven a recogerlo sin hacer fila. Blanco y negro o a todo color.",
-    painPoints: ["Impresión en alta resolución láser", "Envío directo desde tu celular", "Ven, paga y llévate tu trabajo al instante"],
-    whatsappMessage: "Hola, necesito imprimir un trabajo urgente. Aquí te envío el archivo PDF:",
-    metaTitle: "Imprimir Trabajos y PDF por WhatsApp cerca | Librería Chroma",
-    metaDescription: "Servicio de impresión rápida. Envía tu PDF o Word por WhatsApp y recógelo sin colas. Blanco y negro o color de gran calidad.",
+    h1Title: "Impresion de trabajos y PDF por WhatsApp",
+    subtitle:
+      "Envianos tu archivo desde el celular y deja listo tu trabajo antes de llegar a la tienda.",
+    painPoints: [
+      "Impresion en blanco y negro o color",
+      "Envio directo del archivo por WhatsApp",
+      "Recojo rapido sin hacer fila",
+    ],
+    whatsappMessage: "Hola, necesito imprimir un trabajo. Aqui te envio mi archivo.",
+    metaTitle: "Imprime trabajos y PDF por WhatsApp",
+    metaDescription:
+      "Envianos tu PDF o Word por WhatsApp y deja listas tus impresiones antes de llegar. Servicio rapido y claro.",
     categoryHint: "servicios",
   },
   "papeleria-bonita-y-asthetic-para-apuntes": {
     slug: "papeleria-bonita-y-asthetic-para-apuntes",
-    h1Title: "Papelería Bonita y Aesthetic para Apuntes",
-    subtitle: "Plumones para lettering, resaltadores pastel, cuadernos de puntos y mucho más para que tus apuntes destaquen.",
-    painPoints: ["Tombow, Stabilo, Mildliner (Consultar stock)", "Cuadernos tipo Bullet Journal", "Saca tu lado más creativo"],
-    whatsappMessage: "Hola! ¿Tienen papelería aesthetic (resaltadores pastel, lettering)?",
-    metaTitle: "Papelería Aesthetic, Lettering y Bullet Journal en Lima",
-    metaDescription: "Plumones para lettering, resaltadores pastel y cuadernos aesthetic. Decora tus apuntes con la mejor papelería de Librería Chroma.",
+    h1Title: "Papeleria bonita y aesthetic para apuntes",
+    subtitle:
+      "Plumones, resaltadores pastel, cuadernos y accesorios para apuntes bonitos, lettering y estudio creativo.",
+    painPoints: [
+      "Papeleria para apuntes creativos",
+      "Resaltadores y lettering por consulta",
+      "Ideas para estudio mas visual",
+    ],
+    whatsappMessage: "Hola, tienen papeleria aesthetic y productos para lettering?",
+    metaTitle: "Papeleria aesthetic y lettering",
+    metaDescription:
+      "Encuentra papeleria aesthetic, resaltadores pastel y productos para lettering. Consulta stock y modelos por WhatsApp.",
     categoryHint: "arte",
   },
   "materiales-de-arte-y-pintura-colegio": {
     slug: "materiales-de-arte-y-pintura-colegio",
-    h1Title: "Materiales de Arte y Pintura para el Colegio",
-    subtitle: "Acuarelas, témperas, pinceles especiales, lienzos y blocks de dibujo (sketchbook).",
-    painPoints: ["Acuarelas escolares y profesionales", "Block Marquilla y Sketchbook", "Todo para el curso de Artes Plásticas"],
-    whatsappMessage: "Hola, necesito materiales para pintar (acuarelas, pinceles, sketchbook). ¿Me ayudan con esto?",
-    metaTitle: "Materiales de Arte, Pintura y Acuarelas | Librería Escolar",
-    metaDescription: "Encuentra pinturas, témperas, acuarelas y pinceles para las clases de arte en tu colegio. Tu talento necesita grandes herramientas.",
+    h1Title: "Materiales de arte y pintura para el colegio",
+    subtitle:
+      "Acuarelas, temperas, pinceles y blocks para tareas de arte, dibujo y pintura escolar.",
+    painPoints: [
+      "Acuarelas y temperas escolares",
+      "Pinceles, blocks y materiales de dibujo",
+      "Consulta modelos y stock por WhatsApp",
+    ],
+    whatsappMessage: "Hola, necesito materiales de arte y pintura para el colegio.",
+    metaTitle: "Materiales de arte y pintura escolar",
+    metaDescription:
+      "Cotiza acuarelas, temperas, pinceles y blocks para clases de arte. Te ayudamos a encontrar lo necesario rapido.",
     categoryHint: "arte",
   },
   "utiles-para-secundaria-y-universidad": {
     slug: "utiles-para-secundaria-y-universidad",
-    h1Title: "Útiles de Secundaria y Universidad",
-    subtitle: "Cuadernos universitarios anillados, blocks cuadriculados, lapiceros tinta gel y calculadoras científicas.",
-    painPoints: ["Formatos universitarios A4", "Lapiceros Pilot, Faber-Castell", "Calculadoras y escuadras técnicas"],
-    whatsappMessage: "Hola, busco útiles para universidad (cuadernos A4, lapiceros tinta gel).",
-    metaTitle: "Útiles Escolares para Secundaria y Universidad",
-    metaDescription: "Cuadernos universitarios, lapiceros de tinta gel, calculadoras científicas. Todo lo indispensable para clases exigentes.",
+    h1Title: "Utiles de secundaria y universidad",
+    subtitle:
+      "Cuadernos universitarios, lapiceros, blocks y calculadoras para clases mas exigentes y estudio diario.",
+    painPoints: [
+      "Utiles para secundaria y universidad",
+      "Formatos A4, cuadriculados y tecnicos",
+      "Compra rapida por WhatsApp",
+    ],
+    whatsappMessage: "Hola, busco utiles para secundaria o universidad.",
+    metaTitle: "Utiles para secundaria y universidad",
+    metaDescription:
+      "Cotiza cuadernos, lapiceros y calculadoras para secundaria o universidad. Te ayudamos a resolver tu pedido por WhatsApp.",
     categoryHint: "utiles",
   },
-
-  // GRUPO C: Desde el Colegio (emergencias rápidas)
   "libreria-abierta-ahora-cerca-al-colegio": {
     slug: "libreria-abierta-ahora-cerca-al-colegio",
-    h1Title: "Librería Abierta Ahora Cerca de Ti",
-    subtitle: "Solucionamos tus apuros escolares al instante. Escríbenos para confirmar si tenemos lo que te piden antes de venir.",
-    painPoints: ["Ubicación céntrica", "Verificación de stock al toque por WhatsApp", "Atención ultra rápida de mostrador"],
-    whatsappMessage: "Hola, ¿están abiertos ahora? Necesito pasar rápido a comprar algo.",
-    metaTitle: "Librería Escolar Abierta Ahora Cerca | Librería Chroma",
-    metaDescription: "¿Buscas una librería abierta cerca de ti? Estamos listos para atenderte. Envíanos un WhatsApp para separar tu compra rápida.",
+    h1Title: "Libreria abierta ahora cerca de ti",
+    subtitle:
+      "Confirma por WhatsApp si tenemos lo que necesitas antes de venir y resuelve tu compra mas rapido.",
+    painPoints: [
+      "Atencion rapida antes de llegar",
+      "Confirmacion de stock por WhatsApp",
+      "Compra agil cerca del colegio",
+    ],
+    whatsappMessage: "Hola, estan abiertos ahora? Quiero confirmar stock antes de ir.",
+    metaTitle: "Libreria abierta ahora cerca de ti",
+    metaDescription:
+      "Si buscas una libreria abierta cerca, escribenos por WhatsApp y confirma stock antes de venir a la tienda.",
     categoryHint: "servicios",
   },
   "silicona-goma-y-pegamentos-para-trabajos": {
     slug: "silicona-goma-y-pegamentos-para-trabajos",
-    h1Title: "Silicona, Goma y Pegamentos para Trabajos",
-    subtitle: "Desde silicona líquida y en barra hasta cinta doble faz especial para tu maqueta escolar.",
-    painPoints: ["Silicona líquida todos los tamaños", "Pegamentos extra fuertes y UHU", "Pistolas de silicona caliente"],
-    whatsappMessage: "Hola! ¿Tienen silicona para trabajos manuales y cinta doble faz?",
-    metaTitle: "Comprar Silicona, Goma y Cinta doble faz escolar",
-    metaDescription: "Tenemos todo tipo de adhesivos: Goma en barra, silicona líquida, cinta masking, uhu y más. Todo para que tu trabajo no se desarme.",
+    h1Title: "Silicona, goma y pegamentos para trabajos",
+    subtitle:
+      "Tenemos silicona liquida, goma en barra, cinta doble faz y otros adhesivos para trabajos escolares y maquetas.",
+    painPoints: [
+      "Adhesivos para colegio y manualidades",
+      "Consulta stock de silicona y cinta",
+      "Te orientamos segun el trabajo",
+    ],
+    whatsappMessage: "Hola, necesito silicona, goma o cinta doble faz para un trabajo.",
+    metaTitle: "Silicona, goma y cinta doble faz",
+    metaDescription:
+      "Cotiza silicona, goma y cinta doble faz para trabajos escolares. Consulta stock y opciones por WhatsApp.",
     categoryHint: "arte",
   },
   "cartulinas-papelografos-y-papel-craft": {
     slug: "cartulinas-papelografos-y-papel-craft",
-    h1Title: "Cartulinas, Papelógrafos y Papel Kraft",
-    subtitle: "Imprescindibles para toda buena exposición escolar. Tenemos de todos los colores y medidas, además de plumones gruesos.",
-    painPoints: ["Papelógrafo rayado y cuadriculado", "Cartulina escolar todos los tonos", "Plumones gruesos de pizarra y tiza"],
-    whatsappMessage: "Hola, busco papelógrafos y cartulinas para una exposición escolar, ¿qué colores tienen?",
-    metaTitle: "Fotocopias y Escaneos para Colegios | Papelógrafos y Cartulinas",
-    metaDescription: "Preparate para la exposición con nuestros papelógrafos, cartulinas de colores y papel kraft escolar. Consulta el stock en WhatsApp.",
+    h1Title: "Cartulinas, papelografos y papel kraft",
+    subtitle:
+      "Todo para exposiciones escolares: cartulinas de colores, papelografos, kraft y plumones gruesos.",
+    painPoints: [
+      "Material para exposiciones y afiches",
+      "Varios colores y formatos escolares",
+      "Consulta disponibilidad por WhatsApp",
+    ],
+    whatsappMessage: "Hola, busco cartulinas, papelografos y papel kraft para una exposicion.",
+    metaTitle: "Cartulinas y papelografos escolares",
+    metaDescription:
+      "Encuentra cartulinas, papelografos y papel kraft para exposiciones escolares. Consulta colores y stock por WhatsApp.",
     categoryHint: "arte",
   },
   "fotocopias-y-escaneos-rapidos": {
     slug: "fotocopias-y-escaneos-rapidos",
-    h1Title: "Fotocopias y Escaneos: Confidencialidad Absoluta",
-    subtitle: "Protegemos tu identidad y tus documentos. Servicio veloz de alta resolución para trámites críticos y escolares.",
-    painPoints: ["Fotocopias B/N y a Color full nitidez", "Enviamos tus escaneos a WhatsApp con seguridad", "Atención inmediata sin demoras molestas"],
-    whatsappMessage: "Hola, necesito fotocopias y escaneos rápidos.",
-    metaTitle: "Sacar Fotocopias y Escanear Documentos Rápido y Cerca",
-    metaDescription: "Servicio veloz de fotocopias y escaneos con total seguridad y confidencialidad. Soluciona tu trámite del colegio al toque.",
+    h1Title: "Fotocopias y escaneos rapidos",
+    subtitle:
+      "Resuelve fotocopias, escaneos y envio de archivos con una atencion clara, rapida y sin complicaciones.",
+    painPoints: [
+      "Fotocopias y escaneos al instante",
+      "Envio de archivos por WhatsApp o correo",
+      "Atencion simple para tramites y colegio",
+    ],
+    whatsappMessage: "Hola, necesito fotocopias y escaneos rapidos.",
+    metaTitle: "Fotocopias y escaneos rapidos",
+    metaDescription:
+      "Servicio rapido de fotocopias y escaneos para colegio y tramites. Te atendemos por WhatsApp y en tienda.",
     categoryHint: "servicios",
   },
   "necesito-utiles-urgente": {
     slug: "necesito-utiles-urgente",
-    h1Title: "¡Necesito Útiles Urgente! Atención Express",
-    subtitle: "Sabemos cómo es. Escríbenos inmediatamente, indícanos qué te falta y te confirmamos si lo tenemos en menos de 5 min.",
-    painPoints: ["S.O.S de padres", "Respuestas en tiempo real", "Facilidad de pago online (Yape, Plin)"],
-    whatsappMessage: "¡Hola! Es una urgencia máxima, necesito unos útiles de inmediato. Te dicto qué me falta:",
-    metaTitle: "Útiles Ecolares Urgentes | Delivery Rápido en Lima",
-    metaDescription: "¿Te pidieron útiles a última hora? Resolvemos tu urgencia escolar express. Comunícate ya vía WhatsApp.",
+    h1Title: "Necesito utiles urgente",
+    subtitle:
+      "Escribenos ahora, dinos que te falta y te confirmamos stock rapido para que salgas del apuro.",
+    painPoints: [
+      "Respuesta rapida para urgencias",
+      "Confirmacion de stock en minutos",
+      "Recojo agil y medios de pago simples",
+    ],
+    whatsappMessage: "Hola, necesito utiles urgente y quiero confirmar stock ahora.",
+    metaTitle: "Utiles urgentes con recojo rapido",
+    metaDescription:
+      "Si necesitas utiles urgente, escribenos por WhatsApp y confirma stock en minutos para resolver tu compra rapido.",
     categoryHint: "utiles",
   },
 };

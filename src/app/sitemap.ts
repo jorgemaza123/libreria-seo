@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { seoPagesConfig } from '@/data/seo/seoPagesConfig'
 import { seoConfig } from '@/lib/seo'
 
 // Cuando uses Supabase, importa los datos dinámicos
@@ -25,6 +26,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
+  const seoLandingPages: MetadataRoute.Sitemap = Object.values(seoPagesConfig).map((page) => ({
+    url: `${baseUrl}/${page.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.82,
+  }))
+
   // TODO: Cuando tengas Supabase configurado, agregar páginas dinámicas
   // const products = await getProducts()
   // const productPages: MetadataRoute.Sitemap = products.map((product) => ({
@@ -44,6 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticPages,
+    ...seoLandingPages,
     // ...productPages,
     // ...categoryPages,
   ]

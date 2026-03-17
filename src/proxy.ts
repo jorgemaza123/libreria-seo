@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -9,9 +9,7 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // Skip auth check if Supabase is not configured
   if (!supabaseUrl || !supabaseKey) {
-    // For development, allow access to admin without auth
     return supabaseResponse
   }
 
@@ -38,7 +36,6 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Check if this is an admin route
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
   const isLoginRoute = request.nextUrl.pathname === '/admin/login'
 
@@ -48,14 +45,12 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      // Redirect to login if not authenticated
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
       url.searchParams.set('redirect', request.nextUrl.pathname)
       return NextResponse.redirect(url)
     }
 
-    // Check if user is an admin
     const { data: adminUser } = await supabase
       .from('admin_users')
       .select('role')
@@ -63,7 +58,6 @@ export async function middleware(request: NextRequest) {
       .single()
 
     if (!adminUser) {
-      // User is not an admin, redirect to home
       return NextResponse.redirect(new URL('/', request.url))
     }
   }
@@ -73,7 +67,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match admin routes
     '/admin/:path*',
   ],
 }

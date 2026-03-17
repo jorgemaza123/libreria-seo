@@ -14,9 +14,9 @@ export interface SEOConfig {
 export const seoConfig: SEOConfig = {
   siteName: "Libreria CHROMA",
   siteUrl: "https://www.libreriachroma.com",
-  defaultTitle: "Impresiones, utiles, maquetas y tramites en VMT | Libreria Chroma",
+  defaultTitle: "Impresiones, utiles y tramites en VMT",
   defaultDescription:
-    "Impresiones por WhatsApp, utiles escolares, materiales para maquetas, fotocopias, escaneos y tramites en Villa Maria del Triunfo. Atencion clara para alumnos, padres y adultos mayores.",
+    "Impresiones por WhatsApp, utiles escolares, maquetas, fotocopias y tramites en Villa Maria del Triunfo. Atencion clara y recojo rapido.",
   defaultImage: "/opengraph-image",
   twitterHandle: "@libreriaCHROMA",
   locale: "es_PE",

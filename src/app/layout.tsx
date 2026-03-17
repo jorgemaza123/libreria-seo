@@ -9,7 +9,6 @@ import { mockFAQs } from "@/lib/mock-data";
 import { getSiteContent } from "@/lib/supabase/queries/site-settings";
 import "./globals.css";
 
-// Configuración de fuentes optimizada
 const nunito = Nunito({
   subsets: ["latin"],
   variable: "--font-heading",
@@ -35,29 +34,6 @@ export const metadata: Metadata = {
     template: `%s | ${seoConfig.siteName}`,
   },
   description: seoConfig.defaultDescription,
-  keywords: [
-    "librería Villa María del Triunfo",
-    "útiles escolares VMT",
-    "papelería Lima",
-    "impresiones Villa María del Triunfo",
-    "trámites RENIEC SUNAT Lima",
-    "sublimación personalizada VMT",
-    "soporte técnico PC laptops Lima",
-    "desarrollo web Lima Perú",
-    "librería Estela Maris",
-    "útiles escolares baratos Lima",
-    "RENIEC",
-    "SUNAT",
-    "RUC",
-    "Clave Sol",
-    "antecedentes policiales",
-    "tazas personalizadas",
-    "polos personalizados",
-    "Villa María del Triunfo",
-    "VMT",
-    "Lima",
-    "Perú",
-  ],
   authors: [{ name: seoConfig.siteName }],
   creator: seoConfig.siteName,
   openGraph: {
@@ -67,14 +43,12 @@ export const metadata: Metadata = {
     siteName: seoConfig.siteName,
     title: seoConfig.defaultTitle,
     description: seoConfig.defaultDescription,
-    // og:image auto-generado por src/app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
     title: seoConfig.defaultTitle,
     description: seoConfig.defaultDescription,
     creator: seoConfig.twitterHandle,
-    // twitter:image auto-generado por src/app/opengraph-image.tsx
   },
   robots: {
     index: true,
@@ -89,7 +63,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Schema LocalBusiness para Google
 const localBusinessSchema = generateLocalBusinessSchema({
   name: BUSINESS_INFO.name,
   description: BUSINESS_INFO.description,
@@ -115,12 +88,13 @@ const localBusinessSchema = generateLocalBusinessSchema({
   },
 });
 
-// Schema FAQ para Google
 const faqSchema = generateFAQSchema(
-  mockFAQs.filter(f => f.isActive).map(f => ({
-    question: f.question,
-    answer: f.answer,
-  }))
+  mockFAQs
+    .filter((faq) => faq.isActive)
+    .map((faq) => ({
+      question: faq.question,
+      answer: faq.answer,
+    })),
 );
 
 export default async function RootLayout({
@@ -128,13 +102,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch server-side para que el primer render tenga el contenido correcto del CMS
-  // evitando el flash de contenido por defecto en el Hero (mejora LCP)
-  let initialSiteContent: unknown = null
+  let initialSiteContent: unknown = null;
+
   try {
-    initialSiteContent = await getSiteContent()
+    initialSiteContent = await getSiteContent();
   } catch {
-    // Si Supabase no está disponible, el provider usa defaultContent como fallback
+    // Si Supabase falla, el provider cae al contenido por defecto.
   }
 
   return (
@@ -151,9 +124,7 @@ export default async function RootLayout({
       </head>
       <body className={`${quicksand.variable} ${nunito.variable} ${lexend.variable} font-display antialiased`}>
         <Providers initialSiteContent={initialSiteContent}>
-          <SmoothScrollProvider>
-            {children}
-          </SmoothScrollProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </Providers>
         <AnalyticsScripts />
       </body>

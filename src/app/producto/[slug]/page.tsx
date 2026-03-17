@@ -10,14 +10,14 @@ import { ChatBot } from '@/components/chat/ChatBot';
 import { mockProducts } from '@/lib/mock-data';
 import { seoConfig, generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { AddToCartButton } from './add-to-cart-button';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/server';
 
 // ISR: revalida cada hora para mostrar precios/stock actualizados sin sacrificar performance
 export const revalidate = 3600;
 
 async function getProduct(slug: string) {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
@@ -65,7 +65,7 @@ async function getProduct(slug: string) {
 
 async function getAllProductSlugs() {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
