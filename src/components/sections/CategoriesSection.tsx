@@ -81,7 +81,7 @@ function CategoryModal({
       aria-labelledby="modal-title"
     >
       <div
-        className="relative bg-card rounded-2xl lg:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-background-dark border border-white/10 rounded-2xl lg:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col glass-card"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón Cerrar - Grande y accesible */}
@@ -212,7 +212,7 @@ export function CategoriesSection() {
     <>
       <section
         id="categorias"
-        className="py-10 md:py-14 lg:py-16 bg-muted/40"
+        className="py-10 md:py-14 lg:py-16 bg-background-dark/50"
         aria-labelledby="categories-title"
       >
         <div className="container mx-auto px-4 sm:px-6">
@@ -245,23 +245,22 @@ export function CategoriesSection() {
                 onClick={() => setSelectedCategory(category)}
                 aria-label={`Ver categoría ${category.name}`}
                 className="
-                  group relative rounded-2xl bg-card
+                  group relative rounded-2xl glass-card
                   p-5 sm:p-6
                   min-h-[140px] sm:min-h-[160px]
                   flex flex-col items-center justify-center text-center
-                  border-2 border-transparent
                   shadow-sm hover:shadow-lg
-                  hover:border-primary/30
                   transition-all duration-300
-                  hover:-translate-y-1
-                  focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                  hover:-translate-y-1 hover:bg-white/5
+                  bg-background-dark/40
+                  focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark
                 "
               >
                 {/* Icono */}
                 <div
                   className="
                     w-14 h-14 sm:w-16 sm:h-16 rounded-xl
-                    bg-gradient-to-br from-primary/20 to-primary/5
+                    bg-primary/10
                     border border-primary/20
                     shadow-md
                     flex items-center justify-center
@@ -276,14 +275,14 @@ export function CategoriesSection() {
                 </div>
 
                 {/* Nombre */}
-                <span className="mt-3 text-base sm:text-lg font-bold line-clamp-2">
+                <span className="mt-4 text-base sm:text-lg font-bold line-clamp-2 text-white group-hover:text-primary transition-colors">
                   {category.name}
                 </span>
 
                 {/* Texto de acción */}
-                <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+                <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-400 group-hover:text-primary transition-colors">
                   <Eye className="w-4 h-4" />
-                  <span>Ver más</span>
+                  <span>Ver catálogo</span>
                 </div>
               </button>
             ))}

@@ -50,11 +50,11 @@ export function TopBanner() {
 
         {/* Phone - Always visible */}
         <a
-          href="tel:+51932371532"
+          href="tel:+51902843481"
           className="hidden lg:flex items-center gap-2 bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors font-bold flex-shrink-0"
         >
           <Phone className="w-4 h-4" />
-          932 371 532
+          902 843 481
         </a>
 
         {/* Close button - más visible */}

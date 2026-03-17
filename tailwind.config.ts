@@ -1,13 +1,15 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
+const withOpacity = (variable: string) => `hsl(var(${variable}) / <alpha-value>)`;
+
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -19,12 +21,12 @@ const config = {
       },
     },
     screens: {
-      'xs': '475px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px',
+      xs: "475px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     },
     extend: {
       fontFamily: {
@@ -32,60 +34,60 @@ const config = {
         body: ["var(--font-body)", "Quicksand", "sans-serif"],
       },
       colors: {
-        // CORRECCIÓN: Quitamos "hsl()" porque en globals.css ya son valores completos (oklch)
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: withOpacity("--border"),
+        input: withOpacity("--input"),
+        ring: withOpacity("--ring"),
+        background: withOpacity("--background"),
+        "background-dark": withOpacity("--background-dark"),
+        foreground: withOpacity("--foreground"),
+        "surface-dark": withOpacity("--surface-dark"),
+        "surface-elevated": withOpacity("--surface-elevated"),
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
-          glow: "var(--primary-glow)",
+          DEFAULT: withOpacity("--primary"),
+          foreground: withOpacity("--primary-foreground"),
+          glow: withOpacity("--primary"),
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: withOpacity("--secondary"),
+          foreground: withOpacity("--secondary-foreground"),
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: withOpacity("--destructive"),
+          foreground: withOpacity("--destructive-foreground"),
         },
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: withOpacity("--muted"),
+          foreground: withOpacity("--muted-foreground"),
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: withOpacity("--accent"),
+          foreground: withOpacity("--accent-foreground"),
         },
         popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: withOpacity("--popover"),
+          foreground: withOpacity("--popover-foreground"),
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: withOpacity("--card"),
+          foreground: withOpacity("--card-foreground"),
         },
-        // Sidebar: Ajustado a las variables de tu CSS
         sidebar: {
-          DEFAULT: "var(--sidebar)",
-          foreground: "var(--sidebar-foreground)",
-          primary: "var(--sidebar-primary)",
-          "primary-foreground": "var(--sidebar-primary-foreground)",
-          accent: "var(--sidebar-accent)",
-          "accent-foreground": "var(--sidebar-accent-foreground)",
-          border: "var(--sidebar-border)",
-          ring: "var(--sidebar-ring)",
+          DEFAULT: withOpacity("--sidebar"),
+          foreground: withOpacity("--sidebar-foreground"),
+          primary: withOpacity("--sidebar-primary"),
+          "primary-foreground": withOpacity("--sidebar-primary-foreground"),
+          accent: withOpacity("--sidebar-accent"),
+          "accent-foreground": withOpacity("--sidebar-accent-foreground"),
+          border: withOpacity("--sidebar-border"),
+          ring: withOpacity("--sidebar-ring"),
         },
-        // WhatsApp y CTA: Mantenemos HSL porque en CSS son números sueltos (142 72% 50%)
         cta: {
-          DEFAULT: "hsl(var(--cta))",
-          foreground: "hsl(var(--cta-foreground))",
+          DEFAULT: withOpacity("--cta"),
+          foreground: withOpacity("--cta-foreground"),
         },
         whatsapp: {
-          DEFAULT: "hsl(var(--whatsapp))",
-          foreground: "hsl(var(--whatsapp-foreground))",
+          DEFAULT: withOpacity("--whatsapp"),
+          foreground: withOpacity("--whatsapp-foreground"),
         },
       },
       borderRadius: {

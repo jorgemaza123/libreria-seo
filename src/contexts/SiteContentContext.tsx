@@ -126,12 +126,12 @@ export const defaultContent: SiteContent = {
   hero: {
     title: 'Tu Librería de Confianza',
     subtitle: 'Todo lo que necesitas para el colegio, oficina y más. Calidad y precios justos.',
-    ctaText: 'Ver Productos',
-    ctaLink: '/productos',
+    ctaText: 'Ver productos',
+    ctaLink: '/#productos',
     secondaryCtaText: 'Contáctanos',
-    secondaryCtaLink: '/contacto',
+    secondaryCtaLink: '/#contacto',
     showSearch: true,
-    priorityMode: 'school' as HeroPriorityMode,
+    priorityMode: 'services' as HeroPriorityMode,
     schoolLanding: {
       heroTitle: 'Envía tu lista escolar y nosotros la armamos por ti',
       heroSubtitle: 'Ahorra tiempo y dinero. Recibe todo listo en tu casa o recógelo en tienda.',
@@ -179,9 +179,9 @@ export const defaultContent: SiteContent = {
     showSocialLinks: true,
     quickLinks: [
       { label: 'Inicio', url: '/' },
-      { label: 'Productos', url: '/productos' },
-      { label: 'Servicios', url: '/servicios' },
-      { label: 'Contacto', url: '/contacto' },
+      { label: 'Productos', url: '/#productos' },
+      { label: 'Servicios', url: '/#servicios' },
+      { label: 'Contacto', url: '/#contacto' },
     ],
   },
   sections: {

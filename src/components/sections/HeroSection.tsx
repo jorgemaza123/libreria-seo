@@ -53,7 +53,9 @@ const CATEGORY_STYLES = {
 };
 
 const DEFAULT_HERO = {
-  title: "Soluciones Integrales frente a tu Colegio",
+  title: "Ahorra Tiempo y Estrés",
+  titleElite: "Útiles, Sublimación y Trámites",
+  titleSuffix: "Sin vueltas, sin esperas.",
   // Subtítulo más corto para móvil
   subtitle: "Ahorra tiempo. Útiles escolares, tecnología y trámites en un solo lugar.",
   subtitleShort: "Útiles, tecnología y trámites en un solo lugar",
@@ -115,7 +117,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative bg-background pt-4 pb-6 lg:pt-16 lg:pb-0 lg:min-h-[85vh] flex lg:items-center overflow-hidden"
+      className="relative bg-background pt-4 pb-6 lg:pt-16 lg:pb-0 lg:min-h-[90vh] flex lg:items-center overflow-hidden"
       aria-labelledby="hero-title"
     >
       {/* ===== Ambient Light (GPU Optimizado) ===== */}
@@ -134,11 +136,11 @@ export function HeroSection() {
           {/* H1 VISIBLE EN MÓVIL - Crítico para SEO y UX */}
           <h1
             id="hero-title"
-            className="text-2xl sm:text-3xl font-extrabold leading-tight mb-2"
+            className="text-3xl sm:text-4xl font-black tracking-tighter mb-4 leading-tight text-white italic"
           >
             {heroData.title}
           </h1>
-          <p className="text-base text-muted-foreground">
+          <p className="text-lg text-slate-400 font-light max-w-sm mx-auto">
             {heroData.subtitleShort}
           </p>
         </div>
@@ -165,12 +167,13 @@ export function HeroSection() {
 
             {/* Texto del título en desktop — styled como heading, pero el H1 semántico
                 está en el bloque móvil (siempre en DOM). Evita H1 duplicado para SEO. */}
-            <p className="text-5xl font-extrabold leading-tight tracking-tight">
-              {heroData.title}
-            </p>
+            <h1 className="text-6xl xl:text-8xl font-black leading-[0.9] tracking-tighter text-white uppercase italic">
+              {heroData.title.split(' ')[0]} <br/> 
+              <span className="text-primary">{heroData.title.split(' ').slice(1).join(' ')}</span>
+            </h1>
 
-            <p className="text-xl max-w-xl text-muted-foreground">
-              {heroData.subtitle}
+            <p className="text-xl max-w-xl text-slate-400 font-light leading-relaxed">
+              Delegación premium para tu tranquilidad. <span className="text-white font-bold">Libérate del estrés nocturno</span> y deja que los expertos lo resuelvan por ti.
             </p>
 
             <div className="flex gap-4">
@@ -203,8 +206,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* ===== CARD INTERACTIVA ===== */}
-          <div className="relative bg-card/95 backdrop-blur-md rounded-2xl lg:rounded-3xl p-5 sm:p-6 lg:p-10 shadow-2xl border border-border/50 transform-gpu">
+          {/* ===== CARD INTERACTIVA ELITE ===== */}
+          <div className="relative bg-black/60 backdrop-blur-2xl rounded-3xl p-6 lg:p-12 shadow-2xl border border-white/10 glass-card transform-gpu">
 
             {/* ===== TABS DE CATEGORÍA - MEJORADOS PARA ACCESIBILIDAD ===== */}
             <nav aria-label="Categorías de servicios" className="mb-6">

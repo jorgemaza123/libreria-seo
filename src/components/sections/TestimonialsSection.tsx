@@ -68,7 +68,7 @@ export function TestimonialsSection() {
   return (
     <section
       id="testimonios"
-      className="py-12 md:py-16 lg:py-20 relative overflow-hidden bg-muted/40"
+      className="py-12 md:py-16 lg:py-20 relative overflow-hidden bg-background-dark/50 border-t border-white/5"
       aria-labelledby="testimonials-title"
     >
       {/* Fondo luminoso */}
@@ -128,11 +128,11 @@ export function TestimonialsSection() {
             {getVisibleTestimonials().map((t, index) => (
               <article
                 key={`${t.id}-${index}`}
-                className={`relative rounded-2xl p-5 sm:p-6 bg-card/90 backdrop-blur border
+                className={`relative rounded-2xl p-5 sm:p-6 bg-background-dark/40 backdrop-blur border glass-card
                 transition-all duration-500
                 ${index === 1 && reviews.length >= 3
-                  ? 'md:scale-105 border-primary/40 shadow-xl shadow-primary/20'
-                  : 'border-border/50 shadow-md hover:shadow-lg'}`}
+                  ? 'md:scale-105 border-primary/40 shadow-xl shadow-primary/20 z-10'
+                  : 'border-white/10 shadow-md hover:shadow-lg'}`}
               >
                 {/* Quote icon */}
                 <Quote className="w-8 h-8 sm:w-10 sm:h-10 text-primary/20 mb-3" aria-hidden="true" />

@@ -16,8 +16,10 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useSearch } from "@/contexts/SearchContext";
+import { useWhatsApp } from "@/hooks/use-whatsapp";
 import { mockNavItems } from "@/lib/mock-data";
 import { ShareModal } from "@/components/ui/ShareModal";
+import { SectionRail } from "@/components/layout/SectionRail";
 import logoImg from "@/app/logo.png";
 
 const useIsClient = () => {
@@ -40,6 +42,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const { getItemCount, setIsCartOpen } = useCart();
   const { searchQuery, setSearchQuery } = useSearch();
+  const { getWhatsAppUrl } = useWhatsApp();
 
   const mounted = useIsClient();
 
@@ -78,8 +81,8 @@ export function Navbar() {
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-md shadow-md"
-            : "bg-background/80 backdrop-blur-sm"
+            ? "border-b border-white/8 bg-background/95 shadow-md backdrop-blur-xl"
+            : "bg-background/88 backdrop-blur-md"
         }`}
       >
         <div className="container mx-auto px-3 sm:px-4">
@@ -100,12 +103,12 @@ export function Navbar() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex-1 max-w-[200px] md:hidden flex items-center gap-2 px-3 py-2.5 bg-muted/60 hover:bg-muted active:bg-muted/80 active:scale-[0.98] rounded-full border border-transparent hover:border-primary/20 transition-all touch-manipulation"
+              className="flex max-w-[220px] flex-1 touch-manipulation items-center gap-2 rounded-full border border-white/10 bg-card px-3 py-2.5 transition-all hover:border-primary/25 hover:bg-accent active:scale-[0.98] md:hidden"
               aria-label="Abrir buscador"
             >
               <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               <span className="text-sm text-muted-foreground truncate">
-                Buscar producto...
+                Buscar utiles y materiales
               </span>
             </button>
 
@@ -127,21 +130,35 @@ export function Navbar() {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Buscar productos..."
+                  placeholder="Buscar utiles y materiales"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-full bg-muted/60 border border-transparent focus:border-primary/30 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full rounded-full border border-white/10 bg-card pl-10 pr-4 py-2.5 text-sm transition-all focus:border-primary/30 focus:ring-2 focus:ring-primary/20"
                 />
               </form>
             </div>
 
-            <div className="flex items-center gap-0.5 sm:gap-1">
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <Button
+                asChild
+                size="sm"
+                className="hidden rounded-full px-4 font-semibold shadow-md lg:inline-flex"
+              >
+                <a
+                  href={getWhatsAppUrl("Hola, quiero una cotizacion")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Cotizar
+                </a>
+              </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsShareModalOpen(true)}
                 aria-label="Compartir esta página"
-                className="text-primary"
+                className="text-primary hover:bg-primary/10"
               >
                 <Share2 className="w-5 h-5" />
               </Button>
@@ -192,6 +209,11 @@ export function Navbar() {
         </div>
       </header>
 
+      <SectionRail
+        items={visibleNavItems}
+        suspended={isSearchOpen || isMobileMenuOpen || isShareModalOpen}
+      />
+
       {isSearchOpen && (
         <div
           className="fixed inset-0 z-[55] bg-background/98 backdrop-blur-md safe-area-inset"
@@ -208,7 +230,7 @@ export function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="¿Qué producto buscas?"
-                  className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl bg-muted border-2 border-transparent focus:border-primary focus:ring-0 outline-none transition-all"
+                  className="w-full rounded-2xl border-2 border-transparent bg-card pl-12 pr-4 py-4 text-lg outline-none transition-all focus:border-primary focus:ring-0"
                   autoComplete="off"
                 />
               </form>

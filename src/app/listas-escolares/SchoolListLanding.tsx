@@ -136,7 +136,7 @@ export function SchoolListLanding() {
   }, [trackEvent, phone])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background-dark">
       {/* ==========================================
           URGENCY COUNTDOWN BAR (FOMO)
           ========================================== */}
@@ -151,7 +151,7 @@ export function SchoolListLanding() {
       {/* ==========================================
           SECTION 1: HERO — Emotion + Decision
           ========================================== */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-green-500/5">
+      <section className="relative overflow-hidden bg-background-dark/80 backdrop-blur-md">
         {/* Ambient blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -264,7 +264,7 @@ export function SchoolListLanding() {
       {/* ==========================================
           SECTION 2: HOW IT WORKS
           ========================================== */}
-      <section id="como-funciona" className="py-16 sm:py-20 bg-muted/30 scroll-mt-16">
+      <section id="como-funciona" className="py-16 sm:py-20 bg-background-dark/50 scroll-mt-16 border-y border-white/5">
         <div className="container mx-auto px-4">
           <FadeIn>
             <div className="text-center mb-12">
@@ -300,7 +300,7 @@ export function SchoolListLanding() {
               },
             ].map((item) => (
               <StaggerItem key={item.step}>
-                <div className="relative text-center p-6 rounded-2xl bg-card border border-border/50">
+                <div className="relative text-center p-6 rounded-2xl bg-background-dark/40 border border-white/10 glass-card">
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-md">
                     {item.step}
                   </div>
@@ -352,7 +352,7 @@ export function SchoolListLanding() {
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* ECONÓMICO */}
             <StaggerItem>
-              <div className="relative rounded-2xl border border-border/50 bg-card p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+              <div className="relative rounded-2xl border border-white/10 bg-background-dark/40 p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full glass-card">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                     <Coins className="w-6 h-6 text-emerald-600" />
@@ -381,7 +381,7 @@ export function SchoolListLanding() {
 
             {/* MEDIO — POPULAR */}
             <StaggerItem>
-              <div className="relative rounded-2xl border-2 border-primary bg-card p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full ring-1 ring-primary/20">
+              <div className="relative rounded-2xl border-2 border-primary bg-background-dark/40 p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full ring-1 ring-primary/20 glass-card">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-md whitespace-nowrap">
                   MÁS POPULAR
                 </div>
@@ -413,7 +413,7 @@ export function SchoolListLanding() {
 
             {/* PREMIUM */}
             <StaggerItem>
-              <div className="relative rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-50/50 to-card dark:from-amber-950/20 dark:to-card p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+              <div className="relative rounded-2xl border border-amber-400/30 bg-background-dark/40 p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full glass-card">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
                     <Crown className="w-6 h-6 text-amber-600" />
@@ -446,7 +446,7 @@ export function SchoolListLanding() {
       {/* ==========================================
           SECTION 4: ADD-ONS
           ========================================== */}
-      <section className="py-16 sm:py-20 bg-muted/30">
+      <section className="py-16 sm:py-20 bg-background-dark/50 border-y border-white/5">
         <div className="container mx-auto px-4">
           <FadeIn>
             <div className="text-center mb-12">
@@ -487,7 +487,7 @@ export function SchoolListLanding() {
               <StaggerItem key={addon.title}>
                 <button
                   onClick={() => handleAddonClick(addon.title)}
-                  className="w-full text-left rounded-2xl border border-border/50 bg-card p-5 hover:shadow-md hover:border-primary/30 transition-all duration-300 group"
+                  className="w-full text-left rounded-2xl border border-white/10 bg-background-dark/40 p-5 hover:shadow-md hover:border-primary/30 transition-all duration-300 group glass-card"
                 >
                   <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${addon.color} mb-3`}>
                     <addon.icon className="w-5 h-5" />
@@ -521,7 +521,7 @@ export function SchoolListLanding() {
                 { icon: Store, label: 'Negocio local de confianza', sublabel: '+10 años en Villa María del Triunfo' },
                 { icon: ShieldCheck, label: 'Productos originales', sublabel: 'Garantía de calidad certificada' },
               ].map((badge) => (
-                <div key={badge.label} className="flex items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border/30">
+                <div key={badge.label} className="flex items-center gap-3 p-4 rounded-xl bg-background-dark/40 border border-white/10 glass-card">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <badge.icon className="w-5 h-5 text-primary" />
                   </div>
@@ -546,7 +546,7 @@ export function SchoolListLanding() {
               <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 {reviews.slice(0, 6).map((review) => (
                   <StaggerItem key={review.id}>
-                    <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
+                    <div className="rounded-2xl border border-white/10 bg-background-dark/40 p-5 shadow-sm glass-card">
                       <div className="flex items-center gap-3 mb-3">
                         {review.avatar ? (
                           <Image
@@ -628,7 +628,7 @@ export function SchoolListLanding() {
       <div
         className={`
           fixed bottom-0 left-0 right-0 z-50 p-3
-          bg-background/80 backdrop-blur-lg border-t border-border/50
+          bg-background-dark/80 backdrop-blur-xl border-t border-white/10
           md:hidden safe-area-bottom
           transition-all duration-300
           ${scrollPastThreshold ? 'pb-4' : ''}

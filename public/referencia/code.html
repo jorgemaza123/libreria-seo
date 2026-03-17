@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hacemos tu Tarea - Elite Academic Support</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee79",
+                        "background-light": "#f8f9fa",
+                        "background-dark": "#121212", // Premium graphite
+                        "surface-dark": "#1e1e1e",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(18, 18, 18, 0) 0%, rgba(18, 18, 18, 0.8) 70%, rgba(18, 18, 18, 1) 100%);
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 flex items-center bg-background-dark/90 backdrop-blur-md p-4 justify-between border-b border-white/5">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<h2 class="text-slate-100 text-lg font-extrabold leading-tight tracking-tight flex-1 text-center font-display uppercase tracking-[0.2em]">Hacemos tu Tarea</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex items-center justify-center text-slate-100">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</header>
+<main class="flex-1 pb-24">
+<!-- Hero Section -->
+<section class="relative h-[480px] w-full overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A focused student studying with premium desk setup" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAyZaD5jntoWOJMoUhE7Whvyd27bGStu4CU6bImtzt1HRNePZtunVr5x-25t0B4IKTNDKKbzKFGCW6RCQbabLxiNW8YetE7HlngDPyoTpatk6DMa-oS1Bb6T_Uhc6ivngN4PRYe_dNQ6OWAjJt39bhlFAz8Nvg_m4QEXAW2tejqz5EcrKncd9jOc9V4UBGNE8vYoAQKiVvyPnzvHFyzqxVnO4nZ8NcvVxMyfC1CjfSkvVPOTo78sUPpaqnI0W5h4l_FFMFAmhby3o')"></div>
+<div class="absolute inset-0 hero-gradient"></div>
+<div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col gap-4">
+<span class="bg-white/10 text-white border border-white/20 px-3 py-1 rounded-full text-[10px] font-bold w-fit uppercase tracking-widest">Servicio Elite</span>
+<h1 class="text-white text-4xl font-extrabold leading-[1.1] tracking-tight">Tu Tranquilidad,<br/><span class="text-primary">Nuestra Prioridad</span></h1>
+<p class="text-slate-300 text-base font-light leading-relaxed max-w-[95%]">
+                Delegación académica premium para Inicial, Primaria y Secundaria. Resultados garantizados por expertos.
+            </p>
+</div>
+</section>
+<!-- Psychological Triggers -->
+<section class="px-6 py-8 grid grid-cols-1 gap-4">
+<div class="flex items-center gap-4 p-5 rounded-2xl glass-card">
+<div class="bg-primary/10 p-3 rounded-xl text-primary">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<h3 class="font-bold text-white">Confidencialidad absoluta</h3>
+<p class="text-sm text-slate-400">Protegemos tu identidad y la de tus hijos.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-5 rounded-2xl glass-card">
+<div class="bg-primary/10 p-3 rounded-xl text-primary">
+<span class="material-symbols-outlined">mood</span>
+</div>
+<div>
+<h3 class="font-bold text-white">Libérate del estrés nocturno</h3>
+<p class="text-sm text-slate-400">Recupera tiempo de calidad con tu familia.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-5 rounded-2xl glass-card">
+<div class="bg-primary/10 p-3 rounded-xl text-primary">
+<span class="material-symbols-outlined">military_tech</span>
+</div>
+<div>
+<h3 class="font-bold text-white">Expertos Calificados</h3>
+<p class="text-sm text-slate-400">Docentes y especialistas en cada área.</p>
+</div>
+</div>
+</section>
+<!-- Services Grid -->
+<section class="px-6 py-4">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-white">¿Qué cubrimos?</h2>
+<span class="text-primary text-sm font-medium">Ver todo</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-dark p-6 rounded-2xl border border-white/5 flex flex-col gap-3 group active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">menu_book</span>
+<p class="font-semibold text-white">Investigaciones</p>
+</div>
+<div class="bg-surface-dark p-6 rounded-2xl border border-white/5 flex flex-col gap-3 group active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">architecture</span>
+<p class="font-semibold text-white">Maquetas</p>
+</div>
+<div class="bg-surface-dark p-6 rounded-2xl border border-white/5 flex flex-col gap-3 group active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">edit_note</span>
+<p class="font-semibold text-white">Ensayos</p>
+</div>
+<div class="bg-surface-dark p-6 rounded-2xl border border-white/5 flex flex-col gap-3 group active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">science</span>
+<p class="font-semibold text-white">Ciencias</p>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-6 py-10">
+<div class="bg-surface-dark p-8 rounded-[2rem] border border-white/10 relative overflow-hidden shadow-2xl">
+<div class="relative z-10 flex flex-col items-center text-center gap-6">
+<div class="flex flex-col gap-2">
+<h3 class="text-white text-2xl font-extrabold leading-tight">¿Listo para delegar?</h3>
+<p class="text-slate-400 font-normal">Atención inmediata las 24 horas del día.</p>
+</div>
+<a class="w-full bg-primary text-background-dark py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-lg shadow-lg shadow-primary/20 uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined font-bold">chat</span>
+                    WhatsApp Directo
+                </a>
+</div>
+<!-- Subtle decorative background pulse -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[60px]"></div>
+<div class="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-[60px]"></div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 px-4 pb-6 pt-3">
+<div class="max-w-md mx-auto flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="text-primary flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px] fill-1">home</span>
+</div>
+<p class="text-primary text-[10px] font-bold uppercase tracking-widest">Inicio</p>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-500 hover:text-white transition-colors" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">book_2</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-widest">Servicios</p>
+</a>
+<div class="relative -top-8">
+<a class="bg-primary text-background-dark size-14 rounded-full flex items-center justify-center shadow-lg shadow-primary/40 border-[6px] border-background-dark" href="#">
+<span class="material-symbols-outlined font-bold text-3xl">chat</span>
+</a>
+</div>
+<a class="flex flex-col items-center gap-1 group text-slate-500 hover:text-white transition-colors" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">payments</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-widest">Precios</p>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-500 hover:text-white transition-colors" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">person</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-widest">Perfil</p>
+</a>
+</div>
+</nav>
+</body></html>

@@ -119,7 +119,7 @@ export function PromotionsSection() {
             <h3 className="text-lg sm:text-xl font-bold">Promociones de Temporada</h3>
           </div>
 
-          <div className="overflow-hidden rounded-2xl lg:rounded-3xl shadow-2xl bg-muted relative group">
+          <div className="overflow-hidden rounded-2xl lg:rounded-3xl shadow-2xl bg-background-dark border border-white/10 relative group glass-card">
             <div
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -251,7 +251,7 @@ export function PromotionsSection() {
             {flashDeals.map((deal) => (
               <article
                 key={deal.id}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+                className="group relative bg-background-dark/40 rounded-2xl overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg glass-card"
               >
                 {/* Badge descuento */}
                 <div className="absolute top-3 left-3 z-10 px-3 py-1.5 bg-destructive text-destructive-foreground rounded-full text-sm font-bold">

@@ -8,15 +8,9 @@ import { useConversionCTA } from '@/hooks/use-conversion-cta'
 import { generateWhatsAppURL } from '@/lib/whatsapp'
 import { trackSchoolListLead } from '@/lib/analytics'
 import { FadeIn } from '@/components/ui/motion'
-import { MessageSquare, ChevronRight, Check, BookOpen } from 'lucide-react'
-import Image from 'next/image'
+import { HeroImageBackdrop } from '@/components/landing/HeroImageBackdrop'
+import { BookOpen, Check, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
-
-// ============================================
-// SCHOOL HERO — Hero section for Campaña Escolar
-// Reutilizable: Home (/) + /listas-escolares
-// No duplica código. Solo la sección hero.
-// ============================================
 
 export function SchoolHero() {
   const { effectiveContent } = useSiteContent()
@@ -36,114 +30,94 @@ export function SchoolHero() {
   }, [trackEvent, phone])
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-green-500/5">
-      {/* Ambient blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -right-20 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-3xl" />
+    <section id="hero" className="relative isolate flex min-h-[90vh] w-full flex-col justify-center overflow-hidden bg-background-dark sm:min-h-[85vh]">
+      <HeroImageBackdrop />
+
+      <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+        <div className="absolute -top-20 -left-20 h-96 w-96 rounded-full bg-primary/10 blur-[100px]" />
+        <div className="absolute -bottom-32 -right-20 h-[500px] w-[500px] rounded-full bg-emerald-500/10 blur-[100px]" />
       </div>
 
-      <div className="container mx-auto px-4 pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-28 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-
-          {/* Campaign Badge */}
+      <div className="container relative z-20 mx-auto flex flex-col items-center px-6 py-12 sm:px-8">
+        <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-6 text-center sm:gap-8">
           <FadeIn delay={0}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-6 border border-primary/20">
-              <BookOpen className="w-4 h-4" />
-              {schoolContent?.heroBadge || 'Campaña Escolar 2026'}
-            </div>
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur-md sm:text-xs">
+              {schoolContent?.heroBadge || 'Campana escolar lista para cotizar'}
+            </span>
           </FadeIn>
 
-          {/* Headline */}
           <FadeIn delay={0.1}>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-heading font-extrabold text-foreground leading-[1.1] mb-5">
-              {schoolContent?.heroTitle || (
-                <>
-                  Tu lista escolar completa en 24 horas.{' '}
-                  <span className="text-primary">Sin colas. Sin estrés.</span>
-                </>
-              )}
+            <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+              Envia tu lista escolar.
+              <br />
+              <span className="text-primary text-gradient drop-shadow-md">Nosotros la armamos por ti.</span>
             </h1>
           </FadeIn>
 
-          {/* Subtitle */}
           <FadeIn delay={0.2}>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-200 sm:text-xl">
               {schoolContent?.heroSubtitle || (
                 <>
-                  Envíanos la lista por WhatsApp y recibe todo listo para usar.
-                  <br className="hidden sm:block" />
-                  Con opción económica, intermedia o premium. Entrega a domicilio.
+                  Manda la foto de la lista por WhatsApp y recibe utiles, cuadernos,
+                  forrado y entrega rapida sin hacer colas.
                 </>
               )}
             </p>
           </FadeIn>
 
-          {/* CTA Buttons */}
-          <FadeIn delay={0.3}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* Primary: WhatsApp */}
+          <FadeIn delay={0.3} className="w-full sm:w-auto">
+            <div className="flex w-full flex-col justify-center gap-4 sm:flex-row">
               <button
                 onClick={handlePrimaryClick}
                 {...primaryCtaProps}
-                className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-bold text-lg rounded-2xl shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-300 hover:-translate-y-0.5 min-h-[56px]"
+                className="group relative inline-flex min-h-[64px] w-full items-center justify-center gap-3 rounded-2xl bg-primary px-10 py-5 text-lg font-extrabold uppercase tracking-wider text-primary-foreground shadow-[0_0_40px_rgba(34,197,94,0.25)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_56px_rgba(34,197,94,0.38)] sm:w-auto sm:text-xl"
               >
-                <MessageSquare className="w-5 h-5" />
-                {schoolContent?.heroPrimaryCTA || 'Enviar mi lista ahora'}
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <MessageSquare className="h-6 w-6 fill-current" />
+                {schoolContent?.heroPrimaryCTA || 'Cotizar por WhatsApp'}
               </button>
 
-              {/* Secondary: Go to full landing */}
               <Link
-                href="/listas-escolares"
-                onClick={() => trackEvent('hero_cta_click', { metadata: { type: 'home_school_secondary' } })}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-border text-foreground font-semibold text-lg rounded-2xl hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 min-h-[56px]"
+                href="#productos"
+                className="inline-flex min-h-[64px] w-full items-center justify-center gap-2 rounded-2xl border border-white/12 bg-card px-8 py-5 text-lg font-semibold text-white shadow-sm transition-all duration-300 hover:border-primary/40 hover:bg-accent sm:w-auto"
               >
-                {schoolContent?.heroSecondaryCTA || 'Ver opciones de precios'}
+                Ver productos
               </Link>
             </div>
           </FadeIn>
 
-          {/* Social Proof */}
-          <FadeIn delay={0.35}>
-            <p className="mt-5 text-sm text-muted-foreground">
-              Más de <span className="font-bold text-foreground">40 familias</span> ya separaron su lista esta semana
-            </p>
-          </FadeIn>
+          <FadeIn delay={0.4} className="mt-4 w-full sm:mt-8">
+            <div className="grid w-full grid-cols-1 gap-4 text-left sm:grid-cols-3">
+              <div className="glass-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
+                <div className="shrink-0 rounded-xl bg-primary/10 p-2 text-primary sm:p-3">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Cotizacion rapida</h3>
+                  <p className="text-xs text-slate-300">Te respondemos con una opcion clara.</p>
+                </div>
+              </div>
 
-          {/* Trust Bullets */}
-          <FadeIn delay={0.4}>
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8 text-sm text-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-500" />
-                Forrado disponible
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-500" />
-                Stickers personalizados
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-green-500" />
-                Envío gratis desde S/200
-              </span>
+              <div className="glass-card flex items-center gap-3 rounded-2xl p-4 sm:p-5">
+                <div className="shrink-0 rounded-xl bg-primary/10 p-2 text-primary sm:p-3">
+                  <Check className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Explicacion simple</h3>
+                  <p className="text-xs text-slate-300">Ideal para padres, alumnos y adultos mayores.</p>
+                </div>
+              </div>
+
+              <div className="glass-card relative flex items-center gap-3 overflow-hidden rounded-2xl p-4 sm:p-5">
+                <div className="shrink-0 rounded-xl bg-primary/10 p-2 text-primary sm:p-3">
+                  <MessageSquare className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Recojo o delivery</h3>
+                  <p className="text-xs text-slate-300">Lo recibes listo o lo recoges en tienda.</p>
+                </div>
+              </div>
             </div>
           </FadeIn>
-
-          {/* Hero Image (optional, from CMS) */}
-          {schoolContent?.heroImage && (
-            <FadeIn delay={0.5}>
-              <div className="mt-12 relative aspect-video max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
-                <Image
-                  src={schoolContent.heroImage}
-                  alt="Útiles escolares Librería CHROMA"
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 672px"
-                />
-              </div>
-            </FadeIn>
-          )}
         </div>
       </div>
     </section>

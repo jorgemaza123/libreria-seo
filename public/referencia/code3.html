@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee79",
+                        "hbo-dark": "#000000",
+                        "hbo-charcoal": "#121212",
+                        "deep-graphite": "#1c1c1c",
+                    },
+                    fontFamily: {
+                        "sans": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { 
+            font-family: 'Lexend', sans-serif; 
+            background-color: #000000;
+        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        .premium-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .input-premium {
+            background: #121212;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .input-premium:focus {
+            border-color: #2bee79;
+            box-shadow: 0 0 15px rgba(43, 238, 121, 0.1);
+            background: #1a1a1a;
+        }
+
+        .heading-premium {
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+        
+        .hero-glow {
+            background: radial-gradient(circle at top right, rgba(43, 238, 121, 0.08), transparent 60%);
+        }
+    </style>
+</head>
+<body class="bg-hbo-dark text-white min-h-screen">
+<div class="relative flex h-screen w-full max-w-[430px] mx-auto flex-col bg-hbo-dark overflow-hidden hero-glow">
+<!-- Top Navigation -->
+<div class="flex items-center p-6 justify-between relative z-10">
+<button class="text-white flex size-10 shrink-0 items-center justify-center rounded-full bg-deep-graphite/50 focus:outline-none border border-white/5">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<span class="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Soporte Vital PC</span>
+<div class="size-10"></div> <!-- Spacer for centering -->
+</div>
+<!-- Hero Psychology -->
+<div class="px-8 pt-4 pb-8 relative z-10">
+<div class="inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-[10px] font-bold tracking-widest uppercase mb-4 border border-primary/30">
+            Diagnóstico experto inmediato
+        </div>
+<h1 class="text-4xl font-black heading-premium mb-4">
+            Recupera tu <br/>
+<span class="text-primary italic">herramienta</span> <br/>
+            de estudio.
+        </h1>
+<p class="text-sm text-white/50 leading-relaxed max-w-[280px]">
+            No dejes que una falla detenga tu futuro. Nuestros especialistas están listos para el rescate.
+        </p>
+</div>
+<!-- Form Section -->
+<div class="flex-1 overflow-y-auto px-8 py-2 space-y-6">
+<!-- Minimalist Inputs -->
+<div class="space-y-4">
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Tu Nombre</label>
+<input class="input-premium flex w-full rounded-2xl h-16 px-6 text-white placeholder:text-white/20 focus:outline-none" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Síntomas del equipo</label>
+<textarea class="input-premium flex w-full rounded-2xl min-h-[120px] p-6 text-white placeholder:text-white/20 focus:outline-none resize-none" placeholder="¿Qué está pasando? (ej. pantalla azul, no enciende)..."></textarea>
+</div>
+</div>
+<!-- High Contrast Urgency Toggle -->
+<div class="flex items-center justify-between p-6 bg-primary/5 border border-primary/10 rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="bg-primary/20 p-2.5 rounded-xl">
+<span class="material-symbols-outlined text-primary scale-110">bolt</span>
+</div>
+<div>
+<p class="text-white font-bold text-sm">Prioridad Crítica</p>
+<p class="text-white/40 text-[10px] uppercase tracking-wider font-semibold">Respuesta en &lt; 15 min</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-7 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Action Button Area (Fixed at bottom) -->
+<div class="p-8 bg-gradient-to-t from-hbo-dark via-hbo-dark/95 to-transparent">
+<button class="w-full bg-primary hover:bg-primary/90 text-black font-black text-lg py-5 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_40px_rgba(43,238,121,0.25)] active:scale-95 transition-all">
+<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path>
+</svg>
+            SOLICITAR SOPORTE 24/7
+        </button>
+<p class="text-center text-white/30 text-[10px] mt-4 font-medium uppercase tracking-[0.2em]">
+            Atención VIP vía WhatsApp Business
+        </p>
+</div>
+</div>
+</body></html>

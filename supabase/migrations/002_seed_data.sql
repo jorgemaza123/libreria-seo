@@ -145,9 +145,9 @@ ON CONFLICT DO NOTHING;
 -- =============================================
 INSERT INTO site_settings (key, value) VALUES
 ('contact_info', '{
-    "whatsapp": "51932371532",
-    "phone": "+51 932 371 532",
-    "email": "jorgemazaromero@hotmail.com",
+    "whatsapp": "902843481",
+    "phone": "+51 902 843 481",
+    "email": "chromalibreria@gmail.com",
     "address": {
         "street": "Av. Principal #123",
         "district": "San Juan de Lurigancho",

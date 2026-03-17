@@ -68,16 +68,16 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <article className="group bg-card rounded-xl overflow-hidden shadow-sm card-elevated hover:shadow-lg transition-shadow h-full flex flex-col">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-surface-dark/90 shadow-sm transition-shadow card-elevated glass-card hover:shadow-lg">
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-surface-dark border-b border-white/5">
         {hasValidImage ? (
           <Image
             src={product.image}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
             onError={() => setImageError(true)}
           />
@@ -104,7 +104,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* Quick Actions - Alto contraste para cualquier fondo */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <div className="absolute top-2 right-2 z-10 flex flex-col gap-1.5 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           {/* Botón Favoritos */}
           <button
             onClick={handleToggleFavorite}
@@ -122,61 +122,76 @@ function ProductCard({ product }: { product: Product }) {
           <Link
             href={`/producto/${product.slug}`}
             aria-label="Ver producto"
-            className="w-9 h-9 bg-slate-900/80 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-slate-900 transition-all duration-200"
+            className="w-10 h-10 bg-background-dark/90 backdrop-blur-md border border-white/10 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-background-dark transition-all duration-200"
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="w-5 h-5" />
           </Link>
         </div>
 
-        {/* Add to Cart Overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10">
-          <Button variant="default" size="sm" className="w-full font-bold" onClick={() => addToCart(product)}>
-            <ShoppingCart className="w-4 h-4 mr-1" />
-            Cotizar
-          </Button>
-        </div>
       </div>
 
       {/* Content */}
-      <div className="p-3 space-y-1 flex flex-col flex-grow">
-        <span className="text-xs text-primary font-medium uppercase tracking-wide">
+      <div className="flex flex-grow flex-col space-y-2 bg-background/20 p-4 backdrop-blur-sm">
+        <span className="text-[11px] text-primary/80 font-bold uppercase tracking-widest">
           {product.category}
         </span>
-        <h3 className="font-heading font-semibold text-sm text-foreground line-clamp-2 group-hover:text-primary transition-colors flex-grow">
+        <h3 className="font-display font-semibold text-base text-slate-100 line-clamp-2 group-hover:text-primary transition-colors flex-grow leading-tight">
           <Link href={`/producto/${product.slug}`}>
             {product.name}
           </Link>
         </h3>
 
         {/* Rating */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1 mt-1">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className={`w-3 h-3 ${
-                i < 4 ? 'fill-primary text-primary' : 'text-muted-foreground'
+              className={`w-3.5 h-3.5 ${
+                i < 4 ? 'fill-primary text-primary' : 'text-slate-600'
               }`}
             />
           ))}
-          <span className="text-xs text-muted-foreground ml-1">(24)</span>
+          <span className="text-[12px] text-slate-400 font-medium ml-1.5">(24)</span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center gap-2 pt-1 mt-auto">
-          {hasDiscount ? (
-            <>
-              <span className="text-lg font-bold text-primary">
-                S/{product.salePrice?.toFixed(2)}
-              </span>
-              <span className="text-xs text-muted-foreground line-through">
+        <div className="mt-auto border-t border-white/5 pt-3">
+          <div className="mb-3 flex items-center gap-2">
+            {hasDiscount ? (
+              <>
+                <span className="text-xl font-bold text-white">
+                  S/{product.salePrice?.toFixed(2)}
+                </span>
+                <span className="text-sm text-slate-500 line-through font-medium">
+                  S/{product.price.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <span className="text-xl font-bold text-white">
                 S/{product.price.toFixed(2)}
               </span>
-            </>
-          ) : (
-            <span className="text-lg font-bold text-foreground">
-              S/{product.price.toFixed(2)}
-            </span>
-          )}
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="default"
+              className="h-11 flex-1 rounded-xl bg-primary font-bold text-background-dark shadow-lg shadow-primary/20 hover:bg-primary/90"
+              onClick={() => addToCart(product)}
+            >
+              <ShoppingCart className="mr-2 w-5 h-5" />
+              Cotizar
+            </Button>
+            <Button
+              variant="outline"
+              asChild
+              className="h-11 rounded-xl px-4"
+            >
+              <Link href={`/producto/${product.slug}`}>
+                <Eye className="w-4 h-4" />
+                <span className="sr-only">Ver producto</span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </article>
@@ -258,13 +273,14 @@ export function ProductsSection() {
   const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 12);
 
   return (
-    <section id="productos" className="py-12 md:py-16 bg-muted/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="productos" className="py-16 md:py-24 bg-background-dark relative">
+      <div className="absolute inset-0 bg-primary/5 pattern-dots pointer-events-none opacity-50 mix-blend-overlay"></div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Productos Destacados - Una sola línea */}
         {featuredProducts.length > 0 && (
-          <div className="mb-12">
-            <div className="text-center mb-6 space-y-2">
-              <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+          <div className="mb-16">
+            <div className="text-center mb-10 space-y-4">
+              <span className="inline-block px-4 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-full text-sm font-bold tracking-widest uppercase">
                 Los Más Vendidos
               </span>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold">
@@ -291,40 +307,41 @@ export function ProductsSection() {
         )}
 
         {/* Catálogo Completo */}
-        <div className="text-center mb-6 space-y-2">
-          <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+        <div className="text-center mb-10 space-y-4">
+          <span className="inline-block px-4 py-1.5 bg-primary/10 border border-primary/20 text-primary rounded-full text-sm font-bold tracking-widest uppercase">
             Catálogo Completo
           </span>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold">
-            Todos Nuestros <span className="text-primary">Productos</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-white">
+            Todos Nuestros <span className="text-primary text-gradient">Productos</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Descubre nuestra selección de productos de alta calidad
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
+            Descubre nuestra selección de productos de alta calidad para el regreso a clases
           </p>
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="bg-card rounded-xl p-4 shadow-sm mb-8 border border-border">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="glass-card rounded-2xl p-5 shadow-2xl mb-10 border border-white/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+          <div className="flex flex-col md:flex-row gap-4 relative z-10">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Buscar productos..."
+                placeholder="Buscar utiles, papeleria o material"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                className="w-full pl-12 pr-4 py-4 rounded-xl border border-white/10 bg-black/40 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-base"
               />
             </div>
 
             {/* Category Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="appearance-none pl-10 pr-10 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all min-w-[200px]"
+                className="appearance-none pl-12 pr-12 py-4 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all min-w-[240px] text-base cursor-pointer"
               >
                 <option value="all">Todas las categorías</option>
                 {categories.filter(c => c.isActive).map((category) => (

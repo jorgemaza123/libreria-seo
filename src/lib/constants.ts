@@ -2,10 +2,10 @@
 // Este archivo contiene toda la información de contacto y configuración general
 
 export const CONTACT = {
-  whatsapp: '932371532',
-  whatsappFormatted: '+51 932 371 532',
-  phone: '+51 932 371 532',
-  email: 'contacto@libreriahyj.com',
+  whatsapp: '902843481',
+  whatsappFormatted: '+51 902 843 481',
+  phone: '+51 902 843 481',
+  email: 'chromalibreria@gmail.com',
 } as const;
 
 export const BUSINESS_INFO = {
@@ -50,9 +50,9 @@ export const BUSINESS_HOURS = {
 } as const;
 
 export const SOCIAL_MEDIA = {
-  facebook: 'https://facebook.com/libreriahyj',
-  instagram: 'https://instagram.com/libreriahyj',
-  tiktok: 'https://tiktok.com/@libreriahyj',
+  facebook: 'https://facebook.com/libreriachroma',
+  instagram: 'https://instagram.com/libreriachroma',
+  tiktok: 'https://tiktok.com/@libreriachroma',
 } as const;
 
 // Helpers para URLs

@@ -258,8 +258,8 @@ export function ChatBot() {
       <div
         className={`
           fixed z-[60] flex-col
-          bg-white dark:bg-zinc-900
-          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]
+          bg-background-dark/95 backdrop-blur-xl
+          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]
           overflow-hidden
           transition-all duration-300 ease-out
           ${isOpen
@@ -269,14 +269,14 @@ export function ChatBot() {
           inset-0 rounded-none
           lg:inset-auto lg:bottom-6 lg:right-6
           lg:w-[400px] lg:h-[520px]
-          lg:rounded-3xl lg:border lg:border-zinc-200 lg:dark:border-zinc-800
+          lg:rounded-3xl lg:border lg:border-white/10
           lg:origin-bottom-right
         `}
         role="dialog"
         aria-modal="true"
         aria-label="Asistente de ventas"
       >
-        <header className="flex items-center justify-between px-4 py-3 md:px-5 md:py-4 bg-gradient-to-r from-green-500 to-green-600 text-white flex-shrink-0 safe-area-pt">
+        <header className="flex items-center justify-between px-4 py-3 md:px-5 md:py-4 bg-background-dark border-b border-white/10 text-white flex-shrink-0 safe-area-pt">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -309,7 +309,7 @@ export function ChatBot() {
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 md:px-5 space-y-4 bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex-1 overflow-y-auto px-4 py-4 md:px-5 space-y-4 bg-background-dark/50">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -320,8 +320,8 @@ export function ChatBot() {
                   max-w-[85%] rounded-2xl px-4 py-3
                   text-[15px] md:text-base leading-relaxed
                   ${msg.type === 'user'
-                    ? 'bg-green-500 text-white rounded-br-md'
-                    : 'bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-bl-md shadow-sm'
+                    ? 'bg-primary text-background rounded-br-md font-bold'
+                    : 'bg-background-dark/60 text-white border border-white/10 rounded-bl-md shadow-sm glass-card'
                   }
                 `}
               >
@@ -343,7 +343,7 @@ export function ChatBot() {
 
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+              <div className="bg-background-dark/60 border border-white/10 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm glass-card">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-2.5 h-2.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
@@ -357,7 +357,7 @@ export function ChatBot() {
         </div>
 
         {!hasInteracted && (
-          <div className="px-4 py-3 md:px-5 md:py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0">
+          <div className="px-4 py-3 md:px-5 md:py-4 border-t border-white/10 bg-background-dark flex-shrink-0">
             <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mb-3 font-medium">
               Selecciona una opción rápida:
             </p>
@@ -366,12 +366,12 @@ export function ChatBot() {
                 <button
                   key={option.id}
                   onClick={() => handleQuickOption(option)}
-                  className={`flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-700 active:scale-[0.98] active:bg-green-100 dark:active:bg-green-900/40 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-green-500/50 touch-manipulation ${
+                  className={`flex items-center gap-2.5 px-3 py-3 md:py-3.5 rounded-xl border border-white/10 bg-background-dark/40 hover:bg-primary/10 hover:border-primary/50 transition-all text-left group glass-card focus:outline-none focus:ring-2 focus:ring-primary/50 touch-manipulation ${
                     QUICK_OPTIONS.length % 2 !== 0 && index === QUICK_OPTIONS.length - 1 ? 'col-span-2' : ''
                   }`}
                   aria-label={`${option.label}: ${option.description}`}
                 >
-                  <span className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
+                  <span className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     {option.icon}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -391,7 +391,7 @@ export function ChatBot() {
 
         <form
           onSubmit={handleSubmit}
-          className="px-4 py-3 md:px-5 md:py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0 safe-area-pb"
+          className="px-4 py-3 md:px-5 md:py-4 border-t border-white/10 bg-background-dark flex-shrink-0 safe-area-pb"
         >
           <div className="flex items-center gap-2 md:gap-3">
             <input
@@ -401,7 +401,7 @@ export function ChatBot() {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Escribe tu consulta..."
               disabled={isTyping}
-              className="flex-1 h-12 md:h-14 px-4 md:px-5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 text-[15px] md:text-base focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex-1 h-12 md:h-14 px-4 md:px-5 rounded-xl border border-white/10 bg-background-dark/60 text-white placeholder:text-zinc-500 text-[15px] md:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               aria-label="Escribe tu consulta"
             />
             <button

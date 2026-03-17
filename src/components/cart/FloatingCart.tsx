@@ -38,9 +38,9 @@ export function FloatingCart() {
     <div className="fixed bottom-[88px] right-4 z-40 lg:bottom-6">
       {/* Expanded Cart Preview */}
       {isExpanded && (
-        <div className="mb-3 w-80 bg-card rounded-xl shadow-2xl border border-border overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+        <div className="mb-3 w-80 bg-background-dark/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 overflow-hidden animate-in slide-in-from-bottom-4 duration-200 glass-card">
           {/* Header */}
-          <div className="flex items-center justify-between p-3 border-b border-border bg-muted/50">
+          <div className="flex items-center justify-between p-3 border-b border-white/10 bg-background-dark/50">
             <span className="font-semibold text-sm">Mi Cotización ({itemCount})</span>
             <button
               onClick={() => setIsExpanded(false)}
@@ -57,7 +57,7 @@ export function FloatingCart() {
               return (
                 <div
                   key={item.product.id}
-                  className="flex items-center gap-2 p-2 bg-muted/30 rounded-lg group"
+                  className="flex items-center gap-2 p-2 bg-background-dark/40 border border-white/5 rounded-lg group glass-card"
                 >
                   <img
                     src={item.product.image}
@@ -87,7 +87,7 @@ export function FloatingCart() {
           </div>
 
           {/* Footer */}
-          <div className="p-3 border-t border-border space-y-2">
+          <div className="p-3 border-t border-white/10 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Total Estimado:</span>
               <span className="text-lg font-bold text-primary">S/ {getTotal().toFixed(2)}</span>

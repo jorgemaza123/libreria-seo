@@ -309,7 +309,7 @@ function PackCard({ pack, index = 0 }: { pack: PackDef; index?: number }) {
       </div>
 
       {/* ── BODY ── */}
-      <div className="flex flex-col flex-1 p-5 gap-3.5 relative z-10 bg-card">
+      <div className="flex flex-col flex-1 p-5 gap-3.5 relative z-10 bg-background-dark/80 backdrop-blur-md">
         <ul className="space-y-2.5 flex-1">
           {pack.features.map((f, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm text-foreground leading-snug">
@@ -328,7 +328,7 @@ function PackCard({ pack, index = 0 }: { pack: PackDef; index?: number }) {
 
         {/* Micro-urgency */}
         <div
-          className="flex items-center gap-2 py-2 px-3 rounded-xl bg-muted/60 border border-border/40"
+          className="flex items-center gap-2 py-2 px-3 rounded-xl bg-background-dark/40 border border-white/10 glass-card"
           style={{ minHeight: 36 }}
         >
           <Zap className="w-3 h-3 flex-shrink-0" style={{ color: pack.accentColor }} />
@@ -450,7 +450,7 @@ function MobileSlider() {
           Compara los 3 packs
         </p>
         <div
-          className="inline-flex items-center gap-1.5 p-1 rounded-2xl bg-muted/60 border border-border/40"
+          className="inline-flex items-center gap-1.5 p-1 rounded-2xl bg-background-dark/60 border border-white/10 glass-card"
           role="tablist"
           aria-label="Seleccionar pack"
         >
@@ -531,7 +531,7 @@ function MobileSlider() {
         <button
           onClick={() => scrollToCard(activeIdx + 1)}
           aria-label="Ver siguiente pack"
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-background/85 dark:bg-card/85 backdrop-blur-md border border-border/50 shadow-lg flex items-center justify-center nav-arrow-bounce"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-background-dark/85 backdrop-blur-md border border-white/10 shadow-lg flex items-center justify-center nav-arrow-bounce glass-card"
           style={{ marginTop: 20 }}
         >
           <ChevronRight className="w-4 h-4 text-foreground/70" />
@@ -559,7 +559,7 @@ function MobileSlider() {
 
       {/* ── Progress: "Pack X de 3" pill ── */}
       <div className="flex flex-col items-center gap-1.5 mt-5">
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-muted/70 border border-border/40 shadow-sm overflow-hidden">
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-background-dark/70 border border-white/10 shadow-sm overflow-hidden glass-card">
           {/* Colored dot for current pack */}
           <span
             className="w-2 h-2 rounded-full flex-shrink-0 transition-colors duration-300"
@@ -651,7 +651,7 @@ export function SchoolPacksSection() {
 
       <section
         id="packs"
-        className="py-20 lg:py-28 relative overflow-hidden"
+        className="py-20 lg:py-28 relative overflow-hidden bg-background-dark"
         aria-labelledby="packs-title"
       >
         {/* Top border line — section delimiter */}

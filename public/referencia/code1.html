@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Premium School Hub - Catalog</title>
+<!-- BEGIN: External Resources -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'hbo-dark': '#000000',
+            'hbo-gray': '#0a0a0a',
+            'hbo-accent': '#ffffff',
+            'brand-green': '#00ff66',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .heading-gradient {
+      background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .glass-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .premium-shadow {
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.1);
+    }
+    
+    .floating-whatsapp {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(0, 255, 102, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+    }
+  </style>
+<!-- END: External Resources -->
+</head>
+<body class="bg-hbo-dark text-white min-h-screen pb-24">
+<!-- BEGIN: Floating WhatsApp -->
+<a aria-label="WhatsApp Support" class="fixed bottom-8 right-6 z-[100] bg-brand-green text-black p-4 rounded-full shadow-2xl floating-whatsapp flex items-center justify-center transition-transform active:scale-95" href="https://wa.me/yournumber">
+<svg class="w-8 h-8" fill="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path>
+</svg>
+</a>
+<!-- END: Floating WhatsApp -->
+<!-- BEGIN: Header -->
+<header class="sticky top-0 z-[60] bg-hbo-dark/95 backdrop-blur-xl border-b border-white/10 px-6 py-5">
+<div class="max-w-screen-xl mx-auto flex justify-between items-center">
+<h1 class="text-2xl font-black tracking-tighter uppercase italic leading-none">SchoolHub<span class="text-brand-green">.</span></h1>
+<nav class="flex items-center gap-6" data-purpose="top-navigation">
+<a class="hidden md:block text-[10px] uppercase tracking-[0.2em] font-bold text-white/50 hover:text-white transition-colors" href="#soluciones-academicas">Académico</a>
+<a class="hidden md:block text-[10px] uppercase tracking-[0.2em] font-bold text-white/50 hover:text-white transition-colors" href="#gestion-digital">Gestión</a>
+<button class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold transition-all border border-white/5">Menu</button>
+</nav>
+</div>
+</header>
+<!-- END: Header -->
+<main class="max-w-screen-xl mx-auto px-6 pt-16">
+<!-- BEGIN: Hero Section -->
+<section class="mb-20 text-center md:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/10 border border-brand-green/20 mb-6">
+<span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+<span class="text-brand-green text-[10px] uppercase tracking-widest font-black">Supporte Inmediato 24/7</span>
+</div>
+<h2 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 heading-gradient leading-[0.9]">Premium<br/>Services.</h2>
+<p class="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">Optimizamos tu camino hacia el <span class="text-white font-bold">Éxito Garantizado</span>. Soluciones de élite para estudiantes que no aceptan menos que la perfección.</p>
+</section>
+<!-- END: Hero Section -->
+<!-- BEGIN: Soluciones Academicas -->
+<section class="mb-24" id="soluciones-academicas">
+<div class="flex items-center gap-6 mb-12">
+<h3 class="text-sm font-black tracking-[0.3em] uppercase text-white/40">Soluciones Académicas</h3>
+<div class="h-[1px] flex-grow bg-gradient-to-r from-white/20 to-transparent"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Service Card: Hacemos tu Tarea -->
+<div class="glass-card p-10 rounded-2xl hover:bg-white/[0.07] transition-all duration-500 group relative overflow-hidden" data-purpose="service-card">
+<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-brand-green">school</span>
+</div>
+<div class="mb-8 w-14 h-14 bg-brand-green/10 flex items-center justify-center rounded-xl border border-brand-green/20">
+<span class="material-symbols-outlined text-brand-green text-3xl">auto_stories</span>
+</div>
+<h4 class="text-2xl font-black mb-4 group-hover:text-brand-green transition-colors">Hacemos tu Tarea</h4>
+<p class="text-gray-400 text-base leading-relaxed mb-10">Soporte Inmediato en todos los niveles. Nuestro equipo de expertos asegura que cada entrega cumpla con los más altos estándares académicos.</p>
+<a class="w-full flex items-center justify-center gap-3 bg-brand-green hover:bg-green-400 text-black font-black py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] premium-shadow group-hover:scale-[1.02]" href="https://wa.me/yournumber?text=Hola,%20necesito%20ayuda%20con%20una%20tarea">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+  SOLICITAR APOYO EXPERTO
+</a>
+</div>
+<!-- Service Card: Impresiones -->
+<div class="glass-card p-10 rounded-2xl hover:bg-white/[0.07] transition-all duration-500 group relative overflow-hidden" data-purpose="service-card">
+<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-brand-green">print</span>
+</div>
+<div class="mb-8 w-14 h-14 bg-brand-green/10 flex items-center justify-center rounded-xl border border-brand-green/20">
+<span class="material-symbols-outlined text-brand-green text-3xl">print_connect</span>
+</div>
+<h4 class="text-2xl font-black mb-4 group-hover:text-brand-green transition-colors">Impresiones High-End</h4>
+<p class="text-gray-400 text-base leading-relaxed mb-10">Nitidez superior y acabado profesional. Garantizamos el Éxito en tus presentaciones con impresión de alta resolución y entrega prioritaria.</p>
+<a class="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-brand-green font-black py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] group-hover:scale-[1.02]" href="https://wa.me/yournumber?text=Hola,%20quiero%20imprimir%20un%20archivo">
+<span class="material-symbols-outlined text-sm">upload_file</span>
+  SUBIR ARCHIVO AHORA
+</a>
+</div>
+</div>
+</section>
+<!-- END: Soluciones Academicas -->
+<!-- BEGIN: Gestion Digital -->
+<section class="mb-24" id="gestion-digital">
+<div class="flex items-center gap-6 mb-12">
+<h3 class="text-sm font-black tracking-[0.3em] uppercase text-white/40">Gestión Digital</h3>
+<div class="h-[1px] flex-grow bg-gradient-to-r from-white/20 to-transparent"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Service Card: Trámites Online -->
+<div class="glass-card p-10 rounded-2xl hover:bg-white/[0.07] transition-all duration-500 group relative overflow-hidden" data-purpose="service-card">
+<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-brand-green">verified_user</span>
+</div>
+<div class="mb-8 w-14 h-14 bg-brand-green/10 flex items-center justify-center rounded-xl border border-brand-green/20">
+<span class="material-symbols-outlined text-brand-green text-3xl">history_edu</span>
+</div>
+<h4 class="text-2xl font-black mb-4 group-hover:text-brand-green transition-colors">Trámites y Certificados</h4>
+<p class="text-gray-400 text-base leading-relaxed mb-10">Gestión Experta de tu burocracia académica. Nos encargamos de becas y registros con eficiencia garantizada y absoluta confidencialidad.</p>
+<a class="w-full flex items-center justify-center gap-3 bg-brand-green hover:bg-green-400 text-black font-black py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] premium-shadow group-hover:scale-[1.02]" href="https://wa.me/yournumber?text=Hola,%20necesito%20ayuda%20con%20un%20tramite">
+<span class="material-symbols-outlined text-sm">bolt</span>
+  INICIAR GESTIÓN FAST-TRACK
+</a>
+</div>
+<!-- Service Card: Soporte Técnico -->
+<div class="glass-card p-10 rounded-2xl hover:bg-white/[0.07] transition-all duration-500 group relative overflow-hidden" data-purpose="service-card">
+<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-brand-green">precision_manufacturing</span>
+</div>
+<div class="mb-8 w-14 h-14 bg-brand-green/10 flex items-center justify-center rounded-xl border border-brand-green/20">
+<span class="material-symbols-outlined text-brand-green text-3xl">terminal</span>
+</div>
+<h4 class="text-2xl font-black mb-4 group-hover:text-brand-green transition-colors">Soporte Tecnológico</h4>
+<p class="text-gray-400 text-base leading-relaxed mb-10">Diagnóstico experto para tus herramientas de estudio. Soporte Inmediato para asegurar que tu flujo de trabajo nunca se detenga.</p>
+<a class="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-brand-green font-black py-5 rounded-xl transition-all text-xs uppercase tracking-[0.2em] group-hover:scale-[1.02]" href="https://wa.me/yournumber?text=Hola,%20mi%20laptop%20necesita%20soporte">
+<span class="material-symbols-outlined text-sm">settings_suggest</span>
+  AGENDAR REVISIÓN EXPERTA
+</a>
+</div>
+</div>
+</section>
+<!-- END: Gestion Digital -->
+<!-- BEGIN: Estilo y Regalos -->
+<section class="mb-24" id="estilo-regalos">
+<div class="flex items-center gap-6 mb-12">
+<h3 class="text-sm font-black tracking-[0.3em] uppercase text-white/40">Estilo y Regalos</h3>
+<div class="h-[1px] flex-grow bg-gradient-to-r from-white/20 to-transparent"></div>
+</div>
+<div class="max-w-full">
+<!-- Service Card: Personalización -->
+<div class="glass-card p-12 rounded-2xl hover:bg-white/[0.07] transition-all duration-500 group flex flex-col md:flex-row gap-12 items-center relative overflow-hidden" data-purpose="service-card">
+<div class="absolute -bottom-10 -right-10 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
+<span class="material-symbols-outlined text-[200px] text-white">style</span>
+</div>
+<div class="w-24 h-24 bg-brand-green/10 flex items-center justify-center rounded-2xl border border-brand-green/20 flex-shrink-0">
+<span class="material-symbols-outlined text-brand-green text-5xl">palette</span>
+</div>
+<div class="flex-grow text-center md:text-left z-10">
+<h4 class="text-3xl font-black mb-6 group-hover:text-brand-green transition-colors uppercase tracking-tight">Personalización DTF / Sublimado</h4>
+<p class="text-gray-400 text-lg leading-relaxed mb-10 max-w-xl">Lleva tu identidad al siguiente nivel con tecnología de impresión de grado industrial. Colores vibrantes y durabilidad excepcional garantizada.</p>
+<a class="bg-brand-green hover:bg-green-400 text-black font-black py-6 px-12 rounded-xl transition-all text-xs uppercase tracking-[0.2em] inline-flex items-center gap-4 premium-shadow group-hover:scale-105" href="https://wa.me/yournumber?text=Hola,%20quiero%20cotizar%20un%20diseño%20personalizado">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+  CREAR DISEÑO EXCLUSIVO
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Estilo y Regalos -->
+</main>
+<!-- BEGIN: Footer -->
+<footer class="border-t border-white/10 pt-16 pb-12 px-6">
+<div class="max-w-screen-xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-center gap-10">
+<div class="text-center md:text-left">
+<h5 class="text-xl font-black italic tracking-tighter mb-2">SchoolHub<span class="text-brand-green">.</span></h5>
+<p class="text-[10px] uppercase tracking-widest text-white/40">© 2024 School Hub Premium. Todos los derechos reservados.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 text-[10px] uppercase tracking-[0.2em] font-black">
+<a class="text-white/40 hover:text-brand-green transition-colors" href="#">Términos</a>
+<a class="text-white/40 hover:text-brand-green transition-colors" href="#">Privacidad</a>
+<a class="text-white/40 hover:text-brand-green transition-colors" href="#">Contacto Directo</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>

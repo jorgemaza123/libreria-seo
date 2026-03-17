@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Quicksand } from "next/font/google";
+import { Nunito, Quicksand, Lexend } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
@@ -19,6 +19,12 @@ const nunito = Nunito({
 const quicksand = Quicksand({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -143,7 +149,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </head>
-      <body className={`${quicksand.variable} ${nunito.variable} font-body antialiased`}>
+      <body className={`${quicksand.variable} ${nunito.variable} ${lexend.variable} font-display antialiased`}>
         <Providers initialSiteContent={initialSiteContent}>
           <SmoothScrollProvider>
             {children}

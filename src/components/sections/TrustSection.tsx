@@ -1,10 +1,9 @@
 "use client"
 
-import { useMemo } from 'react';
-import { Store, Truck, CreditCard, Shield, Clock, MapPin, Award } from 'lucide-react';
-import { useSiteContent } from '@/contexts/SiteContentContext';
+import { useMemo } from 'react'
+import { Award, Clock, CreditCard, MapPin, Shield, Store, Truck } from 'lucide-react'
+import { useSiteContent } from '@/contexts/SiteContentContext'
 
-// Diccionario de Iconos
 const ICON_MAP: Record<string, any> = {
   Store,
   Truck,
@@ -13,140 +12,117 @@ const ICON_MAP: Record<string, any> = {
   Clock,
   MapPin,
   Award,
-};
+}
 
-// Datos por Defecto
 const DEFAULT_TRUST = [
   {
     iconName: 'Store',
-    title: 'Años',
-    subtitle: 'en el barrio',
+    title: 'años',
+    subtitle: 'atendiendo en la zona',
     highlight: true,
-    hasLogos: false
+    hasLogos: false,
   },
   {
     iconName: 'Truck',
-    title: 'Envío por vecinos',
-    subtitle: 'de confianza',
+    title: 'Recojo o delivery',
+    subtitle: 'segun tu comodidad',
     highlight: false,
-    hasLogos: false
+    hasLogos: false,
   },
   {
     iconName: 'CreditCard',
     title: 'Yape y Plin',
-    subtitle: 'aceptados',
+    subtitle: 'pagos rapidos',
     highlight: false,
     hasLogos: true,
   },
   {
     iconName: 'Shield',
-    title: 'Productos',
-    subtitle: 'originales',
+    title: 'Atencion clara',
+    subtitle: 'sin complicarte',
     highlight: false,
-    hasLogos: false
+    hasLogos: false,
   },
   {
     iconName: 'Clock',
-    title: 'Entrega',
-    subtitle: 'mismo día',
+    title: 'Respuesta',
+    subtitle: 'por WhatsApp',
     highlight: false,
-    hasLogos: false
+    hasLogos: false,
   },
   {
     iconName: 'MapPin',
-    title: 'Frente a',
-    subtitle: 'Estela Maris',
+    title: 'Frente al',
+    subtitle: 'Colegio Estela Maris',
     highlight: false,
-    hasLogos: false
+    hasLogos: false,
   },
-];
+]
 
 export function TrustSection() {
-  const { effectiveContent } = useSiteContent();
+  const { effectiveContent } = useSiteContent()
 
   const trustItems = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dbTrust = (effectiveContent as any)?.trust;
-
+    const dbTrust = (effectiveContent as any)?.trust
     if (dbTrust && Array.isArray(dbTrust) && dbTrust.length > 0) {
-      return dbTrust;
+      return dbTrust
     }
-    return DEFAULT_TRUST;
-  }, [effectiveContent]);
+    return DEFAULT_TRUST
+  }, [effectiveContent])
 
   return (
-    <section
-      className="py-8 md:py-10 bg-secondary text-secondary-foreground overflow-hidden"
-      aria-label="Razones para confiar en nosotros"
-    >
+    <section className="overflow-hidden border-b border-white/5 bg-background py-8 text-white md:py-10" aria-label="Razones para confiar en nosotros">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Header opcional para móvil */}
-        <div className="text-center mb-6 lg:hidden">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-semibold">
-            <Award className="w-4 h-4" />
-            ¿Por qué elegirnos?
+        <div className="mb-6 text-center lg:hidden">
+          <div className="section-kicker">
+            <Award className="h-4 w-4" />
+            Por que elegirnos
           </div>
         </div>
 
-        <div
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5"
-          role="list"
-        >
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <div className="grid grid-cols-2 gap-4 md:gap-5 sm:grid-cols-3 lg:grid-cols-6" role="list">
           {trustItems.map((item: any, index: number) => {
-            const IconComponent = ICON_MAP[item.iconName] || ICON_MAP['Store'];
+            const IconComponent = ICON_MAP[item.iconName] || ICON_MAP.Store
 
             return (
               <div
                 key={index}
                 role="listitem"
-                className={`
-                  flex flex-col items-center text-center
-                  p-4 sm:p-5 rounded-2xl transition-all
-                  ${item.highlight
-                    ? 'bg-primary/20 border-2 border-primary/30'
-                    : 'hover:bg-secondary-foreground/5 border-2 border-transparent'
-                  }
-                `}
+                className={`glass-card flex flex-col items-center rounded-2xl border p-4 text-center transition-all ${
+                  item.highlight
+                    ? 'scale-[1.02] border-primary/40 bg-primary/15 shadow-xl shadow-primary/10'
+                    : 'border-white/10 bg-surface-dark/80 hover:border-white/20'
+                }`}
               >
-                {/* Icono */}
                 <div
-                  className={`
-                    w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mb-3
-                    ${item.highlight
+                  className={`mb-3 flex h-14 w-14 items-center justify-center rounded-xl sm:h-16 sm:w-16 ${
+                    item.highlight
                       ? 'bg-primary text-primary-foreground shadow-lg'
-                      : 'bg-secondary-foreground/10 text-secondary-foreground'
-                    }
-                  `}
+                      : 'bg-secondary text-secondary-foreground'
+                  }`}
                   aria-hidden="true"
                 >
-                  <IconComponent className="w-7 h-7 sm:w-8 sm:h-8" />
+                  <IconComponent className="h-7 w-7 sm:h-8 sm:w-8" />
                 </div>
 
-                {/* Textos - Tamaños mejorados */}
-                <p className="font-bold text-base sm:text-lg leading-tight">
-                  {item.title}
-                </p>
-                <p className="text-secondary-foreground/80 text-sm sm:text-base mt-0.5">
-                  {item.subtitle}
-                </p>
+                <p className="text-base font-bold leading-tight sm:text-lg">{item.title}</p>
+                <p className="mt-0.5 text-sm text-secondary-foreground/80 sm:text-base">{item.subtitle}</p>
 
-                {/* Yape/Plin logos - Más grandes y legibles */}
                 {item.hasLogos && (
-                  <div className="flex gap-2 mt-3">
-                    <div className="px-3 py-1.5 bg-purple-600 rounded-lg flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
+                  <div className="mt-3 flex gap-2">
+                    <div className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white shadow-md sm:text-sm">
                       YAPE
                     </div>
-                    <div className="px-3 py-1.5 bg-teal-500 rounded-lg flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-md">
+                    <div className="rounded-lg bg-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-md sm:text-sm">
                       PLIN
                     </div>
                   </div>
                 )}
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

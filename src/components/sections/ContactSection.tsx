@@ -1,16 +1,19 @@
 "use client"
 
-import { MapPin, Phone, Mail, Clock, MessageCircle, ArrowRight, Navigation } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS, getWhatsAppUrl, getPhoneUrl, getEmailUrl } from '@/lib/constants';
+import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Navigation, Phone } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  BUSINESS_HOURS,
+  BUSINESS_INFO,
+  CONTACT,
+  getEmailUrl,
+  getPhoneUrl,
+  getWhatsAppUrl,
+} from '@/lib/constants'
 
-/**
- * Calcula si la librería está abierta ahora mismo según el horario de atención.
- * Usa la hora local del navegador (usuarios son locales en Lima, UTC-5).
- */
 function getOpenStatus(): { isOpen: boolean; label: string } {
   const now = new Date()
-  const day = now.getDay() // 0=Dom, 1=Lun...6=Sáb
+  const day = now.getDay()
   const minutes = now.getHours() * 60 + now.getMinutes()
 
   const toMinutes = (hhmm: string) => {
@@ -19,169 +22,120 @@ function getOpenStatus(): { isOpen: boolean; label: string } {
   }
 
   if (day >= 1 && day <= 5) {
-    // Lunes a Viernes
     const opens = toMinutes(BUSINESS_HOURS.weekdays.opens)
     const closes = toMinutes(BUSINESS_HOURS.weekdays.closes)
     if (minutes >= opens && minutes < closes) {
-      return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+      return { isOpen: true, label: 'Abierto ahora. Respondemos rapido.' }
     }
     if (minutes < opens) {
-      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.weekdays.opens.replace('0', '')} AM` }
+      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.weekdays.opens}` }
     }
-    return { isOpen: false, label: 'Cerrado · Abrimos mañana a las 7:00 AM' }
+    return { isOpen: false, label: `Cerrado. Abrimos mañana a las ${BUSINESS_HOURS.weekdays.opens}` }
   }
 
   if (day === 6) {
-    // Sábado
     const opens = toMinutes(BUSINESS_HOURS.saturday.opens)
     const closes = toMinutes(BUSINESS_HOURS.saturday.closes)
     if (minutes >= opens && minutes < closes) {
-      return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+      return { isOpen: true, label: 'Abierto ahora. Respondemos rapido.' }
     }
     if (minutes < opens) {
-      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.saturday.opens.replace('0', '')} AM` }
+      return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.saturday.opens}` }
     }
-    return { isOpen: false, label: 'Cerrado · Abrimos el domingo a las 10:00 AM' }
+    return { isOpen: false, label: `Cerrado. Abrimos mañana a las ${BUSINESS_HOURS.sunday.opens}` }
   }
 
-  // Domingo (day === 0)
   const opens = toMinutes(BUSINESS_HOURS.sunday.opens)
   const closes = toMinutes(BUSINESS_HOURS.sunday.closes)
   if (minutes >= opens && minutes < closes) {
-    return { isOpen: true, label: 'Abierto ahora · Respondemos al instante' }
+    return { isOpen: true, label: 'Abierto ahora. Respondemos rapido.' }
   }
   if (minutes < opens) {
-    return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.sunday.opens.replace('0', '')} AM` }
+    return { isOpen: false, label: `Abrimos hoy a las ${BUSINESS_HOURS.sunday.opens}` }
   }
-  return { isOpen: false, label: 'Cerrado · Abrimos el lunes a las 7:00 AM' }
+  return { isOpen: false, label: `Cerrado. Abrimos el lunes a las ${BUSINESS_HOURS.weekdays.opens}` }
 }
 
 export function ContactSection() {
   const openStatus = getOpenStatus()
 
   return (
-    <section
-      id="contacto"
-      className="relative py-12 md:py-20 lg:py-24 overflow-hidden bg-muted/30"
-      aria-labelledby="contact-title"
-    >
-      {/* Background Decorative Elements */}
-      <div className="absolute top-1/4 left-0 w-72 h-72 lg:w-96 lg:h-96 bg-primary/5 rounded-full blur-3xl -z-10" aria-hidden="true" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 lg:w-96 lg:h-96 bg-blue-500/5 rounded-full blur-3xl -z-10" aria-hidden="true" />
+    <section id="contacto" className="relative overflow-hidden border-t border-white/5 bg-background py-14 md:py-20 lg:py-24" aria-labelledby="contact-title">
+      <div className="absolute left-0 top-1/4 h-72 w-72 rounded-full bg-primary/5 blur-3xl lg:h-96 lg:w-96" aria-hidden="true" />
+      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-sky-500/5 blur-3xl lg:h-96 lg:w-96" aria-hidden="true" />
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        {/* Header */}
-        <header className="text-center mb-10 lg:mb-16 space-y-3">
-          <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold">
-            Estamos Aquí Para Ti
-          </span>
-          <h2
-            id="contact-title"
-            className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-heading font-bold"
-          >
-            ¿Necesitas Ayuda?
+      <div className="container relative z-10 mx-auto px-4 sm:px-6">
+        <header className="mb-10 space-y-3 text-center lg:mb-14">
+          <span className="section-kicker">Contacto rapido</span>
+          <h2 id="contact-title" className="text-3xl font-heading font-extrabold text-white sm:text-4xl xl:text-5xl">
+            Habla con nosotros sin complicarte.
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Contáctanos por el medio que prefieras. Respondemos rápido.
+          <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
+            Resolvemos consultas de utiles, impresiones, maquetas, tramites y estampados.
+            Elige el medio mas facil para ti.
           </p>
         </header>
 
-        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-
-          {/* ===== COLUMNA IZQUIERDA: Contacto Rápido ===== */}
+        <div className="grid items-start gap-6 lg:grid-cols-[1.1fr,0.9fr] lg:gap-8">
           <div className="space-y-6">
+            <div className="surface-panel p-6 sm:p-8">
+              <h3 className="mb-5 text-xl font-bold text-white sm:text-2xl">Elige como contactarnos</h3>
 
-            {/* Tarjeta Principal de Contacto */}
-            <div className="bg-card rounded-2xl lg:rounded-3xl p-6 sm:p-8 shadow-lg border border-border/50">
-              <h3 className="text-xl sm:text-2xl font-bold mb-6 text-center lg:text-left">
-                Contáctanos Ahora
-              </h3>
-
-              {/* Botones de Contacto - Grandes y Accesibles */}
-              <div className="space-y-4">
-                {/* WhatsApp - Botón Principal */}
+              <div className="space-y-3">
                 <Button
                   asChild
                   size="lg"
-                  className="w-full min-h-[60px] text-lg font-bold bg-green-600 hover:bg-green-700 shadow-lg"
+                  className="min-h-[60px] w-full bg-[#25D366] text-lg font-bold text-slate-950 shadow-lg hover:bg-[#20BA5C]"
                 >
-                  <a
-                    href={getWhatsAppUrl("Hola! Quiero información")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Enviar mensaje por WhatsApp"
-                  >
-                    <MessageCircle className="w-6 h-6 mr-3" />
-                    Escríbenos por WhatsApp
+                  <a href={getWhatsAppUrl('Hola, quiero informacion sobre utiles, impresiones o tramites')} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-3 h-6 w-6" />
+                    Escribenos por WhatsApp
                   </a>
                 </Button>
 
-                {/* Llamar */}
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="w-full min-h-[56px] text-lg font-bold"
-                >
-                  <a
-                    href={getPhoneUrl()}
-                    aria-label={`Llamar al ${CONTACT.phone}`}
-                  >
-                    <Phone className="w-5 h-5 mr-3" />
+                <Button asChild variant="outline" size="lg" className="min-h-[56px] w-full text-lg font-bold">
+                  <a href={getPhoneUrl()} aria-label={`Llamar al ${CONTACT.phone}`}>
+                    <Phone className="mr-3 h-5 w-5" />
                     Llamar: {CONTACT.phone}
                   </a>
                 </Button>
 
-                {/* Email */}
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="lg"
-                  className="w-full min-h-[52px] text-base"
-                >
-                  <a
-                    href={getEmailUrl()}
-                    aria-label={`Enviar correo a ${CONTACT.email}`}
-                  >
-                    <Mail className="w-5 h-5 mr-3" />
+                <Button asChild variant="ghost" size="lg" className="min-h-[52px] w-full justify-start text-base">
+                  <a href={getEmailUrl()} aria-label={`Enviar correo a ${CONTACT.email}`}>
+                    <Mail className="mr-3 h-5 w-5" />
                     {CONTACT.email}
                   </a>
                 </Button>
               </div>
             </div>
 
-            {/* Horarios de Atención */}
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border/50">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-primary" />
+            <div className="surface-card p-6">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <Clock className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold">Horario de Atención</h3>
+                <h3 className="text-lg font-bold text-white">Horario de atencion</h3>
               </div>
 
               <div className="space-y-3">
-                {/* Lunes a Viernes */}
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="font-medium">Lunes a Viernes</span>
-                  <span className="text-primary font-bold">{BUSINESS_HOURS.weekdays.hours}</span>
+                <div className="flex items-center justify-between border-b border-border/50 py-2">
+                  <span className="font-medium text-slate-100">Lunes a viernes</span>
+                  <span className="font-bold text-primary">{BUSINESS_HOURS.weekdays.hours}</span>
                 </div>
-                {/* Sábados */}
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="font-medium">Sábados</span>
-                  <span className="text-primary font-bold">{BUSINESS_HOURS.saturday.hours}</span>
+                <div className="flex items-center justify-between border-b border-border/50 py-2">
+                  <span className="font-medium text-slate-100">Sabados</span>
+                  <span className="font-bold text-primary">{BUSINESS_HOURS.saturday.hours}</span>
                 </div>
-                {/* Domingos */}
-                <div className="flex justify-between items-center py-2">
-                  <span className="font-medium">Domingos</span>
-                  <span className="text-muted-foreground font-medium">{BUSINESS_HOURS.sunday.hours}</span>
+                <div className="flex items-center justify-between py-2">
+                  <span className="font-medium text-slate-100">Domingos</span>
+                  <span className="font-medium text-muted-foreground">{BUSINESS_HOURS.sunday.hours}</span>
                 </div>
               </div>
 
-              {/* Indicador de estado dinámico según horario real */}
-              <div className="mt-4 pt-4 border-t border-border/50">
+              <div className="mt-4 border-t border-border/50 pt-4">
                 <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${openStatus.isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-                  <span className={`text-sm font-medium ${openStatus.isOpen ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                  <div className={`h-3 w-3 rounded-full ${openStatus.isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                  <span className={`text-sm font-medium ${openStatus.isOpen ? 'text-green-400' : 'text-muted-foreground'}`}>
                     {openStatus.label}
                   </span>
                 </div>
@@ -189,56 +143,46 @@ export function ContactSection() {
             </div>
           </div>
 
-          {/* ===== COLUMNA DERECHA: Mapa y Dirección ===== */}
           <div className="space-y-6">
-
-            {/* Dirección */}
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border/50">
+            <div className="surface-card p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-primary" />
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <MapPin className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold mb-1">Nuestra Ubicación</h3>
-                  <p className="text-muted-foreground mb-3">
-                    {BUSINESS_INFO.address.street}<br />
+                  <h3 className="mb-1 text-lg font-bold text-white">Nuestra ubicacion</h3>
+                  <p className="mb-3 text-muted-foreground">
+                    {BUSINESS_INFO.address.street}
+                    <br />
                     {BUSINESS_INFO.address.district}, {BUSINESS_INFO.address.city}
                   </p>
-                  <p className="text-sm text-primary font-medium">
-                    📍 Frente al Colegio Estela Maris
-                  </p>
+                  <p className="text-sm font-medium text-primary">Frente al Colegio Estela Maris</p>
                 </div>
               </div>
 
-              {/* Botón Cómo Llegar */}
-              <Button
-                asChild
-                variant="outline"
-                className="w-full mt-4 min-h-[48px] font-bold"
-              >
+              <Button asChild variant="outline" className="mt-4 min-h-[48px] w-full font-bold">
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Abrir navegación GPS a nuestra ubicación"
+                  aria-label="Abrir navegacion GPS a nuestra ubicacion"
                 >
-                  <Navigation className="w-5 h-5 mr-2" />
-                  Cómo Llegar (GPS)
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <Navigation className="mr-2 h-5 w-5" />
+                  Como llegar
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>
             </div>
 
-            {/* Mapa */}
-            <div className="bg-card rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg border border-border/50">
-              <div className="p-4 bg-muted/50 border-b border-border/50 flex items-center justify-between">
+            <div className="surface-card overflow-hidden">
+              <div className="flex items-center justify-between border-b border-border/50 bg-white/5 p-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
-                  <span className="text-sm font-bold">Ubicación en el Mapa</span>
+                  <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-bold">Ubicacion en el mapa</span>
                 </div>
               </div>
 
-              <div className="relative w-full h-[280px] sm:h-[320px] lg:h-[350px] bg-muted">
+              <div className="relative h-[280px] w-full bg-muted sm:h-[320px] lg:h-[360px]">
                 <iframe
                   src={`https://maps.google.com/maps?q=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}&z=16&output=embed`}
                   width="100%"
@@ -247,39 +191,29 @@ export function ContactSection() {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Mapa de ubicación de Librería CHROMA"
-                  className="grayscale-[10%] hover:grayscale-0 transition-all duration-500"
+                  title="Mapa de ubicacion de Libreria CHROMA"
+                  className="transition-all duration-500 hover:grayscale-0 grayscale-[10%]"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* ===== BANNER INFERIOR - CTA Final ===== */}
-        <div className="mt-10 lg:mt-16 bg-gradient-to-r from-primary to-primary/80 rounded-2xl lg:rounded-3xl p-6 sm:p-8 lg:p-10 text-center text-primary-foreground shadow-xl">
-          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
-            ¿Tienes una lista escolar?
+        <div className="mt-10 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-center text-primary-foreground shadow-xl lg:mt-14 lg:rounded-3xl lg:p-10">
+          <h3 className="mb-3 text-xl font-bold sm:text-2xl lg:text-3xl">
+            ¿Quieres cotizar ahora mismo?
           </h3>
-          <p className="text-base sm:text-lg opacity-90 mb-6 max-w-2xl mx-auto">
-            Envíanos una foto de tu lista por WhatsApp y te la cotizamos gratis en minutos.
+          <p className="mx-auto mb-6 max-w-2xl text-base opacity-90 sm:text-lg">
+            Envianos tu lista, tu archivo PDF o tu consulta por WhatsApp y te respondemos en minutos.
           </p>
-          <Button
-            asChild
-            size="lg"
-            variant="secondary"
-            className="min-h-[56px] px-8 text-lg font-bold shadow-lg hover:scale-105 transition-transform"
-          >
-            <a
-              href={getWhatsAppUrl("Hola! Quiero enviar mi lista escolar para cotizar")}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Enviar Lista por WhatsApp
+          <Button asChild size="lg" variant="secondary" className="min-h-[56px] px-8 text-lg font-bold shadow-lg transition-transform hover:scale-105">
+            <a href={getWhatsAppUrl('Hola, quiero cotizar utiles, impresiones o tramites')} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Cotizar por WhatsApp
             </a>
           </Button>
         </div>
       </div>
     </section>
-  );
+  )
 }

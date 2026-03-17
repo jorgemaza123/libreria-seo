@@ -11,9 +11,10 @@ import {
   MessageCircle,
   ArrowRight,
 } from 'lucide-react';
-import { mockNavItems, mockCategories } from '@/lib/mock-data';
+import { mockNavItems } from '@/lib/mock-data';
 import { useSiteContent } from '@/contexts/SiteContentContext';
 import { BUSINESS_INFO } from '@/lib/constants';
+import { seoPagesConfig } from '@/data/seo/seoPagesConfig';
 
 export function Footer() {
   const { effectiveContent } = useSiteContent();
@@ -27,7 +28,7 @@ export function Footer() {
     `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`;
 
   return (
-    <footer className="bg-secondary text-secondary-foreground">
+    <footer className="bg-background-dark border-t border-white/5 text-secondary-foreground">
       <div className="container mx-auto px-4 py-10">
         {/* TOP GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -52,6 +53,7 @@ export function Footer() {
                 <a
                   href={social.facebook}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-secondary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-white transition"
                 >
                   <Facebook className="w-4 h-4" />
@@ -61,6 +63,7 @@ export function Footer() {
                 <a
                   href={social.instagram}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full bg-secondary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-white transition"
                 >
                   <Instagram className="w-4 h-4" />
@@ -69,6 +72,7 @@ export function Footer() {
               <a
                 href={getWhatsAppUrl()}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-whatsapp/20 text-whatsapp flex items-center justify-center"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -93,22 +97,26 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* CATEGORIES */}
-          <div>
-            <h4 className="font-semibold mb-3">Categorías</h4>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              {mockCategories.slice(0, 6).map((cat) => (
+          {/* CATEGORIES / SEO LINKS */}
+          <div className="lg:col-span-2">
+            <h4 className="font-semibold mb-3">Búsquedas Populares</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[13px] opacity-80">
+              {Object.values(seoPagesConfig).slice(0, 10).map((page) => (
                 <Link
-                  key={cat.id}
-                  href={`/?category=${cat.slug}#productos`}
-                  className="px-3 py-1.5 rounded-full bg-secondary-foreground/5 hover:bg-primary/10 transition"
+                  key={page.slug}
+                  href={`/${page.slug}`}
+                  className="hover:text-primary transition-colors truncate"
+                  title={page.h1Title}
                 >
-                  {cat.name}
+                  {page.h1Title}
                 </Link>
               ))}
             </div>
           </div>
+        </div>
 
+        {/* BOTTOM SECTION (Contacto / Mapa) */}
+        <div className="mt-12 pt-8 border-t border-secondary-foreground/10 grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* CONTACT */}
           <div className="space-y-3 text-sm">
             <div className="flex gap-2">
@@ -140,7 +148,7 @@ export function Footer() {
         </div>
 
         {/* MAP STRIP */}
-        <div className="mt-8 flex items-center justify-between gap-4 bg-secondary-foreground/5 rounded-xl p-4 border">
+        <div className="mt-8 flex items-center justify-between gap-4 bg-secondary-foreground/5 rounded-xl p-4 border border-secondary-foreground/10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
               <MapPin className="w-4 h-4 text-primary" />
@@ -152,6 +160,7 @@ export function Footer() {
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${BUSINESS_INFO.coordinates.lat},${BUSINESS_INFO.coordinates.lng}`}
             target="_blank"
+            rel="noopener noreferrer"
             className="text-sm text-primary font-medium flex items-center gap-1"
           >
             Abrir GPS <ArrowRight className="w-4 h-4" />

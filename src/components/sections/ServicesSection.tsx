@@ -103,12 +103,13 @@ export function ServicesSection() {
                 role="listitem"
                 className={`
                   group relative flex flex-col
-                  bg-card rounded-2xl
+                  bg-surface-dark/90 rounded-2xl
                   border-2 ${borderClass}
                   p-5 sm:p-6
                   shadow-sm hover:shadow-lg
                   transition-all duration-300
                   hover:-translate-y-1
+                  glass-card
                 `}
               >
                 {/* Icon */}
@@ -138,14 +139,13 @@ export function ServicesSection() {
                 </div>
 
                 {/* Footer con Precio y Botón */}
-                <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between gap-3">
+                <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/50 pt-4">
                   <span className="text-primary font-bold text-base sm:text-lg">
                     {service.price || 'Consultar'}
                   </span>
                   <Button
                     size="sm"
-                    variant="ghost"
-                    className="min-h-[44px] px-4 font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    className="min-h-[44px] px-4 font-semibold shadow-sm"
                     onClick={() =>
                       window.open(
                         getWhatsAppUrl(`¡Hola! Me interesa el servicio de ${service.name}.`),

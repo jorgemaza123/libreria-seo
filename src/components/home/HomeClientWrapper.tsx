@@ -17,13 +17,14 @@ import { SublimationHero } from '@/components/landing/SublimationHero'
 import { ServicesConversionHero } from '@/components/landing/ServicesConversionHero'
 
 // Home sections — siempre presentes debajo del hero
-import { SchoolPacksSection } from '@/components/sections/SchoolPacksSection'
 import { CategoriesSection } from '@/components/sections/CategoriesSection'
 import { ProductsSection } from '@/components/sections/ProductsSection'
 import { CatalogsSection } from '@/components/sections/CatalogsSection'
 import { ServicesSection } from '@/components/sections/ServicesSection'
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
+import { SeoLinksSection } from "@/components/sections/SeoLinksSection";
 import { TrustSection } from '@/components/sections/TrustSection'
+import { ContactSection } from '@/components/sections/ContactSection'
 
 import { CustomPrintingSection } from '@/components/sections/CustomPrintingSection'
 
@@ -151,14 +152,16 @@ export function HomeClientWrapper() {
         <ActiveHero />
 
         {/* Secciones fijas de la Home */}
-        <SchoolPacksSection />
+        <TrustSection />
+        {/* <SchoolPacksSection /> - Ocultado temporalmente por UX Focus */}
         <CategoriesSection />
+        <ServicesSection />
         <ProductsSection />
         <CatalogsSection />
-        <ServicesSection />
+        <SeoLinksSection />
         <CustomPrintingSection />
         <TestimonialsSection />
-        <TrustSection />
+        <ContactSection />
       </main>
 
       <Footer />

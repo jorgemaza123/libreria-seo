@@ -105,7 +105,7 @@ export function CatalogsSection() {
   return (
     <section
       id="catalogos"
-      className="py-12 md:py-16 lg:py-20 bg-muted/30 relative overflow-hidden"
+      className="relative overflow-hidden border-t border-white/5 bg-background py-12 md:py-16 lg:py-20"
       aria-labelledby="catalogs-title"
     >
       {/* Fondo decorativo */}
@@ -135,9 +135,9 @@ export function CatalogsSection() {
             <article
               key={catalog.id}
               role="listitem"
-              className="group bg-card rounded-2xl overflow-hidden border border-border
+              className="group bg-surface-dark/90 rounded-2xl overflow-hidden border border-white/10
                          shadow-sm transition-all duration-300 ease-out
-                         hover:-translate-y-1 hover:shadow-lg"
+                         hover:-translate-y-1 hover:shadow-lg glass-card"
             >
               {/* Cover */}
               <div className="relative h-48 sm:h-52 bg-muted overflow-hidden">
