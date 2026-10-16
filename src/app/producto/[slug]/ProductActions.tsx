@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Heart, Share2, Check, Link2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { seoConfig } from '@/lib/seo'
 
 interface ProductActionsProps {
   productId: string
@@ -67,7 +68,7 @@ export function ProductActions({ productId, productName, productSlug }: ProductA
       text: `Mira este producto: ${productName}`,
       url: typeof window !== 'undefined'
         ? window.location.href
-        : `${process.env.NEXT_PUBLIC_SITE_URL || ''}/producto/${productSlug}`,
+        : `${seoConfig.siteUrl}/producto/${productSlug}`,
     }
 
     try {

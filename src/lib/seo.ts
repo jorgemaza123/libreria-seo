@@ -14,9 +14,9 @@ export interface SEOConfig {
 export const seoConfig: SEOConfig = {
   siteName: "Libreria CHROMA",
   siteUrl: "https://www.libreriachroma.com",
-  defaultTitle: "Impresiones, utiles y tramites en VMT",
+  defaultTitle: "Librería CHROMA: maquetas, impresiones y útiles en VMT",
   defaultDescription:
-    "Impresiones por WhatsApp, utiles escolares, maquetas, fotocopias y tramites en Villa Maria del Triunfo. Atencion clara y recojo rapido.",
+    "Maquetas y trabajos escolares por encargo, impresiones, útiles y trámites en Villa María del Triunfo. Cotiza por WhatsApp para Lima Metropolitana.",
   defaultImage: "/opengraph-image",
   twitterHandle: "@libreriaCHROMA",
   locale: "es_PE",
@@ -60,6 +60,10 @@ export const generateLocalBusinessSchema = (config: {
     "@type": "GeoCoordinates",
     latitude: config.geo.latitude,
     longitude: config.geo.longitude,
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Lima Metropolitana",
   },
   openingHoursSpecification: config.openingHours.map((hours) => {
     const [dayPart, timePart] = hours.split(" ");

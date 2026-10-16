@@ -12,11 +12,15 @@ import {
   Zap,
 } from "lucide-react";
 import { seoPagesConfig } from "@/data/seo/seoPagesConfig";
+import { publishedSchoolWorkSlugs, schoolWorkPages } from "@/data/seo/schoolWorkArchitecture";
+import { SchoolWorkLanding } from "@/components/school-work/SchoolWorkLanding";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
+import { CONTACT } from "@/lib/constants";
+import { seoConfig } from "@/lib/seo";
 
-const DEFAULT_WHATSAPP = "51963725458";
+const DEFAULT_WHATSAPP = CONTACT.whatsapp;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -39,6 +43,30 @@ function getRelatedPages(currentSlug: string, categoryHint: "utiles" | "servicio
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
+  const schoolWorkPage = schoolWorkPages[resolvedParams.slug];
+
+  if (schoolWorkPage) {
+    const canonical = `${seoConfig.siteUrl}/${schoolWorkPage.slug}`;
+
+    return {
+      title: schoolWorkPage.metaTitle,
+      description: schoolWorkPage.metaDescription,
+      alternates: { canonical },
+      openGraph: {
+        title: `${schoolWorkPage.metaTitle} | ${seoConfig.siteName}`,
+        description: schoolWorkPage.metaDescription,
+        locale: seoConfig.locale,
+        type: "website",
+        url: canonical,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${schoolWorkPage.metaTitle} | ${seoConfig.siteName}`,
+        description: schoolWorkPage.metaDescription,
+      },
+    };
+  }
+
   const config = seoPagesConfig[resolvedParams.slug];
 
   if (!config) return {};
@@ -60,11 +88,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  return Object.keys(seoPagesConfig).map((slug) => ({ slug }));
+  return [...new Set([...Object.keys(seoPagesConfig), ...publishedSchoolWorkSlugs])].map((slug) => ({ slug }));
 }
 
 export default async function SeoLandingPage({ params }: PageProps) {
   const resolvedParams = await params;
+  const schoolWorkPage = schoolWorkPages[resolvedParams.slug];
+
+  if (schoolWorkPage) {
+    return <SchoolWorkLanding page={schoolWorkPage} />;
+  }
+
   const pageData = seoPagesConfig[resolvedParams.slug];
 
   if (!pageData) {

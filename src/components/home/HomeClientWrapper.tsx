@@ -1,9 +1,9 @@
 "use client"
 
-import type { ComponentType } from 'react'
 import { useSiteContent } from '@/contexts/SiteContentContext'
 import type { HeroPriorityMode } from '@/contexts/SiteContentContext'
 import { useDeepScrollIntent } from '@/hooks/use-deep-scroll-intent'
+import { homeHeroCampaigns } from '@/data/campaigns'
 
 // Layout
 import { Navbar } from '@/components/layout/Navbar'
@@ -27,90 +27,12 @@ import { TrustSection } from '@/components/sections/TrustSection'
 import { ContactSection } from '@/components/sections/ContactSection'
 
 import { CustomPrintingSection } from '@/components/sections/CustomPrintingSection'
+import { SchoolWorkCampaignSection } from '@/components/sections/SchoolWorkCampaignSection'
 
-// ============================================
-// CAMPAIGN CONFIG — motor central de campañas
-//
-// Cada entrada define TODO lo que necesita un modo:
-//   hero         → componente que se renderiza
-//   countdown    → barra FOMO (solo si hay deadline)
-//   primaryEvent → evento Meta Pixel / GTM activo
-//   goal         → descripción del objetivo (logging / docs)
-//
-// Para agregar un nuevo modo:
-//   1. Crear el componente Hero en /components/landing/
-//   2. Añadir la entrada aquí
-//   3. Activar el modo desde /admin/contenido
-//   Sin tocar ningún otro archivo.
-// ============================================
-
-interface CampaignCountdown {
-  targetDate: string
-  text: string
-  subtext: string
-}
-
-interface CampaignEntry {
-  hero: ComponentType
-  countdown?: CampaignCountdown
-  primaryEvent: string
-  goal: string
-}
-
-const CAMPAIGN_CONFIG: Partial<Record<HeroPriorityMode, CampaignEntry>> = {
-  school: {
-    hero: SchoolHero,
-    countdown: {
-      targetDate: '2026-03-15T23:59:59',
-      text: 'Campaña Escolar hasta 15 de marzo',
-      subtext: 'Envío GRATIS en compras mayores a S/200',
-    },
-    primaryEvent: 'SchoolListLead',
-    goal: 'Capturar listas escolares por WhatsApp',
-  },
-
-  sublimation: {
-    hero: SublimationHero,
-    primaryEvent: 'SublimationLead',
-    goal: 'Cotizaciones de sublimación y personalización',
-  },
-
-  services: {
-    hero: ServicesConversionHero,
-    primaryEvent: 'MultiServiceLead',
-    goal: 'Multi-consulta rápida — útiles, sublimación, trámites',
-  },
-
-  // Futuros modos — descomentar cuando el Hero esté listo:
-  // tramites: {
-  //   hero: TramitesHero,
-  //   primaryEvent: 'TramitesLead',
-  //   goal: 'Consultas de trámites RENIEC/SUNAT y copias',
-  // },
-  // navidad: {
-  //   hero: NavidadHero,
-  //   countdown: { targetDate: '2026-12-24T23:59:59', text: '...', subtext: '...' },
-  //   primaryEvent: 'NavidadLead',
-  //   goal: 'Ventas de regalos navideños personalizados',
-  // },
-  // regalos: {
-  //   hero: RegalosHero,
-  //   primaryEvent: 'RegalosLead',
-  //   goal: 'Pedidos de regalos personalizados',
-  // },
-  // 'black-friday': {
-  //   hero: BlackFridayHero,
-  //   countdown: { targetDate: '...', text: '...', subtext: '...' },
-  //   primaryEvent: 'BlackFridayLead',
-  //   goal: 'Conversiones de oferta Black Friday',
-  // },
-}
-
-// Fallback: si el modo no tiene config, muestra ServicesConversionHero
-const DEFAULT_CAMPAIGN: CampaignEntry = {
-  hero: ServicesConversionHero,
-  primaryEvent: 'MultiServiceLead',
-  goal: 'Modo por defecto',
+const HERO_COMPONENTS: Partial<Record<HeroPriorityMode, typeof ServicesConversionHero>> = {
+  school: SchoolHero,
+  sublimation: SublimationHero,
+  services: ServicesConversionHero,
 }
 
 // ============================================
@@ -122,8 +44,9 @@ export function HomeClientWrapper() {
   const { effectiveContent } = useSiteContent()
   const campaignMode = effectiveContent.hero.priorityMode ?? 'services'
 
-  const campaign = CAMPAIGN_CONFIG[campaignMode] ?? DEFAULT_CAMPAIGN
-  const ActiveHero = campaign.hero
+  const campaign = homeHeroCampaigns[campaignMode as keyof typeof homeHeroCampaigns]
+    ?? homeHeroCampaigns.services
+  const ActiveHero = HERO_COMPONENTS[campaignMode] ?? ServicesConversionHero
 
   // 🔑 Hace que primaryEvent sea REAL, no solo documentación.
   // Cuando el usuario lee ≥80% de la página, Meta recibe:
@@ -152,6 +75,7 @@ export function HomeClientWrapper() {
         <ActiveHero />
 
         {/* Secciones fijas de la Home */}
+        <SchoolWorkCampaignSection />
         <TrustSection />
         {/* <SchoolPacksSection /> - Ocultado temporalmente por UX Focus */}
         <CategoriesSection />

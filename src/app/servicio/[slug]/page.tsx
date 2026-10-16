@@ -1,9 +1,10 @@
-import { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+import { createPublicClient } from '@/lib/supabase/server'
 import { ServiceLanding } from './ServiceLanding'
 import { notFound } from 'next/navigation'
+import { generateBreadcrumbSchema, generateFAQSchema, seoConfig } from '@/lib/seo'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -11,7 +12,7 @@ interface Props {
 
 async function getService(slug: string) {
   try {
-    const supabase = await createClient()
+    const supabase = createPublicClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('services')
@@ -39,7 +40,7 @@ async function getService(slug: string) {
 
 async function getServiceFAQs(serviceSlug: string) {
   try {
-    const supabase = await createClient()
+    const supabase = createPublicClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase as any)
       .from('faqs')
@@ -55,7 +56,7 @@ async function getServiceFAQs(serviceSlug: string) {
 
 async function getReviews(serviceName: string) {
   try {
-    const supabase = await createClient()
+    const supabase = createPublicClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase as any)
       .from('reviews')
@@ -76,13 +77,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!service) return { title: 'Servicio no encontrado' }
 
   return {
-    title: `${service.title} | Librería CHROMA`,
+    title: service.title,
     description: service.shortDescription || service.description?.slice(0, 160),
+    alternates: {
+      canonical: `/servicio/${service.slug}`,
+    },
     openGraph: {
       title: `${service.title} | Librería CHROMA`,
       description: service.shortDescription || service.description?.slice(0, 160),
       type: 'website',
       locale: 'es_PE',
+      url: `${seoConfig.siteUrl}/servicio/${service.slug}`,
+      images: service.image ? [service.image] : [seoConfig.defaultImage],
     },
   }
 }
@@ -98,22 +104,40 @@ export default async function ServicioPage({ params }: Props) {
     getReviews(service.title),
   ])
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Inicio', url: seoConfig.siteUrl },
+    { name: 'Servicios', url: `${seoConfig.siteUrl}/#servicios` },
+    { name: service.title, url: `${seoConfig.siteUrl}/servicio/${service.slug}` },
+  ])
+  const faqSchema = faqs.length > 0
+    ? generateFAQSchema(faqs.map((faq: Record<string, unknown>) => ({
+        question: faq.question as string,
+        answer: faq.answer as string,
+      })))
+    : null
+
   return (
-    <ServiceLanding
-      service={service}
-      faqs={faqs.map((f: Record<string, unknown>) => ({
-        id: f.id as string,
-        question: f.question as string,
-        answer: f.answer as string,
-      }))}
-      reviews={reviews.map((r: Record<string, unknown>) => ({
-        id: r.id as string,
-        name: r.name as string,
-        role: (r.role || '') as string,
-        avatar: (r.avatar || '') as string,
-        rating: (r.rating || 5) as number,
-        comment: (r.comment || '') as string,
-      }))}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {faqSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      )}
+      <ServiceLanding
+        service={service}
+        faqs={faqs.map((f: Record<string, unknown>) => ({
+          id: f.id as string,
+          question: f.question as string,
+          answer: f.answer as string,
+        }))}
+        reviews={reviews.map((r: Record<string, unknown>) => ({
+          id: r.id as string,
+          name: r.name as string,
+          role: (r.role || '') as string,
+          avatar: (r.avatar || '') as string,
+          rating: (r.rating || 5) as number,
+          comment: (r.comment || '') as string,
+        }))}
+      />
+    </>
   )
 }

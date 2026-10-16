@@ -3,9 +3,8 @@ import { Nunito, Quicksand, Lexend } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { AnalyticsScripts } from "@/components/analytics/AnalyticsScripts";
-import { seoConfig, generateLocalBusinessSchema, generateFAQSchema } from "@/lib/seo";
+import { seoConfig, generateLocalBusinessSchema } from "@/lib/seo";
 import { CONTACT, BUSINESS_INFO, BUSINESS_HOURS } from "@/lib/constants";
-import { mockFAQs } from "@/lib/mock-data";
 import { getSiteContent } from "@/lib/supabase/queries/site-settings";
 import "./globals.css";
 
@@ -50,6 +49,9 @@ export const metadata: Metadata = {
     description: seoConfig.defaultDescription,
     creator: seoConfig.twitterHandle,
   },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   robots: {
     index: true,
     follow: true,
@@ -81,21 +83,12 @@ const localBusinessSchema = generateLocalBusinessSchema({
     `Sunday ${BUSINESS_HOURS.sunday.opens}-${BUSINESS_HOURS.sunday.closes}`,
   ],
   priceRange: BUSINESS_INFO.priceRange,
-  image: `${seoConfig.siteUrl}/og-image.jpg`,
+  image: `${seoConfig.siteUrl}${seoConfig.defaultImage}`,
   geo: {
     latitude: BUSINESS_INFO.coordinates.lat,
     longitude: BUSINESS_INFO.coordinates.lng,
   },
 });
-
-const faqSchema = generateFAQSchema(
-  mockFAQs
-    .filter((faq) => faq.isActive)
-    .map((faq) => ({
-      question: faq.question,
-      answer: faq.answer,
-    })),
-);
 
 export default async function RootLayout({
   children,
@@ -116,10 +109,6 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       </head>
       <body className={`${quicksand.variable} ${nunito.variable} ${lexend.variable} font-display antialiased`}>
